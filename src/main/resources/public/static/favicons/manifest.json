@@ -1,0 +1,29 @@
+{
+  "manifest_version": 2,
+  "author": "SinnerSchrader Deutschland GmbH",
+  "developer": {
+    "name": "SinnerSchrader Developers",
+    "url": "https://sinnerschrader.jobs"
+  },
+  "name": "@project.name@",
+  "short_name": "S2 Account",
+  "default_locale": "en",
+  "lang": "en",
+  "version": "@project.version@.@git.closest.tag.commit.count@@version.phase@-@git.commit.id.abbrev@",
+  "icons": [
+    {
+      "src": "/static/favicons/android-chrome-192x192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "/static/favicons/android-chrome-512x512.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ],
+  "theme_color": "#4502da",
+  "background_color": "#4502da",
+  "start_url": "/profile",
+  "display": "standalone"
+}

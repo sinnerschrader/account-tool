@@ -1,0 +1,159 @@
+{% extends "pages/template/authenticated.html" %}
+
+{% block content %}
+<form action="/user/edit/{{user.uid}}" method="post">
+	<input type="hidden" name="{{request.getAttribute('_csrf').parameterName}}"
+		   value="{{request.getAttribute('_csrf').token}}"/>
+
+	<div class="mdl-grid">
+		<div class="mdl-cell mdl-cell--12-col mdl-cell--8-col-tablet mdl-cell--4-col-phone">
+			<h2 class="s2act-sectionHeadline">Edit user {{editUserForm.uid}}</h2>
+		</div>
+		{% set formName = 'editUserForm' %}
+		{% set noSpacing = true %}
+
+		{% if hasErrors(formName) %}
+		<div class="mdl-cell mdl-cell--12-col mdl-cell--8-col-tablet mdl-cell--4-col-phone">
+			<ul class="s2act-messages {{noSpacing ? 's2act-messages--nospacing' : ''}}">
+				{% for err in getAllErrors(formName) %}
+				<li class="s2act-message s2act-message--error">{{ err }}</li>
+				{% endfor %}
+			</ul>
+		</div>
+		{% endif %}
+		<div class="mdl-cell mdl-cell--6-col mdl-cell--4-col-tablet mdl-cell--4-col-phone mdl-cell--order-0-phone">
+			<div class="s2act-selectfield mdl-selectfield mdl-js-selectfield mdl-selectfield--floating-label">
+				<select id="company" name="company" class="mdl-selectfield__select">
+					<option value=""></option>
+					{% for company in companies %}
+					<option value="{{company.key}}" {{isSelected(editUserForm.company,company.key)}}>{{company.value}}</option>
+					{% endfor %}
+				</select>
+				<div class="mdl-selectfield__icon"><i class="material-icons">arrow_drop_down</i></div>
+				<label class="mdl-selectfield__label" for="company">Company</label>
+			</div>
+			<div class="s2act-textfield s2act-textfield__halfWidth mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+				<input class="mdl-textfield__input" type="text" name="firstName" id="firstName"
+					   value="{{ editUserForm.firstName }}" readonly>
+				<label class="mdl-textfield__label" for="firstName">Firstname *</label>
+			</div>
+			<div class="s2act-textfield s2act-textfield__halfWidth mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+				<input class="mdl-textfield__input" type="text" name="lastName" id="lastName"
+					   value="{{ editUserForm.lastName }}" readonly>
+				<label class="mdl-textfield__label" for="lastName">Lastname *</label>
+			</div>
+			<div class="s2act-textfield s2act-textfield__halfWidth mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+				<input class="mdl-textfield__input" type="text" name="uid" id="uid"
+					   value="{{ editUserForm.uid }}" pattern="\D\D\D\D\D\D\D?\D?"
+					   readonly>
+				<label class="mdl-textfield__label" for="uid">Username</label>
+				<span class="mdl-textfield__error">Please enter the uid with six, seven or eight characters</span>
+			</div>
+			<div class="s2act-textfield s2act-textfield__halfWidth mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+				<input class="mdl-textfield__input" type="text" name="birthDate" id="birthDate"
+					   value="{{ editUserForm.birthDate }}" pattern="\d\d\.\d\d">
+				<label class="mdl-textfield__label" for="birthDate">Birthdate</label>
+				<span class="mdl-textfield__error">Please enter the Birthdate in pattern dd.MM</span>
+			</div>
+			<div class="s2act-textfield mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+				<input class="mdl-textfield__input" type="email" name="email" id="email"
+					   value="{{ editUserForm.email }}" readonly>
+				<label class="mdl-textfield__label" for="email">E-Mail</label>
+			</div>
+			<div class="s2act-textfield s2act-textfield__halfWidth mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+				<input class="mdl-textfield__input" type="tel" name="telephoneNumber" id="telephoneNumber"
+					   value="{{ editUserForm.telephoneNumber }}" pattern="\+?[0-9 ()]+">
+				<label class="mdl-textfield__label" for="telephoneNumber">Telephone</label>
+			</div>
+			<div class="s2act-textfield s2act-textfield__halfWidth mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+				<input class="mdl-textfield__input" type="tel" name="mobileNumber" id="mobileNumber"
+					   value="{{ editUserForm.mobileNumber }}" pattern="\+?[0-9 ()]+">
+				<label class="mdl-textfield__label" for="mobileNumber">Mobile</label>
+				<span class="mdl-textfield__error">Please define a valid mobile number</span>
+			</div>
+		</div>
+		<div class="mdl-cell mdl-cell--6-col mdl-cell--4-col-tablet mdl-cell--4-col-phone">
+			<div class="s2act-textfield mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+				<input class="mdl-textfield__input" type="tel" name="employeeNumber" id="employeeNumber"
+					   value="{{ editUserForm.employeeNumber }}">
+				<label class="mdl-textfield__label" for="employeeNumber">Employee number</label>
+				<span class="mdl-textfield__error">Please define a valid mobile number</span>
+			</div>
+			<div class="s2act-selectfield mdl-selectfield mdl-js-selectfield mdl-selectfield--floating-label">
+				<select id="team" name="team" class="mdl-selectfield__select">
+					<option value=""></option>
+					{% for department in departments %}
+					<option value="{{department}}" {{isSelected(editUserForm.team,department)}}>{{department}}</option>
+					{% endfor %}
+				</select>
+				<div class="mdl-selectfield__icon"><i class="material-icons">arrow_drop_down</i></div>
+				<label class="mdl-selectfield__label" for="team">Team *</label>
+			</div>
+			<div class="s2act-textfield mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+				<input class="mdl-textfield__input" type="text" name="title" id="title"
+					   value="{{ editUserForm.title }}">
+				<label class="mdl-textfield__label" for="title">Title *</label>
+			</div>
+			<div class="s2act-selectfield mdl-selectfield mdl-js-selectfield mdl-selectfield--floating-label">
+				<select id="location" name="location" class="mdl-selectfield__select">
+					<option value=""></option>
+					{% for location in locations %}
+					<option value="{{location}}" {{isSelected(editUserForm.location,location)}}>{{location}}</option>
+					{% endfor %}
+				</select>
+				<div class="mdl-selectfield__icon"><i class="material-icons">arrow_drop_down</i></div>
+				<label class="mdl-selectfield__label" for="location">Location *</label>
+			</div>
+			<div class="s2act-selectfield mdl-selectfield mdl-js-selectfield mdl-selectfield--floating-label">
+				<select id="type" name="type" class="mdl-selectfield__select">
+					<option value=""></option>
+					{% for type in types %}
+					<option value="{{type}}" {{isSelected(editUserForm.type,type)}}>{{type}}</option>
+					{% endfor %}
+				</select>
+				<div class="mdl-selectfield__icon"><i class="material-icons">arrow_drop_down</i></div>
+				<label class="mdl-selectfield__label" for="type">Type *</label>
+			</div>
+			<div class="s2act-textfield s2act-textfield__halfWidth mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+				<input class="mdl-textfield__input" type="text" name="entryDate" id="entryDate"
+					   value="{{ editUserForm.entryDate }}"
+					   pattern="[0-9][0-9]\.[0-9][0-9]\.[0-9][0-9][0-9][0-9]">
+				<label class="mdl-textfield__label" for="entryDate">Entry date *</label>
+				<span class="mdl-textfield__error">Please enter the entry date in pattern dd.MM.yyyy</span>
+			</div>
+			<div class="s2act-textfield s2act-textfield__halfWidth mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+				<input class="mdl-textfield__input" type="text" name="exitDate" id="exitDate"
+					   value="{{ editUserForm.exitDate }}"
+					   pattern="[0-9][0-9]\.[0-9][0-9]\.[0-9][0-9][0-9][0-9]">
+				<label class="mdl-textfield__label" for="exitDate">Exit date *</label>
+				<span class="mdl-textfield__error">Please enter the exitdate in pattern dd.MM.yyyy</span>
+			</div>
+		</div>
+		<div class="mdl-cell mdl-cell--4-col mdl-cell--4-col-tablet mdl-cell--4-col-phone">
+			<div class="s2act-textfield s2act-textfield__switch mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+				{{switch('Status', 'status', editUserForm.status equals 'active', 'active', 'inactive')}}
+			</div>
+		</div>
+		<div class="mdl-cell mdl-cell--4-col mdl-cell--4-col-tablet mdl-cell--4-col-phone">
+			<div class="s2act-textfield s2act-textfield__switch mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+				{{switch('E-Mail Status', 'mailStatus', editUserForm.mailStatus equals 'active', 'active', 'inactive')}}
+			</div>
+		</div>
+		<div class="mdl-cell mdl-cell--12-col mdl-cell--8-col-tablet mdl-cell--4-col-phone">
+			<div class="s2act-buttonRow">
+				<input class="s2act-button--right mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--primary"
+					   type="submit" name="save" value="Save"/>
+				{% if editUserForm.status equals 'active' %}
+				<input class="s2act-button--right mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-color--red"
+					   type="submit" name="deactivateUser" value="Deactivate"/>
+				{% else %}
+				<input class="s2act-button--right mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--accent"
+					   type="submit" name="activateUser" value="Activate"/>
+				{% endif %}
+				<input class="s2act-button--right mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--accent"
+					   type="submit" name="resetPassword" value="Reset Password"/>
+			</div>
+		</div>
+	</div>
+</form>
+{% endblock %}

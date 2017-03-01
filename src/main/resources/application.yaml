@@ -1,0 +1,190 @@
+# =============================================================
+# = Spring Boot base
+# =============================================================
+spring:
+  application:
+    name: "@project.name@"
+  messages:
+    basename: "i18n/messages, i18n/validation"
+    cache-seconds: "-1"
+    encoding: "@project.build.sourceEncoding@"
+    fallback-to-system-locale: "true"
+  resources:
+    cache-period: "2678400"
+  security:
+    contentSecurityPolicy: "default-src 'none'; manifest-src 'self'; img-src 'self'; script-src 'self'; style-src 'self' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; connect-src 'self'; report-uri /csp-report"
+  mail:
+    logOnly: "false"
+    default-encoding: "@project.build.sourceEncoding@"
+    from: "accounttool@${domain.primary}"
+    reply: "no-reply@${domain.primary}"
+    host: "smtp.{domain.primary}"
+    port: "25"
+    username:
+    password:
+    properties:
+      mail:
+        smtp:
+          auth: "false"
+    to: #not used on production mode
+
+# =============================================================
+# = Versions Block
+# =============================================================
+app:
+  name: "@project.name@"
+  version: "@project.version@@version.phase@"
+  revision: "@git.commit.id.abbrev@"
+  build-time: "@git.commit.time@"
+  build-by: "@git.commit.user.name@"
+  build-on: "@os.name@ (v@os.version@, arch: @os.arch@)"
+versions:
+  spring-boot: "@project.parent.version@"
+  spring-core: "@spring.version@"
+  spring-security: "@spring-security.version@"
+  spring-pebble: "@pebble-spring.version@"
+  java_build: "@java.version@"
+  java_target: "@maven.compiler.target@"
+  tomcat: "@tomcat.version@"
+  unboundid: "@unboundid-ldapsdk.version@"
+
+# =============================================================
+# = Security
+# =============================================================
+security:
+  headers:
+    cache: "true"
+    content-type: "true"
+    hsts: "all"
+    xss: "true"
+
+# =============================================================
+# = Pebble Engine
+# =============================================================
+pebble:
+  prefix: "public/"
+  suffix:
+  cache: "true"
+  encoding: "UTF-8"
+
+# =============================================================
+# = LDAP Configuration
+# =============================================================
+ldap:
+  embedded: "false"
+  config:
+    host: "127.0.0.1"
+    port: "389"
+    ssl: "false"
+    dc: "dc=example,dc=org"
+    baseDN: "${ldap.config.dc}"
+    groupDN: "${ldap.config.dc}"
+    userDN:
+      - "e1c1:uid={0},ou=users,ou=e1c1,${ldap.config.dc}"
+      - "e1c2:uid={0},ou=users,ou=e1c2,${ldap.config.dc}"
+  queries:
+    searchUser: "(&(objectClass=posixAccount)(|(uid={0})(givenName={0})(sn={0})(mail={0})(cn={0})))"
+    findUserByUid: "(&(objectClass=posixAccount)(uid={0}))"
+    findGroupByCn: "(&(|(objectClass=posixGroup)(objectClass=groupOfUniqueNames)(objectClass=groupOfNames))(cn={0}))"
+    findGroupsByUser: "(|(&(objectClass=posixGroup)(memberUid={0}))(&(objectClass=groupOfUniqueNames)(uniqueMember={1}))(&(objectClass=groupOfNames)(member={1})))"
+    findAllUsers: "(objectClass=posixAccount)"
+    listAllGroups: "(|(objectClass=posixGroup)(objectClass=groupOfUniqueNames)(objectClass=groupOfNames))"
+    findUserByUidNumber: "(&(objectClass=posixAccount)(uidNumber={0}))"
+    checkUniqAttribute: "(&(objectClass=posixAccount)({0}={1}))"
+  permissions:
+    admins: "ldap-admins"
+    userAdmins: "ldap-user-management"
+    defaultGroups: "company-users"
+  companies:
+    - "e1c1:Example - Company 1"
+    - "e1c2:Example - Company 2"
+
+# =============================================================
+# = Domain for E-Mail generation and Validation
+# =============================================================
+domain:
+  primary: "example.com"
+  secondary: "example.de"
+  public: "myaccount.${domain.primary}"
+
+# =============================================================
+# = Configurable Default Values for new Users
+# =============================================================
+user:
+  smbIdPrefix: "S-1-5-21-1519197630-1730194083-1312870134-"
+  sambaFlags: "[U          ]"
+  homeDirPrefix: "/export/home/"
+  loginShell: "/bin/false"
+
+# =============================================================
+# = Management and Endpoints
+# =============================================================
+management:
+  address: "127.0.0.1"
+  port: "8081"
+  context-path: "/management"
+  security:
+    enabled: "false"
+
+endpoints:
+  enabled: "false"
+  sensitive: "false"
+  info.enabled: "true"
+  health.enabled: "true"
+  metrics.enabled: "true"
+  docs.enabled: "true"
+  jmx.enabled: "true"
+
+# =============================================================
+# = Appserver Configuration
+# =============================================================
+server:
+  address:
+  http:
+    port: "0"
+  compression:
+    enabled: "true"
+    min-response-size: "1024"
+  connection-timeout: "10000"
+  session:
+    timeout: "1800"
+    cookie:
+      name: "s2act_session"
+      http-only: "true"
+      secure: "true"
+  tomcat:
+    max-threads: "10"
+    min-spare-threads: "5"
+
+# =============================================================
+# = Custom Dictionary for Password validation
+# =============================================================
+zxcvbn:
+  dictionary:
+    active: "s2crack,top500"
+    s2crack: "classpath:/zxcvbn/s2crack.dic"
+    top500: "classpath:/zxcvbn/top500-worst-passwords.dic"
+
+# =============================================================
+# = Logging
+# =============================================================
+logging:
+  level:
+    com: "WARN"
+    com.sinnerschrader: "INFO"
+    com.unboundid.ldap: "WARN"
+    de: "WARN"
+    net: "WARN"
+    java: "WARN"
+    javax: "WARN"
+    org: "WARN"
+    org.springframework: "INFO"
+    org.springframework.web: "WARN"
+    org.springframework.web.servlet: "INFO"
+    org.springframework.web.servlet.mvc.method.annotation: "WARN"
+    org.springframework.context: "WARN"
+    org.springframework.boot.web: "WARN"
+    org.springframework.security.web: "WARN"
+
+logService:
+  simple: "true"

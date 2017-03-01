@@ -1,0 +1,54 @@
+# =============================================================
+# = Spring Boot base
+# =============================================================
+spring:
+  profiles: development
+  devtools:
+    livereload:
+      enabled: "false"
+    restart:
+      enabled: "false"
+  messages:
+    cache-seconds: "10"
+  mail:
+    logOnly: "true"
+
+# =============================================================
+# = Pebble Engine
+# =============================================================
+pebble:
+  cache: "false"
+
+# =============================================================
+# = LDAP Configuration
+# =============================================================
+ldap:
+  embedded: "true"
+  config:
+    dc: "dc=example,dc=org"
+    host: "127.0.0.1"
+    port: "8389"
+    ssl: "false"
+  permissions:
+    defaultGroups: "git-users,jira-users,company-users,company-vpn"
+
+# =============================================================
+# = Appserver Configuration
+# =============================================================
+server:
+  session:
+    persistent: "true"
+    store-dir: "@project.build.outputDirectory@"
+    cookie:
+      secure: "false"
+  tomcat:
+    max-threads: "5"
+    min-spare-threads: "2"
+
+# =============================================================
+# = Logging
+# =============================================================
+logging:
+  level:
+    com.sinnerschrader: "DEBUG"
+    com.unboundid.ldap: "DEBUG"

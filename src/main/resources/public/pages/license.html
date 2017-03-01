@@ -1,0 +1,113 @@
+{% extends isLoggedIn() ? "pages/template/authenticated.html" : "pages/template/public.html" %}
+
+{% block content %}
+<div class="mdl-grid mdl-grid--no-spacing">
+	<div class="mdl-cell mdl-cell--12-col mdl-cell--8-col-tablet mdl-cell--4-col-phone">
+		<div class="mdl-tabs mdl-js-tabs mdl-js-ripple-effect s2act-tabs">
+			<div class="mdl-tabs__tab-bar s2act-tabs__tab-bar">
+				<a href="#s2act-licence" class="mdl-tabs__tab is-active">License</a>
+				<a href="#ui-dependencies" class="mdl-tabs__tab">UI Dependencies</a>
+				<a href="#java-dependencies" class="mdl-tabs__tab">Java Dependencies</a>
+			</div>
+
+			<div class="mdl-tabs__panel is-active" id="s2act-licence">
+				<div class="mdl-grid">
+					<div class="mdl-cell mdl-cell--12-col mdl-cell--8-col-tablet mdl-cell--4-col-phone">
+						<h2 class="s2act-sectionHeadline">License</h2>
+						<div class="licence__comment">{% include "license.md" %}</div>
+					</div>
+				</div>
+			</div>
+
+			<div class="mdl-tabs__panel" id="ui-dependencies">
+				<div class="mdl-grid">
+					<div class="mdl-cell mdl-cell--12-col mdl-cell--8-col-tablet mdl-cell--4-col-phone">
+						<h3 class="s2act-sectionHeadline">UI Dependencies</h3>
+					</div>
+					{% for dependency in licenseSummary.getDependenciesByType("npm") %}
+					{% set depId = dependency.artifactId + ":" + dependency.version %}
+					<div class="mdl-cell mdl-cell--6-col mdl-cell--4-col-tablet mdl-cell--4-col-phone">
+						<div class="mdl-card mdl-shadow--2dp s2act-card s2act-card--dependency">
+							<div class="mdl-card__title">
+								<i class="material-icons">public</i>
+								<span>{{dependency.artifactId}} : {{dependency.version}}</span>
+								{% if dependency.hasLicenseComment() %}
+								<a href="#" data-toggleid="{{depId}}"
+								   class="js_attributeButton mdl-button mdl-js-button mdl-button--icon">
+									<i class="material-icons">expand_more</i>
+								</a>
+								{% endif %}
+							</div>
+							{% for license in dependency.licenses %}
+							<div class="mdl-card__supporting-text">
+								<p>
+									<span>License:</span>
+									<span>{{license.name}}</span>
+								</p>
+								{% if license.url is not empty %}
+								<p>
+									<span>URL:</span>
+									<a href="{{license.url}}" target="_blank">{{license.url}}</a>
+								</p>
+								{% endif %}
+								{% if license.comments is not empty %}
+								<div id="{{depId}}" class="s2act-togglArea">
+									<p class="licence__comment">{{license.comments}}</p>
+								</div>
+								{% endif %}
+							</div>
+							{% endfor %}
+						</div>
+					</div>
+					{% endfor %}
+				</div>
+			</div>
+
+			<div class="mdl-tabs__panel" id="java-dependencies">
+				<div class="mdl-grid">
+					<div class="mdl-cell mdl-cell--12-col mdl-cell--8-col-tablet mdl-cell--4-col-phone">
+						<h3 class="s2act-sectionHeadline">Java Dependencies</h3>
+					</div>
+					{% for dependency in licenseSummary.getDependenciesByType("maven") %}
+					{% set depId = dependency.groupId + ":" + dependency.artifactId + ":" + dependency.version %}
+					<div class="mdl-cell mdl-cell--6-col mdl-cell--4-col-tablet mdl-cell--4-col-phone">
+						<div class="mdl-card mdl-shadow--2dp s2act-card s2act-card--dependency">
+							<div class="mdl-card__title">
+								<i class="material-icons">public</i>
+								<span>{{dependency.groupId}} : {{dependency.artifactId}} : {{dependency.version}}</span>
+								{% if dependency.hasLicenseComment() %}
+								<a href="#" data-toggleid="{{depId}}"
+								   class="js_attributeButton mdl-button mdl-js-button mdl-button--icon">
+									<i class="material-icons">expand_more</i>
+								</a>
+								{% endif %}
+							</div>
+							{% for license in dependency.licenses %}
+							<div class="mdl-card__supporting-text">
+								<p>
+									<span>License:</span>
+									<span>{{license.name}}</span>
+								</p>
+								{% if license.url is not empty %}
+								<p>
+									<span>URL:</span>
+									<a href="{{license.url}}" target="_blank">{{license.url}}</a>
+								</p>
+								{% endif %}
+								{% if license.comments is not empty %}
+								<div id="{{depId}}" class="s2act-togglArea">
+									<p class="licence__comment">{{license.comments}}</p>
+								</div>
+								{% endif %}
+							</div>
+							{% endfor %}
+						</div>
+					</div>
+					{% endfor %}
+				</div>
+			</div>
+		</div>
+
+	</div>
+</div>
+{% endblock %}

@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+	<!-- Include Default Spring Boot Configuration -->
+	<include resource="org/springframework/boot/logging/logback/base.xml" />
+
+	<!-- Please refer the application.yml and application-profile.yml for log levels -->
+
+</configuration>

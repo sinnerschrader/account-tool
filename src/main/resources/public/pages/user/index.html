@@ -1,0 +1,30 @@
+{% extends "pages/template/authenticated.html" %}
+
+{% block content %}
+<div class="mdl-grid">
+	<div class="mdl-cell mdl-cell--12-col mdl-cell--8-col-tablet mdl-cell--4-col-phone mdl-cell--order-0-phone">
+		<h2 class="s2act-sectionHeadline">
+			<span>User</span>
+			<a class="mdl-button mdl-js-button mdl-button--colored mdl-js-ripple-effect mdl-button--raised s2act-mainActionButton" href="/user/create">
+				New User
+			</a>
+		</h2>
+	</div>
+	<div class="mdl-cell mdl-cell--12-col mdl-cell--8-col-tablet mdl-cell--4-col-phone mdl-cell--order-0-phone">
+		<div class="s2act-card s2act-searchCard mdl-card">
+			<form class="js_searchForm s2act-searchForm" data-searchresultid="userSearchResultArea" action="#" data-action="/user/search" method="get">
+				<div class="s2act-textfield mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+					<input class="mdl-textfield__input" type="text" name="searchTerm" id="searchTerm">
+					<label class="mdl-textfield__label" for="searchTerm">Search User</label>
+				</div>
+				<button class="mdl-button mdl-js-button mdl-button--icon mdl-button--raised">
+					<i class="material-icons">search</i>
+				</button>
+			</form>
+		</div>
+	</div>
+	<div class="mdl-cell mdl-cell--12-col mdl-cell--8-col-tablet mdl-cell--4-col-phone mdl-cell--order-0-phone">
+		<div id="userSearchResultArea" class="js_searchResultArea s2act-searchResultArea"></div>
+	</div>
+</div>
+{% endblock %}

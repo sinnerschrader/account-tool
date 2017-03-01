@@ -1,0 +1,74 @@
+# =============================================================
+# = The MIT License (MIT) Copyright (c) SinnerSchrader
+# =
+# = WARNING: This is an Example of possible production
+# = configuration. Please do not change here anything,
+# = this file will be overwritten with next version/installation.
+# =
+# = Please use the overrides.yaml file next to this one.
+# =============================================================
+#
+#
+# =============================================================
+# = Spring Boot base
+# =============================================================
+spring:
+  profiles: production
+#  mail:
+#    from: "Sending E-Mail Address; default: accounttool@${domain.primary} -> accounttool@example.com"
+#    reply: "A No-Reply Address; default: no-reply@${domain.primary} -> no-reply@example.com"
+#    host: "SMTP Hostname; default: smtp.{domain.primary} -> smtp.example.com"
+#    port: "Port for SMTP Connection; default: 25, recommended: 587"
+#    username: "Username or E-Mail to Authenticate against a SMTP"
+#    password: "Pleaser enter an App Passwort or Passwort for your SMTP Server"
+#    properties:
+#      mail:
+#        smtp:
+#          auth: "Use Authentication; default: true"
+#          starttls:
+#            enable: "Use StartTLS; default: true"
+
+# =============================================================
+# = LDAP Configuration (Required)
+# =============================================================
+#ldap:
+#  config:
+#    host: "Hostname of LDAP; default: localhost"
+#    port: "default: 389, recommended: 636"
+#    ssl: "default: false, recommended: true"
+#    dc: "Root DC; default: dc=example,dc=com"
+#    userDN:
+#      # List of KEY:VALUE for each Company. KEY: unique Key, Value: DN for this company
+#      - "agc1:uid={0},ou=users,ou=s2d,${ldap.config.dc}"
+#      - "agc2:uid={0},ou=users,ou=s2ag,dc=example,dc=org"
+#      - "agc3:uid={0},ou=users,ou=s2c,${ldap.config.dc}"
+#      # The list is dynamic, but has to match ldap.companies. The keys have to match.
+#      # Refs can be used within Config to another config over $ { NAME } Usage
+#  permissions:
+#    admins: "Comma separated (no spaces between separation) list for LDAP Admins; default: ldap-admins"
+#    userAdmins: "Comma separated (no spaces between separation) list for User Management; default: ldap-user-management"
+#    defaultGroups: "Comma separated (no spaces between separation) list for new Users; default: company-users"
+#  companies:
+#    - "agc1:AG Group - Company 1"
+#    - "agc2:AG Group - Company 2"
+#    - "agc3:AG Group - Company 3"
+#   # The key witin the String have to match the Key part within ldap.config.userDN.
+#   # Order is relevant to the UI Dropdown order, not to the Order of userDN Entries.
+
+# =============================================================
+# = Domain for E-Mail generation and Validation (Required)
+# =============================================================
+#domain:
+#  primary: "Your Primary Domain; default: example.com"
+#  secondary: "Your Secondary Domain; default: example.de"
+
+# =============================================================
+# = Appserver Configuration (Optional)
+# =============================================================
+#server:
+#  session:
+#    cookie:
+#      secure: "true"
+#  tomcat:
+#    max-threads: "50"
+#    min-spare-threads: "5"

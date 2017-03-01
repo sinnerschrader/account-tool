@@ -1,0 +1,13 @@
+# This File overrides the default configuration
+#
+JAVA_OPTS="-Xmx512m -Xms64m"
+
+# Controls the started profile of the application.
+SPRING_PROFILES_ACTIVE="production"
+
+# PID File (file only written with correct permissions)
+SPRING_PID_FILE="/var/run/accounttool.pid"
+
+# Define override config file. This can be changed to any .properties or .yaml
+# file.
+SPRING_CONFIG_LOCATION="file:///usr/share/account-tool/conf/overrides.yaml"

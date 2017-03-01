@@ -1,0 +1,75 @@
+version: 1
+
+dn: cn=szz,cn=schema
+objectClass: top
+objectClass: ldapSubEntry
+objectClass: subschema
+cn: szz
+attributeTypes: ( 1.3.6.1.4.1.12415.2.1.1
+  NAME 'szzBirthDay'
+  DESC 'Birth Day'
+  EQUALITY integerMatch
+  SYNTAX 1.3.6.1.4.1.1466.115.121.1.27 SINGLE-VALUE )
+attributeTypes: ( 1.3.6.1.4.1.12415.2.1.2
+  NAME 'szzBirthMonth'
+  DESC 'Birth Month'
+  EQUALITY integerMatch
+  SYNTAX 1.3.6.1.4.1.1466.115.121.1.27 SINGLE-VALUE )
+attributeTypes: ( 1.3.6.1.4.1.12415.2.1.4
+  NAME 'szzEntryDay'
+  DESC 'Entry Day'
+  EQUALITY integerMatch
+  SYNTAX 1.3.6.1.4.1.1466.115.121.1.27 SINGLE-VALUE )
+attributeTypes: ( 1.3.6.1.4.1.12415.2.1.5
+  NAME 'szzEntryMonth'
+  DESC 'Entry Month'
+  EQUALITY integerMatch
+  SYNTAX 1.3.6.1.4.1.1466.115.121.1.27 SINGLE-VALUE )
+attributeTypes: ( 1.3.6.1.4.1.12415.2.1.6
+  NAME 'szzEntryYear'
+  DESC 'Entry Year'
+  EQUALITY integerMatch
+  SYNTAX 1.3.6.1.4.1.1466.115.121.1.27 SINGLE-VALUE )
+attributeTypes: ( 1.3.6.1.4.1.12415.2.1.7
+  NAME 'szzExitDay'
+  DESC 'ExitDay'
+  EQUALITY integerMatch
+  SYNTAX 1.3.6.1.4.1.1466.115.121.1.27 SINGLE-VALUE )
+attributeTypes: ( 1.3.6.1.4.1.12415.2.1.8
+  NAME 'szzExitMonth'
+  DESC 'Exit Month'
+  EQUALITY integerMatch
+  SYNTAX 1.3.6.1.4.1.1466.115.121.1.27 SINGLE-VALUE )
+attributeTypes: ( 1.3.6.1.4.1.12415.2.1.9
+  NAME 'szzExitYear'
+  DESC 'Exit Year'
+  EQUALITY integerMatch
+  SYNTAX 1.3.6.1.4.1.1466.115.121.1.27
+  SINGLE-VALUE )
+attributeTypes: ( 1.3.6.1.4.1.12415.2.1.16
+  NAME 'szzStatus'
+  DESC 'Status information for szzUser'
+  EQUALITY caseIgnoreMatch
+  SUBSTR caseIgnoreSubstringsMatch
+  SYNTAX 1.3.6.1.4.1.1466.115.121.1.15{32} )
+attributeTypes: ( 1.3.6.1.4.1.12415.2.1.18
+  NAME 'szzMailStatus'
+  DESC 'Mail Status information for szzUser'
+  EQUALITY caseIgnoreMatch
+  SUBSTR caseIgnoreSubstringsMatch
+  SYNTAX 1.3.6.1.4.1.1466.115.121.1.15{32} )
+attributeTypes: ( 1.3.6.1.4.1.12415.2.1.28
+  NAME 'szzPublicKey'
+  DESC 'OpenSSH Public key for SZZ'
+  EQUALITY caseExactMatch
+  SUBSTR caseExactSubstringsMatch
+  SYNTAX 1.3.6.1.4.1.1466.115.121.1.44 )
+objectClasses: ( 1.3.1.5.1.4.1.12415.2.2.1
+  NAME 'szzUser'
+  DESC 'SZZ user information'
+  SUP top
+  AUXILIARY
+  MAY ( sn $ cn $ uid $ userPassword $ ou $ givenName $ mail $ szzBirthDay $
+        szzBirthMonth $ szzEntryDay $ szzEntryMonth $ szzEntryYear $
+        szzExitDay $ szzExitMonth $ szzExitYear $ szzPublicKey $ szzStatus $
+        szzMailStatus ) )
