@@ -1,0 +1,43 @@
+version: 1
+
+
+dn: dc=example,dc=org
+objectClass: dcObject
+objectClass: organization
+objectClass: top
+dc: example
+o: Company Group Root
+
+# Company 1 Root
+dn: ou=e1c1,dc=example,dc=org
+objectClass: organizationalUnit
+objectClass: top
+description: Example Group Company 1
+ou: e1c1
+
+dn: ou=users,ou=e1c1,dc=example,dc=org
+objectClass: organizationalUnit
+objectClass: top
+description: Example Group Company 1 (User)
+ou: users
+
+# Company 1 Root
+dn: ou=e1c2,dc=example,dc=org
+objectClass: organizationalUnit
+objectClass: top
+description: Example Group Company 2
+ou: e1c2
+
+dn: ou=users,ou=e1c2,dc=example,dc=org
+objectClass: organizationalUnit
+objectClass: top
+description: Example Group Company 2 (User)
+ou: users
+
+# System Area for Technical Purpose (Root)
+dn: ou=system,dc=example,dc=org
+objectClass: organizationalUnit
+objectClass: top
+description: Area of required technical users
+ou: system
+

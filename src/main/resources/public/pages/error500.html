@@ -1,0 +1,15 @@
+{% extends "pages/template/public.html" %}
+{% import "pages/template/macros.html" %}
+
+{% block content %}
+<div class="mdl-grid">
+	<div class="mdl-cell mdl-cell--12-col">
+		<div class="s2act-card mdl-card s2act-card--error">
+			<h2>{{exception.message}}</h2>
+			<div class="stacktrace">
+				<pre>{{fullStackTrace}}</pre>
+			</div>
+		</div>
+	</div>
+</div>
+{% endblock %}

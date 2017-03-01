@@ -1,0 +1,30 @@
+sudo: false
+language: java
+jdk:
+  - openjdk8
+
+env:
+  - NODE_VERSION=7.4.0
+  - DEBIAN_FRONTEND="noninteractive"
+  - MAVEN_OPTS="-Xmx256m -XX:MaxPermSize=64m"
+
+cache:
+  directories:
+    - $HOME/.m2/repository/
+    - node_modules
+
+notifications:
+  email:
+    on_success: never
+
+before_install:
+  - nvm install $NODE_VERSION
+
+script:
+  - nvm use $NODE_VERSION
+#  - ./mvnw --batch-mode -s .settings.xml -P security org.owasp:dependency-check-maven:update-only
+#  - ./mvnw --batch-mode -s .settings.xml -P security org.owasp:dependency-check-maven:check
+  - ./mvnw --batch-mode -s .settings.xml -P release clean package
+  - DEB_FILE=$(ls target/*.deb)
+  - dpkg -I ${DEB_FILE}
+  - dpkg -c ${DEB_FILE}

@@ -1,0 +1,84 @@
+{% extends "pages/template/public.html" %}
+{% import "pages/template/macros.html" %}
+
+{% block content %}
+<div class="mdl-grid">
+	<div class="mdl-cell mdl-cell--12-col">
+		<div class="s2act-card mdl-card s2act-card--login">
+			{% if error is not empty or msg is not empty %}
+			<ul class="s2act-messages">
+				{% if error is not empty %}
+				<li class="s2act-message s2act-message--error">{{message(error)}}</li>
+				{% elseif msg is not empty %}
+				<li class="s2act-message s2act-message--info">{{message(msg)}}</li>
+				{% endif %}
+			</ul>
+			{% endif %}
+			<form action="/login" method="post" name="login" id="login" autocomplete="off">
+				<input type="hidden" name="{{request.getAttribute('_csrf').parameterName}}"
+					   value="{{request.getAttribute('_csrf').token}}"/>
+				<div class="mdl-grid">
+					<div class="mdl-cell mdl-cell--12-col">
+						<div class="s2act-textfield mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+							<input class="mdl-textfield__input" type="text" name="uid" id="uid" autocomplete="off">
+							<label class="mdl-textfield__label" for="uid">Username</label>
+						</div>
+					</div>
+					<div class="mdl-cell mdl-cell--12-col">
+						<div class="s2act-textfield mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+							<input class="mdl-textfield__input" type="password" name="password" id="password"
+								   autocomplete="off">
+							<label class="mdl-textfield__label" for="password">Password</label>
+						</div>
+					</div>
+					{% if companies | length > 1 %}
+					<div class="mdl-cell mdl-cell--12-col">
+						<div class="s2act-selectfield mdl-selectfield mdl-js-selectfield mdl-selectfield--floating-label">
+							<select id="company" name="company" class="mdl-selectfield__select">
+								{% for company in companies %}
+								<option value="{{company.key}}" {{ selectedCompany equals company.key ?
+								"selected" : "" }}>{{company.value}}</option>
+								{% endfor %}
+							</select>
+							<div class="mdl-selectfield__icon"><i class="material-icons">arrow_drop_down</i></div>
+							<label class="mdl-selectfield__label" for="company">Company</label>
+						</div>
+					</div>
+					{% else %}
+					{% set companyKey = companies.keySet | first %}
+					<input type="hidden" name="company" value="{{companyKey}}">
+					{% endif %}
+					<div class="mdl-cell mdl-cell--12-col s2act-buttonRow">
+						<input type="submit" value="Login"
+							   class="s2act-button--right mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect"/>
+					</div>
+				</div>
+			</form>
+			{% if displayWelcomeInformation %}
+			<div class="mdl-cell mdl-cell--12-col mdl-cell--8-col-tablet mdl-cell--4-col-phone">
+				<h2 class="s2act-helpHeadline">
+					<span>Why do I have to register a second time?</span>
+					<a href="#" class="js_attributeButton mdl-button mdl-js-button mdl-button--icon"
+					   data-toggleid="helpText-doubleLogin">
+						<i class="material-icons">help_outline</i>
+					</a>
+				</h2>
+				<div id="helpText-doubleLogin" class="s2act-togglArea s2act-helpArea">
+					<p>
+						The Account Tool is running behind a OAuth Proxy. This Proxy secures the Account Tool for
+						invalid
+						requests and forces to authenticate you with you S2 Google Account.
+						You will not see the OAuth Login mask for a longer time, till your auth cookie will be
+						invalidated.
+					</p>
+					<p>
+						The credentials between Google Apps and our LDAP can and schould differ,
+						so you have to login separate with your SinnerSchrader account and password now.
+					</p>
+				</div>
+			</div>
+			{% endif %}
+		</div>
+	</div>
+</div>
+{% endblock %}

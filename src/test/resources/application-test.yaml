@@ -1,0 +1,34 @@
+# =============================================================
+# = Spring Boot base
+# =============================================================
+spring.profiles.include: "default"
+
+# =============================================================
+# = LDAP Configuration (different port to avoid port conflicts)
+# =============================================================
+ldap:
+  embedded: "true"
+  config:
+    port: "8390"
+
+# =============================================================
+# = Testuser for Binding LDAP Connection during Integration Tests
+# =============================================================
+test:
+  ldap:
+    user: accadm
+    company: e1c1
+    password: testuser
+
+# =============================================================
+# = Logging
+# =============================================================
+logging:
+  level:
+    com: "WARN"
+    com.sinnerschrader: "INFO"
+    de: "WARN"
+    net: "WARN"
+    java: "WARN"
+    javax: "WARN"
+    org: "WARN"
