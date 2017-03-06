@@ -4,7 +4,6 @@ import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
 import com.sinnerschrader.s2b.accounttool.config.authentication.LdapUserDetails;
 import com.sinnerschrader.s2b.accounttool.config.ldap.LdapConfiguration;
-import com.sinnerschrader.s2b.accounttool.logic.component.authorization.AuthorizationService;
 import com.sinnerschrader.s2b.accounttool.logic.component.encryption.Encrypter;
 import com.sinnerschrader.s2b.accounttool.logic.component.mapping.ModelMaping;
 import com.sinnerschrader.s2b.accounttool.logic.entity.Group;
@@ -53,9 +52,6 @@ public class LdapServiceImpl implements LdapService
 
 	@Autowired
 	private LdapConfiguration ldapConfiguration;
-
-	@Autowired
-	private AuthorizationService authorizationService;
 
 	@Value("${domain.primary}")
 	private String primaryDomain;
@@ -299,8 +295,6 @@ public class LdapServiceImpl implements LdapService
 	@Override
 	public Group addUserToGroup(LDAPConnection connection, LdapUserDetails currentUser, User user, Group group)
 	{
-		authorizationService.ensureGroupAdministration(currentUser, group.getCn());
-
 		Group ldapGroup = getGroupByCN(connection, currentUser, group.getCn());
 		if (ldapGroup == null)
 			return null;
@@ -329,8 +323,6 @@ public class LdapServiceImpl implements LdapService
 	@Override
 	public Group removeUserFromGroup(LDAPConnection connection, LdapUserDetails currentUser, User user, Group group)
 	{
-		authorizationService.ensureGroupAdministration(currentUser, group.getCn());
-
 		Group ldapGroup = getGroupByCN(connection, currentUser, group.getCn());
 		if (ldapGroup == null)
 			return null;
@@ -359,8 +351,6 @@ public class LdapServiceImpl implements LdapService
 	@Override
 	public String resetPassword(LDAPConnection connection, LdapUserDetails currentUser, User user)
 	{
-		authorizationService.ensureUserAdministration(currentUser);
-
 		return changePassword(connection, currentUser, user, RandomStringUtils.randomAlphanumeric(32, 33));
 	}
 
@@ -413,8 +403,6 @@ public class LdapServiceImpl implements LdapService
 	@Override
 	public User activate(LDAPConnection connection, LdapUserDetails currentUser, User user)
 	{
-		authorizationService.ensureUserAdministration(currentUser);
-
 		User ldapUser = getUserByUid(connection, user.getUid());
 		if (ldapUser == null)
 			return user;
@@ -459,8 +447,6 @@ public class LdapServiceImpl implements LdapService
 	@Override
 	public User deactivate(LDAPConnection connection, LdapUserDetails currentUser, User user)
 	{
-		authorizationService.ensureUserAdministration(currentUser);
-
 		User ldapUser = getUserByUid(connection, user.getUid());
 		if (ldapUser == null)
 			return user;
@@ -516,8 +502,6 @@ public class LdapServiceImpl implements LdapService
 	@Override
 	public User insert(LDAPConnection connection, LdapUserDetails currentUser, User user) throws BusinessException
 	{
-		authorizationService.ensureUserAdministration(currentUser);
-
 		try
 		{
 			String mailError = "alreadyUsed";
@@ -797,11 +781,6 @@ public class LdapServiceImpl implements LdapService
 		if (ldapUser == null)
 		{
 			throw new BusinessException("The modification was called for a non existing user", "user.notExists");
-		}
-		// only check useradmin permission if change is triggered for different user than the logged in
-		if (!StringUtils.equals(currentUser.getUsername(), ldapUser.getUid()))
-		{
-			authorizationService.ensureUserAdministration(currentUser);
 		}
 		try
 		{

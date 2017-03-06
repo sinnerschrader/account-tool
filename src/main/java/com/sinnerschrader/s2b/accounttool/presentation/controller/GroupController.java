@@ -4,6 +4,7 @@ import com.sinnerschrader.s2b.accounttool.config.WebConstants;
 import com.sinnerschrader.s2b.accounttool.config.authentication.LdapUserDetails;
 import com.sinnerschrader.s2b.accounttool.config.ldap.LdapConfiguration;
 import com.sinnerschrader.s2b.accounttool.logic.LogService;
+import com.sinnerschrader.s2b.accounttool.logic.component.authorization.AuthorizationService;
 import com.sinnerschrader.s2b.accounttool.logic.component.ldap.LdapService;
 import com.sinnerschrader.s2b.accounttool.logic.component.mail.MailService;
 import com.sinnerschrader.s2b.accounttool.logic.entity.Group;
@@ -47,6 +48,9 @@ public class GroupController
 
 	@Autowired
 	private MailService mailService;
+
+	@Autowired
+	private AuthorizationService authorizationService;
 
 	@Autowired
 	private LdapConfiguration ldapConfiguration;
@@ -114,6 +118,7 @@ public class GroupController
 		@RequestParam(name = "all", defaultValue = "false", required = false) boolean listAllGroups)
 	{
 		LdapUserDetails details = RequestUtils.getCurrentUserDetails();
+		authorizationService.ensureGroupAdministration(details, groupCN);
 		Group group = ldapService.getGroupByCN(connection, details, groupCN);
 		if (group == null)
 		{
@@ -150,6 +155,7 @@ public class GroupController
 	{
 		final String eventKey = "logging.logstash.event.group.user.add";
 		LdapUserDetails details = RequestUtils.getCurrentUserDetails();
+		authorizationService.ensureGroupAdministration(details, groupCN);
 		User user = ldapService.getUserByUid(connection, uid);
 		Group group = ldapService.getGroupByCN(connection, details, groupCN);
 		group = ldapService.addUserToGroup(connection, details, user, group);
@@ -180,6 +186,7 @@ public class GroupController
 	{
 		final String eventKey = "logging.logstash.event.group.user.del";
 		LdapUserDetails details = RequestUtils.getCurrentUserDetails();
+		authorizationService.ensureGroupAdministration(details, groupCN);
 		User user = ldapService.getUserByUid(connection, uid);
 		Group group = ldapService.getGroupByCN(connection, details, groupCN);
 		group = ldapService.removeUserFromGroup(connection, details, user, group);
@@ -208,6 +215,7 @@ public class GroupController
 		@RequestParam(name = "all", defaultValue = "false", required = false) boolean listAllGroups)
 	{
 		LdapUserDetails details = RequestUtils.getCurrentUserDetails();
+		authorizationService.ensureGroupAdministration(details, groupCN);
 		Group group = ldapService.getGroupByCN(connection, details, groupCN);
 		Group adminGroup = group;
 
