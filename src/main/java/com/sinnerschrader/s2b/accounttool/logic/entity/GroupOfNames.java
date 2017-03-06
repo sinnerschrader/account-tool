@@ -23,8 +23,10 @@ public class GroupOfNames implements Group
 
 	private final List<String> memberDNs;
 
+	private transient GroupClassification groupClassification;
+
 	public GroupOfNames(String dn, String cn, String description, boolean uniqueNames,
-		String... memberDNs)
+		GroupClassification groupClassification, String... memberDNs)
 	{
 		final GroupType groupType = uniqueNames
 			? GroupType.GroupOfUniqueNames
@@ -35,9 +37,16 @@ public class GroupOfNames implements Group
 		this.cn = cn;
 		this.description = description;
 		this.uniqueNames = uniqueNames;
+		this.groupClassification = groupClassification;
 		this.memberDNs = (memberDNs != null) ?
 			Collections.unmodifiableList(Arrays.asList(memberDNs)) :
 			Collections.emptyList();
+	}
+
+	@Override
+	public GroupClassification getGroupClassification()
+	{
+		return groupClassification;
 	}
 
 	@Override

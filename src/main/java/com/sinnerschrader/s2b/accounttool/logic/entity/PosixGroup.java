@@ -26,15 +26,25 @@ public class PosixGroup implements Group
 
 	private final List<String> memberUids;
 
-	public PosixGroup(String dn, String cn, Integer gid, String description, String... memberUids)
+	private transient GroupClassification groupClassification;
+
+	public PosixGroup(String dn, String cn, Integer gid, String description,
+		GroupClassification groupClassification, String... memberUids)
 	{
 		this.dn = dn;
 		this.cn = cn;
 		this.gid = gid;
 		this.description = description;
+		this.groupClassification = groupClassification;
 		this.memberUids = (memberUids != null) ?
 			Collections.unmodifiableList(Arrays.asList(memberUids)) :
 			Collections.emptyList();
+	}
+
+	@Override
+	public GroupClassification getGroupClassification()
+	{
+		return groupClassification;
 	}
 
 	@Override

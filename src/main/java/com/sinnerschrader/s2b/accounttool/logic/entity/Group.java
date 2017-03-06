@@ -74,6 +74,9 @@ public interface Group extends Comparable<Group>
 		return hasMember(user.getUid()) || hasMember(user.getDn());
 	}
 
+	@Transient
+	GroupClassification getGroupClassification();
+
 	/**
 	 * Checks if this group is an admin group for a project or internal team.
 	 *
@@ -82,11 +85,29 @@ public interface Group extends Comparable<Group>
 	@Transient
 	default boolean isAdminGroup()
 	{
-		final String cn = getCn();
-		return cn.startsWith("s2a-") ||
-			cn.startsWith("s2i-") ||
-			cn.endsWith("admins") ||
-			cn.endsWith("administrators");
+		return getGroupClassification() == GroupClassification.ADMIN;
+	}
+
+	/**
+	 * Checks if this group is an admin group for a project or internal team.
+	 *
+	 * @return state if it is an admin group or not.
+	 */
+	@Transient
+	default boolean isTechnicalGroup()
+	{
+		return getGroupClassification() == GroupClassification.TECHNICAL;
+	}
+
+	/**
+	 * Checks if this group is an admin group for a project or internal team.
+	 *
+	 * @return state if it is an admin group or not.
+	 */
+	@Transient
+	default boolean isTeamGroup()
+	{
+		return getGroupClassification() == GroupClassification.TEAM;
 	}
 
 	/**
@@ -134,6 +155,17 @@ public interface Group extends Comparable<Group>
 			res = StringUtils.compareIgnoreCase(getGroupPrefix(), o.getGroupPrefix());
 		}
 		return res;
+	}
+
+	/**
+	 * Classification of a Group if it is a Client Team Admin Group, Client Team Group, Technical Integration Group or unknown.
+	 */
+	enum GroupClassification
+	{
+		ADMIN,
+		TEAM,
+		TECHNICAL,
+		UNKNOWN;
 	}
 
 	/**

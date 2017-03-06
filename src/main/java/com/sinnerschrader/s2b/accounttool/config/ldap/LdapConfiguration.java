@@ -32,6 +32,8 @@ public class LdapConfiguration implements InitializingBean
 
 	private LdapPermissions permissions = new LdapPermissions();
 
+	private LdapGroupPrefixes groupPrefixes;
+
 	private List<String> companies = null;
 
 	private transient Map<String, String> companiesAsMap;
@@ -65,6 +67,16 @@ public class LdapConfiguration implements InitializingBean
 		}
 
 		log.info("LDAP Configuration was initialized");
+	}
+
+	public LdapGroupPrefixes getGroupPrefixes()
+	{
+		return groupPrefixes;
+	}
+
+	public void setCompaniesAsMap(Map<String, String> companiesAsMap)
+	{
+		this.companiesAsMap = companiesAsMap;
 	}
 
 	public LdapBaseConfig getConfig()
