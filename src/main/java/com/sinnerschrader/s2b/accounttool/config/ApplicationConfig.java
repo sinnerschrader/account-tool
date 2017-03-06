@@ -8,6 +8,8 @@ import com.sinnerschrader.s2b.accounttool.logic.component.encryption.Encrypter;
 import com.sinnerschrader.s2b.accounttool.logic.component.encryption.PasswordEncrypter;
 import com.sinnerschrader.s2b.accounttool.logic.component.encryption.PlainTextEncrypter;
 import com.sinnerschrader.s2b.accounttool.logic.component.encryption.SambaEncrypter;
+import com.sinnerschrader.s2b.accounttool.logic.component.ldap.LdapBusinessService;
+import com.sinnerschrader.s2b.accounttool.logic.component.ldap.LdapBusinessServiceImpl;
 import com.sinnerschrader.s2b.accounttool.logic.component.ldap.LdapService;
 import com.sinnerschrader.s2b.accounttool.logic.component.ldap.LdapServiceImpl;
 import com.sinnerschrader.s2b.accounttool.logic.component.mapping.GroupMapping;
@@ -23,8 +25,6 @@ import com.sinnerschrader.s2b.accounttool.support.pebble.AccountToolExtension;
 import java.util.Arrays;
 import java.util.Locale;
 
-import javax.validation.Validator;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,7 +33,6 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
 import org.springframework.core.env.Environment;
-import org.springframework.validation.beanvalidation.LocalValidatorFactoryBean;
 import org.springframework.web.servlet.LocaleResolver;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
@@ -54,6 +53,8 @@ public class ApplicationConfig extends WebMvcConfigurerAdapter
 	private LdapConfiguration ldapConfiguration;
 
 	private LdapService ldapService;
+
+	private LdapBusinessService ldapBusinessService;
 
 	private LdapConnectionInterceptor ldapConnectionInterceptor;
 
@@ -132,6 +133,16 @@ public class ApplicationConfig extends WebMvcConfigurerAdapter
 			ldapService = new LdapServiceImpl();
 		}
 		return ldapService;
+	}
+
+	@Bean(name = "ldapBusinessService")
+	public LdapBusinessService ldapBusinessService()
+	{
+		if (ldapBusinessService == null)
+		{
+			ldapBusinessService = new LdapBusinessServiceImpl();
+		}
+		return ldapBusinessService;
 	}
 
 	@Bean(name = "userMapping")

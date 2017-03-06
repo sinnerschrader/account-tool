@@ -5,7 +5,7 @@ Priority: low
 Architecture: all
 Description: [[description]]
 Distribution: development
-Homepage: https://git.sinnerschrader.com/s2-betrieb/account-tool
+Homepage: https://github.com/sinnerschrader/account-tool
 Maintainer: S2 Account Tool <account-tool@sinnerschrader.com>
 Uploaders: [[git.commit.user.name]] <[[git.commit.user.email]]>
 Depends: openjdk-8-jre | openjdk-8-jdk

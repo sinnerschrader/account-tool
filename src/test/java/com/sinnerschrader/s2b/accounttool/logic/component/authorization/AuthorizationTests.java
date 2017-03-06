@@ -57,7 +57,7 @@ public class AuthorizationTests
 			"tesuse", "Tes Useradmin", "testuser", "e1c1", userAdminAuthorities, false, true);
 
 		List<GrantedAuthority> userAuthorities = new ArrayList<>();
-		for (String group : Arrays.asList("s2a-tes", "s2f-tes", "s2f-set", "s2i-set", "s2f-err", "s2-users", "s2-vpn"))
+		for (String group : Arrays.asList("s2a-tes", "s2f-tes", "s2f-set", "s2i-set", "s2f-err", "company-users", "company-vpn"))
 		{
 			userAuthorities.add(new SimpleGrantedAuthority(group));
 		}
@@ -70,7 +70,7 @@ public class AuthorizationTests
 	public void testPermissions()
 	{
 		authorizationService.ensureUserAdministration(admin);
-		authorizationService.ensureGroupAdministration(admin, "s2-users");
+		authorizationService.ensureGroupAdministration(admin, "company-users");
 
 		Assert.assertTrue(authorizationService.isAdmin(admin));
 		Assert.assertFalse(authorizationService.isAdmin(userAdmin));
