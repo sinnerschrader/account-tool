@@ -14,6 +14,8 @@ import java.util.Map;
 public interface MailService
 {
 
+  boolean sendMailForAccountChange(User currentUser, String event);
+
 	boolean sendMailForPasswordReset(LdapUserDetails currentUser, User user, String newPassword);
 
 	boolean sendNotificationOnUnmaintainedAccounts(String[] receipients, Map<String, List<User>> unmaintainedUsers);

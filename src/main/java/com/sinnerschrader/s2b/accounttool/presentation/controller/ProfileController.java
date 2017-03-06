@@ -4,6 +4,7 @@ import com.sinnerschrader.s2b.accounttool.config.WebConstants;
 import com.sinnerschrader.s2b.accounttool.config.authentication.LdapUserDetails;
 import com.sinnerschrader.s2b.accounttool.logic.LogService;
 import com.sinnerschrader.s2b.accounttool.logic.component.ldap.LdapService;
+import com.sinnerschrader.s2b.accounttool.logic.component.mail.MailService;
 import com.sinnerschrader.s2b.accounttool.logic.entity.User;
 import com.sinnerschrader.s2b.accounttool.logic.exception.BusinessException;
 import com.sinnerschrader.s2b.accounttool.presentation.RequestUtils;
@@ -44,6 +45,9 @@ public class ProfileController
 
 	@Autowired
 	private LdapService ldapService;
+
+  @Autowired
+  private MailService mailService;
 
 	@Resource(name = "changeProfileFormValidator")
 	private ChangeProfileFormValidator changeProfileFormValidator;
@@ -93,6 +97,7 @@ public class ProfileController
 				String state = res ? "sucess" : "failure";
 				log.info("{} changed his/her password", details.getUid());
 				logService.event("logging.logstash.event.password-change", state, details.getUid());
+        mailService.sendMailForAccountChange(ldapUser, "passwordChanged");
 			}
 			else
 			{
@@ -100,6 +105,10 @@ public class ProfileController
 				{
 					ldapService.update(connection, updatedUser);
 					log.info("{} updated his/her account informations", details.getUid());
+          if (form.isPublicKeyChange()) 
+          {
+            mailService.sendMailForAccountChange(ldapUser, "sshKeyUpdated");
+          }
 				}
 				catch (BusinessException be)
 				{
