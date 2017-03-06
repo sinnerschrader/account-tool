@@ -12,6 +12,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
 
@@ -50,6 +51,12 @@ public class LdapBusinessServiceImpl implements LdapBusinessService, Initializin
 	public void afterPropertiesSet() throws Exception
 	{
 
+	}
+
+	@Scheduled(cron = "${ldap-management.jobs.updateUnmaintained.cronExpr}")
+	protected void updateUnmaintainedExternals()
+	{
+		log.info("Updating the informations about unmaintained accounts");
 	}
 
 	@Override

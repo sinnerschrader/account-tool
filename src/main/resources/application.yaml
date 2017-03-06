@@ -91,6 +91,10 @@ ldap:
     listAllGroups: "(|(objectClass=posixGroup)(objectClass=groupOfUniqueNames)(objectClass=groupOfNames))"
     findUserByUidNumber: "(&(objectClass=posixAccount)(uidNumber={0}))"
     checkUniqAttribute: "(&(objectClass=posixAccount)({0}={1}))"
+  groupPrefixes:
+    admin: "cad"
+    team: "cpt"
+    technical: "cti"
   permissions:
     admins: "ldap-admins"
     userAdmins: "ldap-user-management"
@@ -101,14 +105,14 @@ ldap:
 
 ldap-management:
   user:
-    bindDN: 'uid=tecmng,ou=users,ou=system,dc=example,dc=org'
+    bindDN: 'uid=tecmng,ou=system,dc=example,dc=org'
     password: 'testuser'
   externalAccountTypes: "Freelancer,External,Extern"
   jobs:
     active: "true"
     updateUnmaintained:
       active: "true"
-      cronExpr: "0 */10 * ? * MON-FRI *"
+      cronExpr: "0 */10 * ? * MON-FRI"
 
 # =============================================================
 # = Domain for E-Mail generation and Validation

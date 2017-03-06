@@ -38,11 +38,6 @@ ou: users
 dn: ou=system,dc=example,dc=org
 objectClass: organizationalUnit
 objectClass: top
-description: System root
+description: Area of required technical users
 ou: system
 
-dn: ou=users,ou=system,dc=example,dc=org
-objectClass: organizationalUnit
-objectClass: top
-description: System Users
-ou: users

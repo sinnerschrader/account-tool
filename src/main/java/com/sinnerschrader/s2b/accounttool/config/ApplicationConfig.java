@@ -4,6 +4,7 @@ import com.mitchellbosecke.pebble.extension.Extension;
 import com.mitchellbosecke.pebble.spring4.extension.SpringExtension;
 import com.sinnerschrader.s2b.accounttool.config.embedded.LDAPServer;
 import com.sinnerschrader.s2b.accounttool.config.ldap.LdapConfiguration;
+import com.sinnerschrader.s2b.accounttool.config.ldap.LdapManagementConfiguration;
 import com.sinnerschrader.s2b.accounttool.logic.component.encryption.Encrypter;
 import com.sinnerschrader.s2b.accounttool.logic.component.encryption.PasswordEncrypter;
 import com.sinnerschrader.s2b.accounttool.logic.component.encryption.PlainTextEncrypter;
@@ -51,6 +52,8 @@ public class ApplicationConfig extends WebMvcConfigurerAdapter
 	private Environment environment;
 
 	private LdapConfiguration ldapConfiguration;
+
+	private LdapManagementConfiguration ldapManagementConfiguration;
 
 	private LdapService ldapService;
 
@@ -133,6 +136,16 @@ public class ApplicationConfig extends WebMvcConfigurerAdapter
 			ldapService = new LdapServiceImpl();
 		}
 		return ldapService;
+	}
+
+	@Bean(name = "ldapManagementConfiguration")
+	public LdapManagementConfiguration ldapManagementConfiguration()
+	{
+		if (ldapManagementConfiguration == null)
+		{
+			ldapManagementConfiguration = new LdapManagementConfiguration();
+		}
+		return ldapManagementConfiguration;
 	}
 
 	@Bean(name = "ldapBusinessService")

@@ -4,7 +4,7 @@ version: 1
 # Required System Users
 ############################################################################
 
-dn: uid=tecmng,ou=users,ou=system,dc=example,dc=org
+dn: uid=tecmng,ou=system,dc=example,dc=org
 objectClass: person
 objectClass: organizationalPerson
 objectClass: inetOrgPerson
