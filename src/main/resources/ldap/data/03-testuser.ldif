@@ -1,6 +1,51 @@
 version: 1
 
 ############################################################################
+# Required System Users
+############################################################################
+
+dn: uid=tecmng,ou=users,ou=system,dc=example,dc=org
+objectClass: person
+objectClass: organizationalPerson
+objectClass: inetOrgPerson
+objectClass: posixAccount
+objectClass: sambaSamAccount
+objectClass: szzUser
+givenName: Technical
+sn: Manangement
+displayName: Technical Manangement
+cn: Technical Manangement
+employeeNumber: 5e6782d3-4b83-4bac-b34b-b4801cce3090
+uid: tecmng
+gecos: Technical Manangement
+mail: technical.manangement@example.com
+szzStatus: active
+szzMailStatus: active
+gidNumber: 100
+description: Technical User
+loginShell: /bin/false
+szzBirthDay: 1
+szzBirthMonth: 1
+szzEntryDay: 1
+szzEntryMonth: 1
+szzEntryYear: 1970
+szzExitDay: 31
+szzExitMonth: 12
+szzExitYear: 2199
+sambaAcctFlags: [U          ]
+sambaPasswordHistory: 0
+sambaNTPassword: testuser
+userPassword: testuser
+sambaPwdLastSet: 0
+ou: Technical User
+title: Technical User
+l: WWW Space
+telephoneNumber:
+homeDirectory: /export/home/tecmng
+uidNumber: 1000
+sambaSID: S-1-5-21-1519197630-1730194083-1312870134-3000
+
+############################################################################
 # Required Testusers
 ############################################################################
 
@@ -42,8 +87,8 @@ title: Administrator
 l: Berlin
 telephoneNumber: +49 (992) 517 2405
 homeDirectory: /export/home/accadm
-uidNumber: 1000
-sambaSID: S-1-5-21-1519197630-1730194083-1312870134-3000
+uidNumber: 1001
+sambaSID: S-1-5-21-1519197630-1730194083-1312870134-3002
 
 dn: uid=usrmng,ou=users,ou=e1c1,dc=example,dc=org
 objectClass: person
@@ -83,8 +128,8 @@ title: User Management
 l: Berlin
 telephoneNumber: +49 (992) 517 2406
 homeDirectory: /export/home/usrmng
-uidNumber: 1001
-sambaSID: S-1-5-21-1519197630-1730194083-1312870134-3000
+uidNumber: 1002
+sambaSID: S-1-5-21-1519197630-1730194083-1312870134-3004
 
 # This is a fixed Testuser, do not rename it to maxmus;
 # integration test will fail otherwise
@@ -126,8 +171,8 @@ title: Testuser
 l: Munich
 telephoneNumber: +49 (992) 517 2405
 homeDirectory: /export/home/accadm
-uidNumber: 1002
-sambaSID: S-1-5-21-1519197630-1730194083-1312870134-3000
+uidNumber: 1003
+sambaSID: S-1-5-21-1519197630-1730194083-1312870134-3006
 
 
 ############################################################################
@@ -908,7 +953,7 @@ gecos: Curtis Roy
 szzStatus: inactive
 szzMailStatus: inactive
 gidNumber: 100
-description: Mitarbeiter
+description: Freelancer
 loginShell: /bin/false
 szzBirthDay: 10
 szzBirthMonth: 1
@@ -923,8 +968,8 @@ sambaPasswordHistory: 0
 sambaNTPassword: testuser
 userPassword: testuser
 sambaPwdLastSet: 0
-ou: Team
-title: Developer
+ou: Freelancer
+title: Freelancer
 l: Hamburg
 telephoneNumber: +49 (899) 555 2213
 homeDirectory: /export/home/curroy
@@ -1160,7 +1205,7 @@ gecos: Sheena Mendez
 szzStatus: active
 szzMailStatus: inactive
 gidNumber: 100
-description: Mitarbeiter
+description: Freelancer
 loginShell: /bin/false
 szzBirthDay: 25
 szzBirthMonth: 5
@@ -1175,8 +1220,8 @@ sambaPasswordHistory: 0
 sambaNTPassword: testuser
 userPassword: testuser
 sambaPwdLastSet: 0
-ou: Team
-title: Developer
+ou: Freelancer
+title: Freelancer
 l: Hamburg
 telephoneNumber: +49 (992) 445 3813
 homeDirectory: /export/home/shemen

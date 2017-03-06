@@ -33,3 +33,16 @@ objectClass: organizationalUnit
 objectClass: top
 description: Example Group Company 2 (User)
 ou: users
+
+# System Area for Technical Purpose (Root)
+dn: ou=system,dc=example,dc=org
+objectClass: organizationalUnit
+objectClass: top
+description: System root
+ou: system
+
+dn: ou=users,ou=system,dc=example,dc=org
+objectClass: organizationalUnit
+objectClass: top
+description: System Users
+ou: users
