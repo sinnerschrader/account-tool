@@ -1,49 +1,14 @@
 version: 1
 
 ############################################################################
-# Required System Users
+# Required System Users (for Background Processes)
 ############################################################################
 
-dn: uid=tecmng,ou=system,dc=example,dc=org
-objectClass: person
-objectClass: organizationalPerson
-objectClass: inetOrgPerson
-objectClass: posixAccount
-objectClass: sambaSamAccount
-objectClass: szzUser
-givenName: Technical
-sn: Manangement
-displayName: Technical Manangement
-cn: Technical Manangement
-employeeNumber: 5e6782d3-4b83-4bac-b34b-b4801cce3090
-uid: tecmng
-gecos: Technical Manangement
-mail: technical.manangement@example.com
-szzStatus: active
-szzMailStatus: active
-gidNumber: 100
-description: Technical User
-loginShell: /bin/false
-szzBirthDay: 1
-szzBirthMonth: 1
-szzEntryDay: 1
-szzEntryMonth: 1
-szzEntryYear: 1970
-szzExitDay: 31
-szzExitMonth: 12
-szzExitYear: 2199
-sambaAcctFlags: [U          ]
-sambaPasswordHistory: 0
-sambaNTPassword: testuser
+dn: cn=tecmng,ou=system,dc=example,dc=org
+objectClass: organizationalRole
+objectClass: simpleSecurityObject
+cn: tecmng
 userPassword: testuser
-sambaPwdLastSet: 0
-ou: Technical User
-title: Technical User
-l: WWW Space
-telephoneNumber:
-homeDirectory: /export/home/tecmng
-uidNumber: 1000
-sambaSID: S-1-5-21-1519197630-1730194083-1312870134-3000
 
 ############################################################################
 # Required Testusers

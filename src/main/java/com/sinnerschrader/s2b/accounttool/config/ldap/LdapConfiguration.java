@@ -216,4 +216,9 @@ public class LdapConfiguration implements InitializingBean
 		this.companies = companies;
 	}
 
+	public void setGroupPrefixes(LdapGroupPrefixes groupPrefixes)
+	{
+		this.groupPrefixes = groupPrefixes;
+	}
+
 }

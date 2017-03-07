@@ -111,9 +111,9 @@ public interface Group extends Comparable<Group>
 	}
 
 	/**
-	 * Extracts the Prefix from group cn. S2 has several prefixes like s2, s2f, s2a, s2i and more.
+	 * Extracts the Prefix from group cn. This prefixes handles some classification on groups.
 	 * <p>
-	 * Example: s2f-customer & s2a-customer will result in "s2f" and "s2a"
+	 * Example: cti-customer, cad-customer or cpt-customer will result in "cti", "cad" and "cpt"
 	 *
 	 * @return the prefix of the group or empty string if the group name is not prefixed.
 	 */
@@ -133,7 +133,7 @@ public interface Group extends Comparable<Group>
 	 * Returns the Name of the Group without the prefix of the group. If there are several groups for the same
 	 * area/customer this will return the same name.
 	 * <p>
-	 * Example: s2f-customer & s2a-customer will result on both to "customer"
+	 * Example: cpt-customer, cad-customer or cti-customer will result on both to "customer"
 	 *
 	 * @return the name without prefix
 	 */

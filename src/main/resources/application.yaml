@@ -105,7 +105,7 @@ ldap:
 
 ldap-management:
   user:
-    bindDN: 'uid=tecmng,ou=system,dc=example,dc=org'
+    bindDN: 'cn=tecmng,ou=system,dc=example,dc=org'
     password: 'testuser'
   externalAccountTypes: "Freelancer,External,Extern"
   jobs:

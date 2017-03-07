@@ -120,7 +120,7 @@ public class LdapServiceTests
 		LDAPConnection connection = create(true);
 
 		User userToAdd = ldapService.getUserByUid(connection, "musmax");
-		Group posixGroup = ldapService.getGroupByCN(connection, currentUser, "s2f-cus");
+		Group posixGroup = ldapService.getGroupByCN(connection, currentUser, "cpt-cus");
 		Group groupOfNames = ldapService.getGroupByCN(connection, currentUser, "groupOfNames");
 		Group groupOfUNames = ldapService.getGroupByCN(connection, currentUser, "groupOfUniqueNames");
 

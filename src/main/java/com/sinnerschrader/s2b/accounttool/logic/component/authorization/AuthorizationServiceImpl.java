@@ -47,13 +47,17 @@ public class AuthorizationServiceImpl implements AuthorizationService
 	@Override
 	public boolean isGroupAdmin(LdapUserDetails user, String groupCn)
 	{
-		if (StringUtils.startsWith(groupCn, "s2a-") || StringUtils.startsWith(groupCn, "s2i-"))
+		final String prefixSuffix = "-"; //yepp, a suffix on a prefix.
+		final String adminPrefix = ldapConfiguration.getGroupPrefixes().getAdmin() + prefixSuffix;
+		final String technicalPrefix = ldapConfiguration.getGroupPrefixes().getTechnical() + prefixSuffix;
+		final String teamPrefix = ldapConfiguration.getGroupPrefixes().getTeam() + prefixSuffix;
+		if (StringUtils.startsWith(groupCn, adminPrefix) || StringUtils.startsWith(groupCn, technicalPrefix))
 		{
 			return isMemberOf(user.getAuthorities(), groupCn);
 		}
-		if (StringUtils.startsWith(groupCn, "s2f-"))
+		if (StringUtils.startsWith(groupCn, teamPrefix))
 		{
-			return isMemberOf(user.getAuthorities(), StringUtils.replace(groupCn, "s2f-", "s2a-"));
+			return isMemberOf(user.getAuthorities(), StringUtils.replace(groupCn, teamPrefix, adminPrefix));
 		}
 		return false;
 	}

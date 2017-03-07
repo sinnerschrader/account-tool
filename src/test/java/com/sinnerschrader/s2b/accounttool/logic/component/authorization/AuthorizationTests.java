@@ -19,7 +19,7 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 
-@RunWith(SpringJUnit4ClassRunner.class)   // 1
+@RunWith(SpringJUnit4ClassRunner.class)
 @SpringBootTest
 @ActiveProfiles({"test"})
 public class AuthorizationTests
@@ -57,7 +57,8 @@ public class AuthorizationTests
 			"tesuse", "Tes Useradmin", "testuser", "e1c1", userAdminAuthorities, false, true);
 
 		List<GrantedAuthority> userAuthorities = new ArrayList<>();
-		for (String group : Arrays.asList("s2a-tes", "s2f-tes", "s2f-set", "s2i-set", "s2f-err", "company-users", "company-vpn"))
+		for (String group : Arrays
+			.asList("cad-tes", "cpt-tes", "cpt-set", "cti-set", "cpt-err", "company-users", "company-vpn"))
 		{
 			userAuthorities.add(new SimpleGrantedAuthority(group));
 		}
@@ -80,11 +81,11 @@ public class AuthorizationTests
 		Assert.assertTrue(authorizationService.isUserAdministration(userAdmin));
 		Assert.assertFalse(authorizationService.isUserAdministration(user));
 
-		Assert.assertTrue(authorizationService.isGroupAdmin(user, "s2a-tes"));
-		Assert.assertTrue(authorizationService.isGroupAdmin(user, "s2f-tes"));
-		Assert.assertTrue(authorizationService.isGroupAdmin(user, "s2i-set"));
-		Assert.assertFalse(authorizationService.isGroupAdmin(user, "s2f-set"));
-		Assert.assertFalse(authorizationService.isGroupAdmin(user, "s2f-err"));
+		Assert.assertTrue(authorizationService.isGroupAdmin(user, "cad-tes"));
+		Assert.assertTrue(authorizationService.isGroupAdmin(user, "cpt-tes"));
+		Assert.assertTrue(authorizationService.isGroupAdmin(user, "cti-set"));
+		Assert.assertFalse(authorizationService.isGroupAdmin(user, "cpt-set"));
+		Assert.assertFalse(authorizationService.isGroupAdmin(user, "cpt-err"));
 	}
 
 }

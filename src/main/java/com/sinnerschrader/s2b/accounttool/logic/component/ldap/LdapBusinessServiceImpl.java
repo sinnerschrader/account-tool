@@ -26,6 +26,9 @@ public class LdapBusinessServiceImpl implements LdapBusinessService, Initializin
 	private final static Logger log = LoggerFactory.getLogger(LdapBusinessServiceImpl.class);
 
 	@Autowired
+	private LdapService ldapService;
+
+	@Autowired
 	private LdapConfiguration ldapConfiguration;
 
 	@Autowired

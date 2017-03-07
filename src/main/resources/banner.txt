@@ -6,6 +6,6 @@
 |   ____) |/ /_   / ____ \ (_| (_| (_) | |_| | | | | |_     | | (_) | (_) | |
 |  |_____/|____| /_/    \_\___\___\___/ \__,_|_| |_|\__|    |_|\___/ \___/|_|
 |
-|  Starting Version: @project.version@.@git.closest.tag.commit.count@@version.phase@ (rev: @git.commit.id.abbrev@, build-time: @git.commit.time@)
+|  Starting Version: @project.version@@version.phase@ (rev: @git.commit.id.abbrev@, build-time: @git.commit.time@)
 |  Powered by Spring Boot: @project.parent.version@ & Spring Core: @spring.version@
 |

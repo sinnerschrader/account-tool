@@ -16,20 +16,6 @@
 		<connection>scm:git:ssh://git@github.com:sinnerschrader/account-tool.git</connection>
 		<developerConnection>scm:git:ssh://git@github.com:sinnerschrader/account-tool.git</developerConnection>
 	</scm>
-	<repositories>
-		<repository>
-			<id>repo.sinnerschrader.com</id>
-			<name>SinnerSchrader Repository</name>
-			<url>https://repo.sinnerschrader.com/repository/szz-internal-group/</url>
-		</repository>
-	</repositories>
-	<pluginRepositories>
-		<pluginRepository>
-			<id>repo.sinnerschrader.com</id>
-			<name>SinnerSchrader Repository</name>
-			<url>https://repo.sinnerschrader.com/repository/szz-internal-group/</url>
-		</pluginRepository>
-	</pluginRepositories>
 	<parent>
 		<groupId>org.springframework.boot</groupId>
 		<artifactId>spring-boot-starter-parent</artifactId>
@@ -422,30 +408,6 @@
 										<argument>run</argument>
 										<argument>check</argument>
 									</arguments>
-								</configuration>
-							</execution>
-						</executions>
-					</plugin>
-					<plugin>
-						<groupId>org.apache.maven.plugins</groupId>
-						<artifactId>maven-deploy-plugin</artifactId>
-						<configuration>
-							<skip>true</skip>
-						</configuration>
-						<executions>
-							<execution>
-								<phase>deploy</phase>
-								<goals>
-									<goal>deploy-file</goal>
-								</goals>
-								<configuration>
-									<repositoryId>repo.sinnerschrader.com</repositoryId>
-									<url>https://repo.sinnerschrader.com/repository/szz-internal-hostet/</url>
-									<file>${project.build.directory}/${project.build.finalName}.jar</file>
-									<files>${project.build.directory}/${project.build.finalName}.deb</files>
-									<types>deb</types>
-									<classifiers>all</classifiers>
-									<pomFile>pom.xml</pomFile>
 								</configuration>
 							</execution>
 						</executions>

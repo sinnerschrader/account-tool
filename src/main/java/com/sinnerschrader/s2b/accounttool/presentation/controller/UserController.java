@@ -108,10 +108,10 @@ public class UserController
 		@PathVariable(name = "userId") String userId,
 		Model model)
 	{
-		LdapUserDetails details = RequestUtils.getCurrentUserDetails();
+		LdapUserDetails currentUserDetails = RequestUtils.getCurrentUserDetails();
 		authorizationService.ensureUserAdministration(details);
 
-		User user = ldapService.getUserByUid(connection, userId);
+		User user = ldapService.getUserByUid(connection, currentUserDetails.getUid());
 		if (StringUtils.isBlank(userId) || user == null)
 		{
 			return new ModelAndView("redirect:/user");
