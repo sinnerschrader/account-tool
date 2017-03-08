@@ -5,6 +5,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
+import java.time.temporal.ChronoUnit;
 import java.util.Date;
 
 import org.apache.commons.lang3.time.DateUtils;
@@ -60,6 +61,11 @@ public class DateTimeHelper
 	public static LocalDate toLocalDate(Date date)
 	{
 		return LocalDate.from(date.toInstant());
+	}
+
+	public static String getDurationString(LocalDateTime start, LocalDateTime end, ChronoUnit unit)
+	{
+		return unit.between(start, end) + " " + unit.name();
 	}
 
 }

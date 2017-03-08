@@ -19,9 +19,9 @@ public class LdapQueries implements InitializingBean
 
 	private String findGroupsByUser = null;
 
-	private String findAllUsers = null;
-
 	private String listAllGroups = null;
+
+	private String listAllUsers = null;
 
 	private String findUserByUidNumber = null;
 
@@ -40,7 +40,7 @@ public class LdapQueries implements InitializingBean
 		queries.put("findUserByUid", findUserByUid);
 		queries.put("findGroupByCn", findGroupByCn);
 		queries.put("findGroupsByUser", findGroupsByUser);
-		queries.put("findAllUsers", findAllUsers);
+		queries.put("listAllUsers", listAllUsers);
 		queries.put("listAllGroups", listAllGroups);
 		queries.put("findUserByUidNumber", findUserByUidNumber);
 		queries.put("checkUniqAttribute", checkUniqAttribute);
@@ -64,11 +64,6 @@ public class LdapQueries implements InitializingBean
 	public String getFindGroupsByUser()
 	{
 		return findGroupsByUser;
-	}
-
-	public String getFindAllUsers()
-	{
-		return findAllUsers;
 	}
 
 	public String getListAllGroups()
@@ -106,11 +101,6 @@ public class LdapQueries implements InitializingBean
 		this.findGroupsByUser = findGroupsByUser;
 	}
 
-	public void setFindAllUsers(String findAllUsers)
-	{
-		this.findAllUsers = findAllUsers;
-	}
-
 	public void setListAllGroups(String listAllGroups)
 	{
 		this.listAllGroups = listAllGroups;
@@ -124,6 +114,16 @@ public class LdapQueries implements InitializingBean
 	public void setCheckUniqAttribute(String checkUniqAttribute)
 	{
 		this.checkUniqAttribute = checkUniqAttribute;
+	}
+
+	public String getListAllUsers()
+	{
+		return listAllUsers;
+	}
+
+	public void setListAllUsers(String listAllUsers)
+	{
+		this.listAllUsers = listAllUsers;
 	}
 
 }

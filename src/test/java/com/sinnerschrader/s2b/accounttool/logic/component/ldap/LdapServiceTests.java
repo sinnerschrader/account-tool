@@ -101,9 +101,9 @@ public class LdapServiceTests
 		Assert.assertNotNull(userGroups);
 		Assert.assertTrue(userGroups.isEmpty());
 
-		List<Group> allGroups = ldapService.getGroups(connection, currentUser);
-		Group group = ldapService.getGroupByCN(connection, currentUser, "company-vpn");
-		Group dontExist = ldapService.getGroupByCN(connection, currentUser, "thisgroupwillneverexist-hopefully");
+		List<Group> allGroups = ldapService.getGroups(connection);
+		Group group = ldapService.getGroupByCN(connection, "company-vpn");
+		Group dontExist = ldapService.getGroupByCN(connection, "thisgroupwillneverexist-hopefully");
 
 		Assert.assertNotNull(allGroups);
 		Assert.assertFalse(allGroups.isEmpty());
@@ -120,9 +120,9 @@ public class LdapServiceTests
 		LDAPConnection connection = create(true);
 
 		User userToAdd = ldapService.getUserByUid(connection, "musmax");
-		Group posixGroup = ldapService.getGroupByCN(connection, currentUser, "cpt-cus");
-		Group groupOfNames = ldapService.getGroupByCN(connection, currentUser, "groupOfNames");
-		Group groupOfUNames = ldapService.getGroupByCN(connection, currentUser, "groupOfUniqueNames");
+		Group posixGroup = ldapService.getGroupByCN(connection, "cpt-cus");
+		Group groupOfNames = ldapService.getGroupByCN(connection, "groupOfNames");
+		Group groupOfUNames = ldapService.getGroupByCN(connection, "groupOfUniqueNames");
 
 		Assert.assertTrue(posixGroup.getGroupType() == Group.GroupType.Posix);
 		Assert.assertTrue(groupOfNames.getGroupType() == Group.GroupType.GroupOfNames);
@@ -132,9 +132,9 @@ public class LdapServiceTests
 		Assert.assertFalse(groupOfNames.hasMember(userToAdd));
 		Assert.assertFalse(groupOfUNames.hasMember(userToAdd));
 
-		posixGroup = ldapService.addUserToGroup(connection, currentUser, userToAdd, posixGroup);
-		groupOfNames = ldapService.addUserToGroup(connection, currentUser, userToAdd, groupOfNames);
-		groupOfUNames = ldapService.addUserToGroup(connection, currentUser, userToAdd, groupOfUNames);
+		posixGroup = ldapService.addUserToGroup(connection, userToAdd, posixGroup);
+		groupOfNames = ldapService.addUserToGroup(connection, userToAdd, groupOfNames);
+		groupOfUNames = ldapService.addUserToGroup(connection, userToAdd, groupOfUNames);
 
 		Assert.assertTrue(posixGroup.hasMember(userToAdd));
 		Assert.assertTrue(groupOfNames.hasMember(userToAdd));
@@ -149,9 +149,9 @@ public class LdapServiceTests
 		Assert.assertTrue(groupOfUNames.hasMember(userToAdd.getDn()));
 		Assert.assertFalse(groupOfUNames.hasMember(userToAdd.getUid()));
 
-		posixGroup = ldapService.removeUserFromGroup(connection, currentUser, userToAdd, posixGroup);
-		groupOfNames = ldapService.removeUserFromGroup(connection, currentUser, userToAdd, groupOfNames);
-		groupOfUNames = ldapService.removeUserFromGroup(connection, currentUser, userToAdd, groupOfUNames);
+		posixGroup = ldapService.removeUserFromGroup(connection, userToAdd, posixGroup);
+		groupOfNames = ldapService.removeUserFromGroup(connection, userToAdd, groupOfNames);
+		groupOfUNames = ldapService.removeUserFromGroup(connection, userToAdd, groupOfUNames);
 
 		Assert.assertFalse(posixGroup.hasMember(userToAdd));
 		Assert.assertFalse(groupOfNames.hasMember(userToAdd));
@@ -213,7 +213,7 @@ public class LdapServiceTests
 		LDAPConnection connection = create(true);
 
 		User newUser = createUser("Guy", "Inçögnítò");
-		User pUser = ldapService.insert(connection, currentUser, newUser);
+		User pUser = ldapService.insert(connection, newUser);
 
 		Assert.assertFalse(StringUtils.containsAny(pUser.getGecos(), 'ç', 'ö', 'í', 'ò'));
 
@@ -249,7 +249,7 @@ public class LdapServiceTests
 		{
 			for (User user : users)
 			{
-				ldapService.insert(connection, currentUser, user);
+				ldapService.insert(connection, user);
 				i++;
 			}
 		}
@@ -276,12 +276,11 @@ public class LdapServiceTests
 		String lastName = rnd();
 
 		User newUser = createUser(firstName, lastName);
-		User pUser = ldapService.insert(connection, currentUser, newUser);
+		User pUser = ldapService.insert(connection, newUser);
 
 		try
 		{
-			ldapService.insert(connection, currentUser,
-				createUser(rnd(), rnd(), pUser.getUid(), rnd() + emailCom, rnd()));
+			ldapService.insert(connection, createUser(rnd(), rnd(), pUser.getUid(), rnd() + emailCom, rnd()));
 			Assert.fail();
 		}
 		catch (BusinessException be)
@@ -291,7 +290,7 @@ public class LdapServiceTests
 
 		try
 		{
-			ldapService.insert(connection, currentUser, createUser(rnd(), rnd(), rnd(), pUser.getMail(), rnd()));
+			ldapService.insert(connection, createUser(rnd(), rnd(), rnd(), pUser.getMail(), rnd()));
 			Assert.fail();
 		}
 		catch (BusinessException be)
@@ -301,7 +300,7 @@ public class LdapServiceTests
 
 		try
 		{
-			ldapService.insert(connection, currentUser,
+			ldapService.insert(connection,
 				createUser(rnd(), rnd(), rnd(), rnd() + emailCom, pUser.getEmployeeNumber()));
 			Assert.fail();
 		}
@@ -319,8 +318,8 @@ public class LdapServiceTests
 		LDAPConnection connection = create(true);
 
 		final User newUser = createUser(rnd(), rnd());
-		final User pUser = ldapService.insert(connection, currentUser, newUser);
-		final String initialPassword = ldapService.resetPassword(connection, currentUser, pUser);
+		final User pUser = ldapService.insert(connection, newUser);
+		final String initialPassword = ldapService.resetPassword(connection, pUser);
 
 		Assert.assertTrue(StringUtils.isNotBlank(initialPassword));
 

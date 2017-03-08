@@ -5,6 +5,7 @@ import com.sinnerschrader.s2b.accounttool.config.authentication.LdapUserDetails;
 import com.sinnerschrader.s2b.accounttool.config.ldap.LdapConfiguration;
 import com.sinnerschrader.s2b.accounttool.logic.LogService;
 import com.sinnerschrader.s2b.accounttool.logic.component.authorization.AuthorizationService;
+import com.sinnerschrader.s2b.accounttool.logic.component.ldap.LdapBusinessService;
 import com.sinnerschrader.s2b.accounttool.logic.component.ldap.LdapService;
 import com.sinnerschrader.s2b.accounttool.logic.component.mail.MailService;
 import com.sinnerschrader.s2b.accounttool.logic.entity.User;
@@ -73,12 +74,26 @@ public class UserController
 	@Autowired
 	private GlobalMessageFactory globalMessageFactory;
 
+	@Autowired
+	private LdapBusinessService ldapBusinessService;
+
 	@RequestMapping(value = "/user", method = RequestMethod.GET)
 	public ModelAndView view()
 	{
 		authorizationService.ensureUserAdministration(RequestUtils.getCurrentUserDetails());
 
 		ModelAndView mav = new ModelAndView("pages/user/index.html");
+		return mav;
+	}
+
+	@RequestMapping(value = "/user/maintenance", method = RequestMethod.GET)
+	public ModelAndView maintenance()
+	{
+		authorizationService.ensureUserAdministration(RequestUtils.getCurrentUserDetails());
+
+		ModelAndView mav = new ModelAndView("pages/user/maintenance.html");
+		mav.addObject("leavingUsers", ldapBusinessService.getLeavingUsers());
+		mav.addObject("unmaintainedUsers", ldapBusinessService.getUnmaintainedExternals());
 		return mav;
 	}
 
@@ -93,7 +108,7 @@ public class UserController
 		List<User> users = new LinkedList<>();
 		if (StringUtils.isNotBlank(searchTerm))
 		{
-			users.addAll(ldapService.findUserBySearchTerm(connection, details, searchTerm));
+			users.addAll(ldapService.findUserBySearchTerm(connection, searchTerm));
 		}
 
 		ModelAndView mav = new ModelAndView("pages/user/userSearch.html");
@@ -108,10 +123,10 @@ public class UserController
 		@PathVariable(name = "userId") String userId,
 		Model model)
 	{
-		LdapUserDetails currentUserDetails = RequestUtils.getCurrentUserDetails();
+		LdapUserDetails details = RequestUtils.getCurrentUserDetails();
 		authorizationService.ensureUserAdministration(details);
 
-		User user = ldapService.getUserByUid(connection, currentUserDetails.getUid());
+		User user = ldapService.getUserByUid(connection, userId);
 		if (StringUtils.isBlank(userId) || user == null)
 		{
 			return new ModelAndView("redirect:/user");
@@ -124,9 +139,9 @@ public class UserController
 		mav.addAllObjects(model.asMap());
 		mav.addObject("user", user);
 		mav.addObject("companies", ldapConfiguration.getCompaniesAsMap());
-		mav.addObject("types", ldapService.getEmployeeType(connection, details));
-		mav.addObject("departments", ldapService.getDepartments(connection, details));
-		mav.addObject("locations", ldapService.getLocations(connection, details));
+		mav.addObject("types", ldapService.getEmployeeType(connection));
+		mav.addObject("departments", ldapService.getDepartments(connection));
+		mav.addObject("locations", ldapService.getLocations(connection));
 		mav.setViewName("pages/user/edit.html");
 		return mav;
 	}
@@ -160,8 +175,7 @@ public class UserController
 		{
 			if (userForm.isChangeUser())
 			{
-				User user = ldapService
-					.update(connection, details, userForm.createUserEntityFromForm(ldapConfiguration));
+				User user = ldapService.update(connection, userForm.createUserEntityFromForm(ldapConfiguration));
 				globalMessageFactory.store(request,
 					globalMessageFactory.createInfo("user.edit.success", user.getUid()));
 				log.info("{} updated the account of user {}", details.getUid(), user.getUid());
@@ -170,7 +184,12 @@ public class UserController
 			{
 				boolean hidePassword = false;
 				User user = ldapService.getUserByUid(connection, userId);
-				String password = ldapService.resetPassword(connection, details, user);
+				String password = ldapService.resetPassword(connection, user);
+				// update current user details for correct bind on next request
+				if (StringUtils.equals(details.getUid(), user.getUid()))
+				{
+					details.setPassword(password);
+				}
 				if (userForm.isResetpassword())
 				{
 					//
@@ -183,7 +202,7 @@ public class UserController
 				if (userForm.isActivateUser())
 				{
 					message = "user.activated";
-					ldapService.activate(connection, details, user);
+					ldapService.activate(connection, user);
 					log.info("{} activated the user {} right now", details.getUid(), user.getUid());
 					logService.event("logging.logstash.event.user.activate",
 						"success", details.getUid(), user.getUid());
@@ -191,7 +210,7 @@ public class UserController
 				if (userForm.isDeactivateUser())
 				{
 					message = "user.deactivated";
-					ldapService.deactivate(connection, details, user);
+					ldapService.deactivate(connection, user);
 					log.info("{} deactivated the user {} right now", details.getUid(), user.getUid());
 					logService.event("logging.logstash.event.user.deactivate",
 						"success", details.getUid(), user.getUid());
@@ -228,9 +247,9 @@ public class UserController
 		mav.addObject("primaryDomain", userFormValidator.getPrimaryDomain());
 		mav.addObject("secondaryDomain", userFormValidator.getSecondaryDomain());
 		mav.addObject("companies", ldapConfiguration.getCompaniesAsMap());
-		mav.addObject("types", ldapService.getEmployeeType(connection, details));
-		mav.addObject("departments", ldapService.getDepartments(connection, details));
-		mav.addObject("locations", ldapService.getLocations(connection, details));
+		mav.addObject("types", ldapService.getEmployeeType(connection));
+		mav.addObject("departments", ldapService.getDepartments(connection));
+		mav.addObject("locations", ldapService.getLocations(connection));
 		mav.setViewName("pages/user/create.html");
 		return mav;
 	}
@@ -254,9 +273,8 @@ public class UserController
 		}
 		try
 		{
-			User newUser = ldapService
-				.insert(connection, currentUser, userForm.createUserEntityFromForm(ldapConfiguration));
-			String password = ldapService.resetPassword(connection, currentUser, newUser);
+			User newUser = ldapService.insert(connection, userForm.createUserEntityFromForm(ldapConfiguration));
+			String password = ldapService.resetPassword(connection, newUser);
 			globalMessageFactory.store(request,
 				globalMessageFactory.createInfo("user.create.success", newUser.getUid(), password));
 			log.info("{} created a new account with uid {}", currentUser.getUid(), newUser.getUid());

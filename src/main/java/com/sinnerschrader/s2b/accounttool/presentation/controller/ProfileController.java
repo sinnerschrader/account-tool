@@ -98,7 +98,7 @@ public class ProfileController
 			{
 				try
 				{
-					ldapService.update(connection, details, updatedUser);
+					ldapService.update(connection, updatedUser);
 					log.info("{} updated his/her account informations", details.getUid());
 				}
 				catch (BusinessException be)

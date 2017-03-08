@@ -87,8 +87,8 @@ ldap:
     findUserByUid: "(&(objectClass=posixAccount)(uid={0}))"
     findGroupByCn: "(&(|(objectClass=posixGroup)(objectClass=groupOfUniqueNames)(objectClass=groupOfNames))(cn={0}))"
     findGroupsByUser: "(|(&(objectClass=posixGroup)(memberUid={0}))(&(objectClass=groupOfUniqueNames)(uniqueMember={1}))(&(objectClass=groupOfNames)(member={1})))"
-    findAllUsers: "(objectClass=posixAccount)"
     listAllGroups: "(|(objectClass=posixGroup)(objectClass=groupOfUniqueNames)(objectClass=groupOfNames))"
+    listAllUsers: "(&(objectClass=inetOrgPerson)(objectClass=posixAccount))"
     findUserByUidNumber: "(&(objectClass=posixAccount)(uidNumber={0}))"
     checkUniqAttribute: "(&(objectClass=posixAccount)({0}={1}))"
   groupPrefixes:
@@ -108,11 +108,12 @@ ldap-management:
     bindDN: 'cn=tecmng,ou=system,dc=example,dc=org'
     password: 'testuser'
   externalAccountTypes: "Freelancer,External,Extern"
+  leavingUsersInCW: "4"
   jobs:
     active: "true"
     updateUnmaintained:
       active: "true"
-      cronExpr: "0 */10 * ? * MON-FRI"
+      cronExpr: "0 */2 * ? * MON-FRI"
 
 # =============================================================
 # = Domain for E-Mail generation and Validation

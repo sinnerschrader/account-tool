@@ -16,9 +16,21 @@ public class LdapManagementConfiguration
 
 	private List<String> externalUserTypes = null;
 
+	private int leavingUsersInCW = 4;
+
 	public List<String> getExternalUserTypes()
 	{
 		return externalUserTypes;
+	}
+
+	public int getLeavingUsersInCW()
+	{
+		return leavingUsersInCW;
+	}
+
+	public void setLeavingUsersInCW(int leavingUsersInCW)
+	{
+		this.leavingUsersInCW = leavingUsersInCW;
 	}
 
 	public ManagementUser getUser()

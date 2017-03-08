@@ -69,7 +69,7 @@ public class GroupController
 			throw new IllegalStateException("Invalid access on groups");
 		}
 		List<Group> groups = listAllGroups ?
-			ldapService.getGroups(connection, details) :
+			ldapService.getGroups(connection) :
 			ldapService.getGroupsByUser(connection, details.getUid(), details.getDn());
 
 		ModelAndView mav = new ModelAndView("pages/group/index.html");
@@ -91,14 +91,14 @@ public class GroupController
 			throw new IllegalStateException("Invalid access on groups");
 		}
 		List<Group> groups = (listAllGroups)
-			? ldapService.getGroups(connection, details)
+			? ldapService.getGroups(connection)
 			: ldapService.getGroupsByUser(connection, details.getUid(), details.getDn());
-		Group selectedGroup = ldapService.getGroupByCN(connection, details, groupCN);
+		Group selectedGroup = ldapService.getGroupByCN(connection, groupCN);
 		if (selectedGroup == null)
 		{
 			return new ModelAndView("redirect:/group");
 		}
-		List<User> users = ldapService.getUsersByGroup(connection, details, selectedGroup);
+		List<User> users = ldapService.getUsersByGroup(connection, selectedGroup);
 
 		ModelAndView mav = new ModelAndView("pages/group/index.html");
 		mav.addObject("company", ldapConfiguration.getCompaniesAsMap());
@@ -119,7 +119,7 @@ public class GroupController
 	{
 		LdapUserDetails details = RequestUtils.getCurrentUserDetails();
 		authorizationService.ensureGroupAdministration(details, groupCN);
-		Group group = ldapService.getGroupByCN(connection, details, groupCN);
+		Group group = ldapService.getGroupByCN(connection, groupCN);
 		if (group == null)
 		{
 			return new ModelAndView("redirect:/group/" + groupCN);
@@ -127,7 +127,7 @@ public class GroupController
 		List<User> users = new LinkedList<>();
 		if (StringUtils.isNotBlank(searchTerm))
 		{
-			List<User> ldapUsers = ldapService.findUserBySearchTerm(connection, details, searchTerm);
+			List<User> ldapUsers = ldapService.findUserBySearchTerm(connection, searchTerm);
 			for (User user : ldapUsers)
 			{
 				if (!group.hasMember(user))
@@ -157,8 +157,8 @@ public class GroupController
 		LdapUserDetails details = RequestUtils.getCurrentUserDetails();
 		authorizationService.ensureGroupAdministration(details, groupCN);
 		User user = ldapService.getUserByUid(connection, uid);
-		Group group = ldapService.getGroupByCN(connection, details, groupCN);
-		group = ldapService.addUserToGroup(connection, details, user, group);
+		Group group = ldapService.getGroupByCN(connection, groupCN);
+		group = ldapService.addUserToGroup(connection, user, group);
 		if (group.hasMember(user))
 		{
 			log.info("User {} added user {} into group {}", details.getUid(), uid, groupCN);
@@ -188,8 +188,8 @@ public class GroupController
 		LdapUserDetails details = RequestUtils.getCurrentUserDetails();
 		authorizationService.ensureGroupAdministration(details, groupCN);
 		User user = ldapService.getUserByUid(connection, uid);
-		Group group = ldapService.getGroupByCN(connection, details, groupCN);
-		group = ldapService.removeUserFromGroup(connection, details, user, group);
+		Group group = ldapService.getGroupByCN(connection, groupCN);
+		group = ldapService.removeUserFromGroup(connection, user, group);
 		if (!group.hasMember(user))
 		{
 			log.info("{} removed user {} from group {}", details.getUid(), uid, groupCN);
@@ -216,7 +216,7 @@ public class GroupController
 	{
 		LdapUserDetails details = RequestUtils.getCurrentUserDetails();
 		authorizationService.ensureGroupAdministration(details, groupCN);
-		Group group = ldapService.getGroupByCN(connection, details, groupCN);
+		Group group = ldapService.getGroupByCN(connection, groupCN);
 		Group adminGroup = group;
 
 		if (group == null)
@@ -234,13 +234,13 @@ public class GroupController
 			if (!adminGroup.isAdminGroup())
 			{
 				String adminGroupCN = StringUtils.replace(groupCN, "s2f", "s2a");
-				adminGroup = ldapService.getGroupByCN(connection, details, adminGroupCN);
+				adminGroup = ldapService.getGroupByCN(connection, adminGroupCN);
 				if (adminGroup == null || !adminGroup.isAdminGroup())
 				{
-					adminGroup = ldapService.getGroupByCN(connection, details, "ldap-admins");
+					adminGroup = ldapService.getGroupByCN(connection, "ldap-admins");
 				}
 			}
-			List<User> adminUser = ldapService.getUsersByGroup(connection, details, adminGroup);
+			List<User> adminUser = ldapService.getUsersByGroup(connection, adminGroup);
 			boolean success = mailService.sendMailForRequestAccessToGroup(details, adminUser, adminGroup, group);
 			if (success)
 			{

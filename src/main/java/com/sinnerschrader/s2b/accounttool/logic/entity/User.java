@@ -218,7 +218,8 @@ public final class User implements Comparable<User>
 		String sambaPasswordHistory, String sambaAcctFlags, String mail,
 		State szzStatus, State szzMailStatus, Long sambaPwdLastSet,
 		String ou, String description, String telephoneNumber, String mobile, String employeeNumber, String title,
-		String l, Integer szzEntryDay, Integer szzEntryMonth, Integer szzEntryYear, Integer szzExitDay, Integer szzExitMonth,
+		String l, Integer szzEntryDay, Integer szzEntryMonth, Integer szzEntryYear, Integer szzExitDay,
+		Integer szzExitMonth,
 		Integer szzExitYear, String szzPublicKey, String o, String companyKey)
 	{
 		this.dn = dn;
@@ -269,28 +270,19 @@ public final class User implements Comparable<User>
 
 		User user = (User) o;
 
-		if (!dn.equals(user.dn))
+		if (uid != null ? !uid.equals(user.uid) : user.uid != null)
 			return false;
-		if (!uid.equals(user.uid))
+		if (uidNumber != null ? !uidNumber.equals(user.uidNumber) : user.uidNumber != null)
 			return false;
-		if (!uidNumber.equals(user.uidNumber))
-			return false;
-		if (szzBirthMonth != null ? !szzBirthMonth.equals(user.szzBirthMonth) : user.szzBirthMonth != null)
-			return false;
-		if (szzBirthDay != null ? !szzBirthDay.equals(user.szzBirthDay) : user.szzBirthDay != null)
-			return false;
-		return mail.equals(user.mail);
+		return mail != null ? mail.equals(user.mail) : user.mail == null;
 	}
 
 	@Override
 	public int hashCode()
 	{
-		int result = dn.hashCode();
-		result = 31 * result + uid.hashCode();
-		result = 31 * result + uidNumber.hashCode();
-		result = 31 * result + (szzBirthMonth != null ? szzBirthMonth.hashCode() : 0);
-		result = 31 * result + (szzBirthDay != null ? szzBirthDay.hashCode() : 0);
-		result = 31 * result + mail.hashCode();
+		int result = uid != null ? uid.hashCode() : 0;
+		result = 31 * result + (uidNumber != null ? uidNumber.hashCode() : 0);
+		result = 31 * result + (mail != null ? mail.hashCode() : 0);
 		return result;
 	}
 

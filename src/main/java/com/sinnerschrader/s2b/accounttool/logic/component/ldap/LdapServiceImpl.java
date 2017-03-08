@@ -17,6 +17,7 @@ import com.unboundid.ldap.sdk.Modification;
 import com.unboundid.ldap.sdk.ModificationType;
 import com.unboundid.ldap.sdk.ModifyDNRequest;
 import com.unboundid.ldap.sdk.ResultCode;
+import com.unboundid.ldap.sdk.SearchRequest;
 import com.unboundid.ldap.sdk.SearchResult;
 import com.unboundid.ldap.sdk.SearchResultEntry;
 import com.unboundid.ldap.sdk.SearchScope;
@@ -90,6 +91,42 @@ public class LdapServiceImpl implements LdapService
 		this.listingsCache = CacheBuilder.newBuilder().expireAfterWrite(6L, TimeUnit.HOURS).build();
 	}
 
+	@Override
+	public int getUserCount(LDAPConnection connection)
+	{
+		try
+		{
+			SearchResult searchResult = connection.search(ldapConfiguration.getBaseDN(), SearchScope.SUB,
+				ldapConfiguration.getLdapQueryByName("listAllUsers"));
+			return searchResult.getEntryCount();
+		}
+		catch (Exception e)
+		{
+			log.error("Could not fetch count of all users", e);
+		}
+		return 0;
+	}
+
+	@Override
+	public List<User> getUsers(LDAPConnection connection, int firstResult, int maxResults)
+	{
+		try
+		{
+			SearchRequest request = new SearchRequest(ldapConfiguration.getBaseDN(), SearchScope.SUB,
+				ldapConfiguration.getLdapQueryByName("listAllUsers"));
+			SearchResult searchResult = connection.search(request);
+			int count = searchResult.getEntryCount();
+			int fr = Math.min(Math.max(0, firstResult), count);
+			int mr = Math.min(fr + maxResults, count);
+			return userMapping.map(searchResult.getSearchEntries().subList(fr, mr));
+		}
+		catch (Exception e)
+		{
+			log.error("Could not fetch all users", e);
+		}
+		return Collections.emptyList();
+	}
+
 	private List<String> getListingFromCacheOrLdap(LDAPConnection connection, String cacheKey, String attribute)
 	{
 		List<String> result = listingsCache.getIfPresent(cacheKey);
@@ -99,7 +136,7 @@ public class LdapServiceImpl implements LdapService
 			{
 				Set<String> tempResult = new HashSet<>();
 				SearchResult searchResult = connection.search(ldapConfiguration.getBaseDN(), SearchScope.SUB,
-					ldapConfiguration.getLdapQueryByName("findAllUsers"), attribute);
+					ldapConfiguration.getLdapQueryByName("listAllUsers"), attribute);
 
 				String value;
 				for (SearchResultEntry entry : searchResult.getSearchEntries())
@@ -127,19 +164,19 @@ public class LdapServiceImpl implements LdapService
 	}
 
 	@Override
-	public List<String> getEmployeeType(LDAPConnection connection, LdapUserDetails currentUser)
+	public List<String> getEmployeeType(LDAPConnection connection)
 	{
 		return getListingFromCacheOrLdap(connection, "employeeTypes", "description");
 	}
 
 	@Override
-	public List<String> getLocations(LDAPConnection connection, LdapUserDetails currentUser)
+	public List<String> getLocations(LDAPConnection connection)
 	{
 		return getListingFromCacheOrLdap(connection, "locations", "l");
 	}
 
 	@Override
-	public List<String> getDepartments(LDAPConnection connection, LdapUserDetails currentUser)
+	public List<String> getDepartments(LDAPConnection connection)
 	{
 		return getListingFromCacheOrLdap(connection, "departments", "ou");
 	}
@@ -176,7 +213,7 @@ public class LdapServiceImpl implements LdapService
 	}
 
 	@Override
-	public Group getGroupByCN(LDAPConnection connection, LdapUserDetails currentUser, String groupCn)
+	public Group getGroupByCN(LDAPConnection connection, String groupCn)
 	{
 		try
 		{
@@ -207,7 +244,7 @@ public class LdapServiceImpl implements LdapService
 	}
 
 	@Override
-	public List<User> findUserBySearchTerm(LDAPConnection connection, LdapUserDetails currentUser, String searchTerm)
+	public List<User> findUserBySearchTerm(LDAPConnection connection, String searchTerm)
 	{
 		List<User> result = new LinkedList<>();
 		try
@@ -225,7 +262,7 @@ public class LdapServiceImpl implements LdapService
 	}
 
 	@Override
-	public List<Group> getGroups(LDAPConnection connection, LdapUserDetails currentUser)
+	public List<Group> getGroups(LDAPConnection connection)
 	{
 		List<Group> result = new LinkedList<>();
 		try
@@ -270,7 +307,7 @@ public class LdapServiceImpl implements LdapService
 	}
 
 	@Override
-	public List<User> getUsersByGroup(LDAPConnection connection, LdapUserDetails currentUser, Group group)
+	public List<User> getUsersByGroup(LDAPConnection connection, Group group)
 	{
 		List<User> users = new ArrayList<>();
 		try
@@ -293,9 +330,9 @@ public class LdapServiceImpl implements LdapService
 	}
 
 	@Override
-	public Group addUserToGroup(LDAPConnection connection, LdapUserDetails currentUser, User user, Group group)
+	public Group addUserToGroup(LDAPConnection connection, User user, Group group)
 	{
-		Group ldapGroup = getGroupByCN(connection, currentUser, group.getCn());
+		Group ldapGroup = getGroupByCN(connection, group.getCn());
 		if (ldapGroup == null)
 			return null;
 		if (ldapGroup.hasMember(user))
@@ -317,13 +354,13 @@ public class LdapServiceImpl implements LdapService
 			}
 			return ldapGroup;
 		}
-		return getGroupByCN(connection, currentUser, group.getCn());
+		return getGroupByCN(connection, group.getCn());
 	}
 
 	@Override
-	public Group removeUserFromGroup(LDAPConnection connection, LdapUserDetails currentUser, User user, Group group)
+	public Group removeUserFromGroup(LDAPConnection connection, User user, Group group)
 	{
-		Group ldapGroup = getGroupByCN(connection, currentUser, group.getCn());
+		Group ldapGroup = getGroupByCN(connection, group.getCn());
 		if (ldapGroup == null)
 			return null;
 		if (!ldapGroup.hasMember(user))
@@ -345,20 +382,20 @@ public class LdapServiceImpl implements LdapService
 			}
 			return ldapGroup;
 		}
-		return getGroupByCN(connection, currentUser, group.getCn());
+		return getGroupByCN(connection, group.getCn());
 	}
 
 	@Override
-	public String resetPassword(LDAPConnection connection, LdapUserDetails currentUser, User user)
+	public String resetPassword(LDAPConnection connection, User user)
 	{
-		return changePassword(connection, currentUser, user, RandomStringUtils.randomAlphanumeric(32, 33));
+		return changePassword(connection, user, RandomStringUtils.randomAlphanumeric(32, 33));
 	}
 
 	@Override
 	public boolean changePassword(LDAPConnection connection, LdapUserDetails currentUser, String password)
 	{
 		User user = getUserByUid(connection, currentUser.getUsername());
-		String newPassword = changePassword(connection, currentUser, user, password);
+		String newPassword = changePassword(connection, user, password);
 		if (newPassword != null)
 		{
 			currentUser.setPassword(newPassword);
@@ -366,7 +403,7 @@ public class LdapServiceImpl implements LdapService
 		return true;
 	}
 
-	private String changePassword(LDAPConnection connection, LdapUserDetails currentUser, User user, String newPassword)
+	private String changePassword(LDAPConnection connection, User user, String newPassword)
 	{
 		final String timestamp = String.valueOf(System.currentTimeMillis() / 1000L);
 		User ldapUser = getUserByUid(connection, user.getUid());
@@ -393,15 +430,11 @@ public class LdapServiceImpl implements LdapService
 			}
 			return null;
 		}
-		if (StringUtils.equals(user.getUid(), currentUser.getUsername()))
-		{
-			currentUser.setPassword(newPassword);
-		}
 		return newPassword;
 	}
 
 	@Override
-	public User activate(LDAPConnection connection, LdapUserDetails currentUser, User user)
+	public User activate(LDAPConnection connection, User user)
 	{
 		User ldapUser = getUserByUid(connection, user.getUid());
 		if (ldapUser == null)
@@ -445,7 +478,7 @@ public class LdapServiceImpl implements LdapService
 	}
 
 	@Override
-	public User deactivate(LDAPConnection connection, LdapUserDetails currentUser, User user)
+	public User deactivate(LDAPConnection connection, User user)
 	{
 		User ldapUser = getUserByUid(connection, user.getUid());
 		if (ldapUser == null)
@@ -500,7 +533,7 @@ public class LdapServiceImpl implements LdapService
 	}
 
 	@Override
-	public User insert(LDAPConnection connection, LdapUserDetails currentUser, User user) throws BusinessException
+	public User insert(LDAPConnection connection, User user) throws BusinessException
 	{
 		try
 		{
@@ -638,10 +671,10 @@ public class LdapServiceImpl implements LdapService
 			{
 				for (String groupCn : defaultGroupsToAdd)
 				{
-					Group group = getGroupByCN(connection, currentUser, groupCn);
+					Group group = getGroupByCN(connection, groupCn);
 					if (group != null)
 					{
-						addUserToGroup(connection, currentUser, newUser, group);
+						addUserToGroup(connection, newUser, group);
 					}
 				}
 			}
@@ -775,7 +808,7 @@ public class LdapServiceImpl implements LdapService
 	}
 
 	@Override
-	public User update(LDAPConnection connection, LdapUserDetails currentUser, User user) throws BusinessException
+	public User update(LDAPConnection connection, User user) throws BusinessException
 	{
 		User ldapUser = getUserByUid(connection, user.getUid());
 		if (ldapUser == null)
@@ -980,7 +1013,7 @@ public class LdapServiceImpl implements LdapService
 
 	private Integer fetchMaxUserIDNumber(LDAPConnection connection)
 	{
-		final String queryName = "findAllUsers";
+		final String queryName = "listAllUsers";
 		final String attribute = "uidNumber";
 		Integer result = 1000;
 		try
