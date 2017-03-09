@@ -55,6 +55,21 @@ spring:
 #   # The key witin the String have to match the Key part within ldap.config.userDN.
 #   # Order is relevant to the UI Dropdown order, not to the Order of userDN Entries.
 
+#ldap-management:
+#  user:
+#    bindDN: "A full DN of a technical user which has read-only permissions"
+#    password: "The password of the technical user"
+#  leavingUsersInCW: "n Calendarweeks before exitDate (Default: 4 Weeks)"
+#  notifyReceipients: "Comma separated list of notification receipients"
+#  jobs:
+#    active: "true|false if any background job schould run or not"
+#    updateUnmaintained:
+#      active: "true|false if the job schould run or not"
+#      cronExpr: "Cron expression how often the Job schould be run (Default: every 15 Minutes)"
+#    notifyAboutUnmaintained:
+#      active: "true|false if the job schould run or not"
+#      cronExpr: "Cron expression how often the Job schould be run (Default: every Monday at 10 o'Clock)"
+
 # =============================================================
 # = Domain for E-Mail generation and Validation (Required)
 # =============================================================

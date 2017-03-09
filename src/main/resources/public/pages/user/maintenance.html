@@ -7,7 +7,7 @@
 			<span>User - Maintenance</span>
 		</h2>
 	</div>
-	<div class="mdl-cell mdl-cell--12-col mdl-cell--8-col-tablet mdl-cell--4-col-phone mdl-cell--order-0-phone">
+	<div class="mdl-cell mdl-cell--6-col mdl-cell--8-col-tablet mdl-cell--4-col-phone mdl-cell--order-0-phone">
 		<h4 class="s2act-sectionSubHeadline">{{ message('user.management.leaving', (leavingUsers | length)) }}</h4>
 		<div class="mdl-list s2act-groupList">
 			{% if leavingUsers is not empty %}
@@ -28,12 +28,43 @@
 			</div>
 			{% endfor %}
 			{% else %}
-				<div class="mdl-list__item s2act-groupList__item">
+			<div class="mdl-list__item s2act-groupList__item">
 					<span class="mdl-list__item-primary-content">
 						<i class="material-icons mdl-list__item-avatar">info</i>
 						<span>No users will leave in the next weeks</span>
 					</span>
-				</div>
+			</div>
+			{% endif %}
+		</div>
+	</div>
+
+	<div class="mdl-cell mdl-cell--6-col mdl-cell--8-col-tablet mdl-cell--4-col-phone mdl-cell--order-0-phone">
+		<h4 class="s2act-sectionSubHeadline">{{ message('user.management.mails', (unmaintainedMailUsers | length)) }}</h4>
+		<div class="mdl-list s2act-groupList">
+			{% if unmaintainedMailUsers is not empty %}
+			{% for user in unmaintainedMailUsers %}
+			<div class="mdl-list__item mdl-list__item--two-line s2act-userList__item">
+				<span class="mdl-list__item-primary-content">
+					<i class="material-icons mdl-list__item-avatar">account_circle</i>
+					<span>{{ user.displayName }}</span>
+					<span class="uid">({{ user.uid }})</span>
+					<span class="mdl-list__item-sub-title">{{ user.o }}</span>
+				</span>
+				<span class="mdl-list__item-secondary-action">
+					<a href="/user/edit/{{ user.uid }}"
+					   class="mdl-button mdl-js-button mdl-button--fab mdl-button--mini-fab mdl-button--raised s2act-action s2act-action--edit">
+						<i class="material-icons">edit</i>
+					</a>
+				</span>
+			</div>
+			{% endfor %}
+			{% else %}
+			<div class="mdl-list__item s2act-groupList__item">
+					<span class="mdl-list__item-primary-content">
+						<i class="material-icons mdl-list__item-avatar">info</i>
+						<span>No inactive users with active E-Mail Account found</span>
+					</span>
+			</div>
 			{% endif %}
 		</div>
 	</div>

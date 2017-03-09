@@ -32,6 +32,16 @@ ldap:
   permissions:
     defaultGroups: "git-users,jira-users,company-users,company-vpn"
 
+ldap-management:
+  user:
+    bindDN: 'cn=tecmng,ou=system,dc=example,dc=org'
+    password: 'testuser'
+  jobs:
+    updateUnmaintained:
+      cronExpr: "0 */5 * ? * MON-FRI"
+    notifyAboutUnmaintained:
+      cronExpr: "59 */5 * ? * MON-FRI"
+
 # =============================================================
 # = Appserver Configuration
 # =============================================================

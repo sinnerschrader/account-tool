@@ -113,7 +113,7 @@ public interface Group extends Comparable<Group>
 	/**
 	 * Extracts the Prefix from group cn. This prefixes handles some classification on groups.
 	 * <p>
-	 * Example: cti-customer, cad-customer or cpt-customer will result in "cti", "cad" and "cpt"
+	 * Example: devs-customer, admin-customer or team-customer will result in "devs", "admin" and "team"
 	 *
 	 * @return the prefix of the group or empty string if the group name is not prefixed.
 	 */
@@ -133,7 +133,7 @@ public interface Group extends Comparable<Group>
 	 * Returns the Name of the Group without the prefix of the group. If there are several groups for the same
 	 * area/customer this will return the same name.
 	 * <p>
-	 * Example: cpt-customer, cad-customer or cti-customer will result on both to "customer"
+	 * Example: team-customer, admin-customer or devs-customer will result on both to "customer"
 	 *
 	 * @return the name without prefix
 	 */

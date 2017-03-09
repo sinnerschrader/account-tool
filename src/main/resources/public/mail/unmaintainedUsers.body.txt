@@ -1,0 +1,16 @@
+Hello Team Usermanagement,
+
+you receive this mail, because you are on the receipient list or group for accounts notifications.
+
+Overview:
+* {{leavingUsers | length}} will leave in the next Weeks
+* {{unmaintainedMailUsers | length}} inactive Accounts have active Mail accounts
+* {{unmaintainedUsers | length}} Accounts are active but already leaved
+
+You will find a detailed view here: https://{{publicDomain}}/user/maintenance
+
+Best regards,
+Your AccountTool
+
+
+[ReqID:{{messageID}}]

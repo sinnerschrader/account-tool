@@ -94,6 +94,7 @@ public class UserController
 		ModelAndView mav = new ModelAndView("pages/user/maintenance.html");
 		mav.addObject("leavingUsers", ldapBusinessService.getLeavingUsers());
 		mav.addObject("unmaintainedUsers", ldapBusinessService.getUnmaintainedExternals());
+		mav.addObject("unmaintainedMailUsers", ldapBusinessService.getUnmaintainedMailUsers());
 		return mav;
 	}
 

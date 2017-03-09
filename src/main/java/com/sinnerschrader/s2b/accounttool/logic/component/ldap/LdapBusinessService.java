@@ -15,6 +15,8 @@ public interface LdapBusinessService
 
 	List<User> getLeavingUsers();
 
+	List<User> getUnmaintainedMailUsers();
+
 	void addDefaultGroups(User user);
 
 	void delDefaulGroups(User user);
