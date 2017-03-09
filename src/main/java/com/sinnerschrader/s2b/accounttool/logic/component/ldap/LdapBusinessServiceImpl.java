@@ -5,6 +5,7 @@ import com.google.common.cache.CacheBuilder;
 import com.sinnerschrader.s2b.accounttool.config.ldap.LdapConfiguration;
 import com.sinnerschrader.s2b.accounttool.config.ldap.LdapManagementConfiguration;
 import com.sinnerschrader.s2b.accounttool.logic.DateTimeHelper;
+import com.sinnerschrader.s2b.accounttool.logic.component.mail.MailService;
 import com.sinnerschrader.s2b.accounttool.logic.entity.User;
 import com.unboundid.ldap.sdk.LDAPConnection;
 import com.unboundid.ldap.sdk.LDAPException;
@@ -35,9 +36,11 @@ public class LdapBusinessServiceImpl implements LdapBusinessService, Initializin
 
 	private final static Logger log = LoggerFactory.getLogger(LdapBusinessServiceImpl.class);
 
-	private final static String NEAR_FUTURE_EXITING = "nearFutureExiting";
+	private final static String NEAR_FUTURE_EXITING = "leavingUsers";
 
-	private final static String EXITED_ACTIVE_USERS = "exitedActiveUsers";
+	private final static String EXITED_ACTIVE_USERS = "unmaintainedUsers";
+
+	private final static String ACTIVE_MAIL_ON_INACTIVE_USER = "unmaintainedMailUsers";
 
 	private Cache<String, List<User>> userCache = null;
 
@@ -49,6 +52,9 @@ public class LdapBusinessServiceImpl implements LdapBusinessService, Initializin
 
 	@Autowired
 	private LdapManagementConfiguration managementConfiguration;
+
+	@Autowired
+	private MailService mailService;
 
 	protected LDAPConnection createManagementConnection() throws LDAPException
 	{
@@ -70,19 +76,26 @@ public class LdapBusinessServiceImpl implements LdapBusinessService, Initializin
 	public void afterPropertiesSet() throws Exception
 	{
 		userCache = CacheBuilder.newBuilder()
-			.expireAfterWrite(60, TimeUnit.MINUTES)
+			.expireAfterWrite(24, TimeUnit.HOURS)
 			.build();
 	}
 
 	@Scheduled(cron = "${ldap-management.jobs.updateUnmaintained.cronExpr}")
-	protected void updateUnmaintainedExternals()
+	protected void updateUnmaintained()
 	{
+		if (!managementConfiguration.getJobs().getUpdateUnmaintained().isActive()
+			|| !managementConfiguration.getJobs().isActive())
+		{
+			return;
+		}
+
 		log.debug("Updating the informations about unmaintained accounts");
 		LocalDateTime startTime = LocalDateTime.now();
 		LDAPConnection connection = null;
 		final int nextWeeks = managementConfiguration.getLeavingUsersInCW();
 		List<User> exitedActiveUsers = new LinkedList<>();
 		List<User> futureExitingUser = new LinkedList<>();
+		List<User> activeMailAccounts = new LinkedList<>();
 		try
 		{
 			connection = createManagementConnection();
@@ -110,13 +123,19 @@ public class LdapBusinessServiceImpl implements LdapBusinessService, Initializin
 								futureExitingUser.add(user);
 							}
 						}
+						if (user.getSzzStatus() == User.State.inactive && user.getSzzMailStatus() == User.State.active)
+						{
+							activeMailAccounts.add(user);
+						}
 					}
 				}
 			}
 			log.debug("Found {} user who are exited but have active accounts", exitedActiveUsers.size());
 			log.debug("Found {} user who are leaving in the next {} weeks", futureExitingUser.size(), nextWeeks);
+			log.debug("Found {} active mail addresses on inactive accounts", activeMailAccounts.size());
 			userCache.put(EXITED_ACTIVE_USERS, exitedActiveUsers);
 			userCache.put(NEAR_FUTURE_EXITING, futureExitingUser);
+			userCache.put(ACTIVE_MAIL_ON_INACTIVE_USER, activeMailAccounts);
 
 			log.info("Updated the informations about unmaintained accounts in {}",
 				DateTimeHelper.getDurationString(startTime, LocalDateTime.now(), ChronoUnit.MILLIS));
@@ -132,6 +151,27 @@ public class LdapBusinessServiceImpl implements LdapBusinessService, Initializin
 				connection.close();
 			}
 		}
+	}
+
+	@Scheduled(cron = "${ldap-management.jobs.notifyAboutUnmaintained.cronExpr}")
+	protected void notifyAboutUnmaintained()
+	{
+		if (userCache.size() > 0)
+		{
+			final String[] to = managementConfiguration.getNotifyReceipients().toArray(new String[0]);
+			mailService.sendNotificationOnUnmaintainedAccounts(to, userCache.asMap());
+		}
+	}
+
+	@Override
+	public List<User> getUnmaintainedMailUsers()
+	{
+		List<User> res = userCache.getIfPresent(ACTIVE_MAIL_ON_INACTIVE_USER);
+		if (res == null)
+		{
+			res = Collections.emptyList();
+		}
+		return res;
 	}
 
 	@Override

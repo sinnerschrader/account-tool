@@ -58,7 +58,7 @@ public class AuthorizationTests
 
 		List<GrantedAuthority> userAuthorities = new ArrayList<>();
 		for (String group : Arrays
-			.asList("cad-tes", "cpt-tes", "cpt-set", "cti-set", "cpt-err", "company-users", "company-vpn"))
+			.asList("admin-tes", "team-tes", "team-set", "devs-set", "team-err", "company-users", "company-vpn"))
 		{
 			userAuthorities.add(new SimpleGrantedAuthority(group));
 		}
@@ -81,11 +81,11 @@ public class AuthorizationTests
 		Assert.assertTrue(authorizationService.isUserAdministration(userAdmin));
 		Assert.assertFalse(authorizationService.isUserAdministration(user));
 
-		Assert.assertTrue(authorizationService.isGroupAdmin(user, "cad-tes"));
-		Assert.assertTrue(authorizationService.isGroupAdmin(user, "cpt-tes"));
-		Assert.assertTrue(authorizationService.isGroupAdmin(user, "cti-set"));
-		Assert.assertFalse(authorizationService.isGroupAdmin(user, "cpt-set"));
-		Assert.assertFalse(authorizationService.isGroupAdmin(user, "cpt-err"));
+		Assert.assertTrue(authorizationService.isGroupAdmin(user, "admin-tes"));
+		Assert.assertTrue(authorizationService.isGroupAdmin(user, "team-tes"));
+		Assert.assertTrue(authorizationService.isGroupAdmin(user, "devs-set"));
+		Assert.assertFalse(authorizationService.isGroupAdmin(user, "team-set"));
+		Assert.assertFalse(authorizationService.isGroupAdmin(user, "team-err"));
 	}
 
 }

@@ -14,13 +14,30 @@ public class LdapManagementConfiguration
 
 	private ManagementUser user;
 
-	private List<String> externalUserTypes = null;
-
 	private int leavingUsersInCW = 4;
 
-	public List<String> getExternalUserTypes()
+	private List<String> notifyReceipients;
+
+	private JobsConfiguration jobs;
+
+	public List<String> getNotifyReceipients()
 	{
-		return externalUserTypes;
+		return notifyReceipients;
+	}
+
+	public void setNotifyReceipients(List<String> notifyReceipients)
+	{
+		this.notifyReceipients = notifyReceipients;
+	}
+
+	public JobsConfiguration getJobs()
+	{
+		return jobs;
+	}
+
+	public void setJobs(JobsConfiguration jobs)
+	{
+		this.jobs = jobs;
 	}
 
 	public int getLeavingUsersInCW()
@@ -36,11 +53,6 @@ public class LdapManagementConfiguration
 	public ManagementUser getUser()
 	{
 		return user;
-	}
-
-	public void setExternalUserTypes(List<String> externalUserTypes)
-	{
-		this.externalUserTypes = externalUserTypes;
 	}
 
 	public void setUser(ManagementUser user)
@@ -84,6 +96,8 @@ public class LdapManagementConfiguration
 
 		private JobConfiguration updateUnmaintained;
 
+		private JobConfiguration notifyAboutUnmaintained;
+
 		public boolean isActive()
 		{
 			return active;
@@ -104,6 +118,18 @@ public class LdapManagementConfiguration
 		{
 			this.updateUnmaintained = updateUnmaintained;
 		}
+
+		public JobConfiguration getNotifyAboutUnmaintained()
+		{
+			return notifyAboutUnmaintained;
+		}
+
+		public void setNotifyAboutUnmaintained(
+			JobConfiguration notifyAboutUnmaintained)
+		{
+			this.notifyAboutUnmaintained = notifyAboutUnmaintained;
+		}
+
 	}
 
 	public static class JobConfiguration

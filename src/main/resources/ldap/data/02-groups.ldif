@@ -4128,8 +4128,8 @@ memberUid: wigshi
 # Integration Groups (PosixGroup)
 ############################################################################
 
-dn: cn=cad-cus,ou=groups,dc=example,dc=org
-cn: cad-cus
+dn: cn=admin-cus,ou=groups,dc=example,dc=org
+cn: admin-cus
 objectClass: top
 objectClass: posixGroup
 objectClass: sambaGroupMapping
@@ -4145,8 +4145,8 @@ memberUid: onenic
 memberUid: crakel
 memberUid: reesul
 
-dn: cn=cpt-cus,ou=groups,dc=example,dc=org
-cn: cpt-cus
+dn: cn=team-cus,ou=groups,dc=example,dc=org
+cn: team-cus
 objectClass: top
 objectClass: posixGroup
 objectClass: sambaGroupMapping
@@ -4181,8 +4181,8 @@ memberUid: joaale
 memberUid: goobro
 memberUid: cassho
 
-dn: cn=cti-cus,ou=groups,dc=example,dc=org
-cn: cti-cus
+dn: cn=devs-cus,ou=groups,dc=example,dc=org
+cn: devs-cus
 objectClass: top
 objectClass: posixGroup
 objectClass: sambaGroupMapping
@@ -4203,8 +4203,8 @@ memberUid: shehol
 # Test Customer Groups (PosixGroup)
 ############################################################################
 
-dn: cn=cad-ced,ou=groups,dc=example,dc=org
-cn: cad-ced
+dn: cn=admin-ced,ou=groups,dc=example,dc=org
+cn: admin-ced
 objectClass: top
 objectClass: posixGroup
 objectClass: sambaGroupMapping
@@ -4215,8 +4215,8 @@ displayName: Cedward Admin Group
 description: Group for Admins of "Cedward" Customer
 memberUid: accadm
 
-dn: cn=cpt-ced,ou=groups,dc=example,dc=org
-cn: cpt-ced
+dn: cn=team-ced,ou=groups,dc=example,dc=org
+cn: team-ced
 objectClass: top
 objectClass: posixGroup
 objectClass: sambaGroupMapping
@@ -4227,8 +4227,8 @@ displayName: Cedward Project Team
 description: Group for Project Team of "Cedward" Customer
 memberUid: accadm
 
-dn: cn=cti-ced,ou=groups,dc=example,dc=org
-cn: cti-ced
+dn: cn=devs-ced,ou=groups,dc=example,dc=org
+cn: devs-ced
 objectClass: top
 objectClass: posixGroup
 objectClass: sambaGroupMapping
@@ -4239,8 +4239,8 @@ displayName: Cedward Developer Group
 description: Group of Developers of "Cedward" Customer
 memberUid: accadm
 
-dn: cn=cad-ext,ou=groups,dc=example,dc=org
-cn: cad-ext
+dn: cn=admin-ext,ou=groups,dc=example,dc=org
+cn: admin-ext
 objectClass: top
 objectClass: posixGroup
 objectClass: sambaGroupMapping
@@ -4251,8 +4251,8 @@ displayName: Extro Admin Group
 description: Group for Admins of "Extro" Customer
 memberUid: accadm
 
-dn: cn=cpt-ext,ou=groups,dc=example,dc=org
-cn: cpt-ext
+dn: cn=team-ext,ou=groups,dc=example,dc=org
+cn: team-ext
 objectClass: top
 objectClass: posixGroup
 objectClass: sambaGroupMapping
@@ -4263,8 +4263,8 @@ displayName: Extro Project Team
 description: Group for Project Team of "Extro" Customer
 memberUid: accadm
 
-dn: cn=cti-ext,ou=groups,dc=example,dc=org
-cn: cti-ext
+dn: cn=devs-ext,ou=groups,dc=example,dc=org
+cn: devs-ext
 objectClass: top
 objectClass: posixGroup
 objectClass: sambaGroupMapping
@@ -4275,8 +4275,8 @@ displayName: Extro Developer Group
 description: Group of Developers of "Extro" Customer
 memberUid: accadm
 
-dn: cn=cad-phe,ou=groups,dc=example,dc=org
-cn: cad-phe
+dn: cn=admin-phe,ou=groups,dc=example,dc=org
+cn: admin-phe
 objectClass: top
 objectClass: posixGroup
 objectClass: sambaGroupMapping
@@ -4287,8 +4287,8 @@ displayName: Pheast Admin Group
 description: Group for Admins of "Pheast" Customer
 memberUid: accadm
 
-dn: cn=cpt-phe,ou=groups,dc=example,dc=org
-cn: cpt-phe
+dn: cn=team-phe,ou=groups,dc=example,dc=org
+cn: team-phe
 objectClass: top
 objectClass: posixGroup
 objectClass: sambaGroupMapping
@@ -4299,8 +4299,8 @@ displayName: Pheast Project Team
 description: Group for Project Team of "Pheast" Customer
 memberUid: accadm
 
-dn: cn=cti-phe,ou=groups,dc=example,dc=org
-cn: cti-phe
+dn: cn=devs-phe,ou=groups,dc=example,dc=org
+cn: devs-phe
 objectClass: top
 objectClass: posixGroup
 objectClass: sambaGroupMapping
@@ -4311,8 +4311,8 @@ displayName: Pheast Developer Group
 description: Group of Developers of "Pheast" Customer
 memberUid: accadm
 
-dn: cn=cad-zen,ou=groups,dc=example,dc=org
-cn: cad-zen
+dn: cn=admin-zen,ou=groups,dc=example,dc=org
+cn: admin-zen
 objectClass: top
 objectClass: posixGroup
 objectClass: sambaGroupMapping
@@ -4323,8 +4323,8 @@ displayName: Zensor Admin Group
 description: Group for Admins of "Zensor" Customer
 memberUid: accadm
 
-dn: cn=cpt-zen,ou=groups,dc=example,dc=org
-cn: cpt-zen
+dn: cn=team-zen,ou=groups,dc=example,dc=org
+cn: team-zen
 objectClass: top
 objectClass: posixGroup
 objectClass: sambaGroupMapping
@@ -4335,8 +4335,8 @@ displayName: Zensor Project Team
 description: Group for Project Team of "Zensor" Customer
 memberUid: accadm
 
-dn: cn=cti-zen,ou=groups,dc=example,dc=org
-cn: cti-zen
+dn: cn=devs-zen,ou=groups,dc=example,dc=org
+cn: devs-zen
 objectClass: top
 objectClass: posixGroup
 objectClass: sambaGroupMapping
@@ -4347,8 +4347,8 @@ displayName: Zensor Developer Group
 description: Group of Developers of "Zensor" Customer
 memberUid: accadm
 
-dn: cn=cad-ins,ou=groups,dc=example,dc=org
-cn: cad-ins
+dn: cn=admin-ins,ou=groups,dc=example,dc=org
+cn: admin-ins
 objectClass: top
 objectClass: posixGroup
 objectClass: sambaGroupMapping
@@ -4359,8 +4359,8 @@ displayName: Insuron Admin Group
 description: Group for Admins of "Insuron" Customer
 memberUid: accadm
 
-dn: cn=cpt-ins,ou=groups,dc=example,dc=org
-cn: cpt-ins
+dn: cn=team-ins,ou=groups,dc=example,dc=org
+cn: team-ins
 objectClass: top
 objectClass: posixGroup
 objectClass: sambaGroupMapping
@@ -4371,8 +4371,8 @@ displayName: Insuron Project Team
 description: Group for Project Team of "Insuron" Customer
 memberUid: accadm
 
-dn: cn=cti-ins,ou=groups,dc=example,dc=org
-cn: cti-ins
+dn: cn=devs-ins,ou=groups,dc=example,dc=org
+cn: devs-ins
 objectClass: top
 objectClass: posixGroup
 objectClass: sambaGroupMapping
@@ -4383,8 +4383,8 @@ displayName: Insuron Developer Group
 description: Group of Developers of "Insuron" Customer
 memberUid: accadm
 
-dn: cn=cad-ste,ou=groups,dc=example,dc=org
-cn: cad-ste
+dn: cn=admin-ste,ou=groups,dc=example,dc=org
+cn: admin-ste
 objectClass: top
 objectClass: posixGroup
 objectClass: sambaGroupMapping
@@ -4395,8 +4395,8 @@ displayName: Steelfab Admin Group
 description: Group for Admins of "Steelfab" Customer
 memberUid: accadm
 
-dn: cn=cpt-ste,ou=groups,dc=example,dc=org
-cn: cpt-ste
+dn: cn=team-ste,ou=groups,dc=example,dc=org
+cn: team-ste
 objectClass: top
 objectClass: posixGroup
 objectClass: sambaGroupMapping
@@ -4407,8 +4407,8 @@ displayName: Steelfab Project Team
 description: Group for Project Team of "Steelfab" Customer
 memberUid: accadm
 
-dn: cn=cti-ste,ou=groups,dc=example,dc=org
-cn: cti-ste
+dn: cn=devs-ste,ou=groups,dc=example,dc=org
+cn: devs-ste
 objectClass: top
 objectClass: posixGroup
 objectClass: sambaGroupMapping
@@ -4419,8 +4419,8 @@ displayName: Steelfab Developer Group
 description: Group of Developers of "Steelfab" Customer
 memberUid: accadm
 
-dn: cn=cad-mom,ou=groups,dc=example,dc=org
-cn: cad-mom
+dn: cn=admin-mom,ou=groups,dc=example,dc=org
+cn: admin-mom
 objectClass: top
 objectClass: posixGroup
 objectClass: sambaGroupMapping
@@ -4431,8 +4431,8 @@ displayName: Momentia Admin Group
 description: Group for Admins of "Momentia" Customer
 memberUid: accadm
 
-dn: cn=cpt-mom,ou=groups,dc=example,dc=org
-cn: cpt-mom
+dn: cn=team-mom,ou=groups,dc=example,dc=org
+cn: team-mom
 objectClass: top
 objectClass: posixGroup
 objectClass: sambaGroupMapping
@@ -4443,8 +4443,8 @@ displayName: Momentia Project Team
 description: Group for Project Team of "Momentia" Customer
 memberUid: accadm
 
-dn: cn=cti-mom,ou=groups,dc=example,dc=org
-cn: cti-mom
+dn: cn=devs-mom,ou=groups,dc=example,dc=org
+cn: devs-mom
 objectClass: top
 objectClass: posixGroup
 objectClass: sambaGroupMapping
@@ -4455,8 +4455,8 @@ displayName: Momentia Developer Group
 description: Group of Developers of "Momentia" Customer
 memberUid: accadm
 
-dn: cn=cad-biz,ou=groups,dc=example,dc=org
-cn: cad-biz
+dn: cn=admin-biz,ou=groups,dc=example,dc=org
+cn: admin-biz
 objectClass: top
 objectClass: posixGroup
 objectClass: sambaGroupMapping
@@ -4467,8 +4467,8 @@ displayName: Bizmatic Admin Group
 description: Group for Admins of "Bizmatic" Customer
 memberUid: accadm
 
-dn: cn=cpt-biz,ou=groups,dc=example,dc=org
-cn: cpt-biz
+dn: cn=team-biz,ou=groups,dc=example,dc=org
+cn: team-biz
 objectClass: top
 objectClass: posixGroup
 objectClass: sambaGroupMapping
@@ -4479,8 +4479,8 @@ displayName: Bizmatic Project Team
 description: Group for Project Team of "Bizmatic" Customer
 memberUid: accadm
 
-dn: cn=cti-biz,ou=groups,dc=example,dc=org
-cn: cti-biz
+dn: cn=devs-biz,ou=groups,dc=example,dc=org
+cn: devs-biz
 objectClass: top
 objectClass: posixGroup
 objectClass: sambaGroupMapping
@@ -4491,8 +4491,8 @@ displayName: Bizmatic Developer Group
 description: Group of Developers of "Bizmatic" Customer
 memberUid: accadm
 
-dn: cn=cad-can,ou=groups,dc=example,dc=org
-cn: cad-can
+dn: cn=admin-can,ou=groups,dc=example,dc=org
+cn: admin-can
 objectClass: top
 objectClass: posixGroup
 objectClass: sambaGroupMapping
@@ -4503,8 +4503,8 @@ displayName: Candecor Admin Group
 description: Group for Admins of "Candecor" Customer
 memberUid: accadm
 
-dn: cn=cpt-can,ou=groups,dc=example,dc=org
-cn: cpt-can
+dn: cn=team-can,ou=groups,dc=example,dc=org
+cn: team-can
 objectClass: top
 objectClass: posixGroup
 objectClass: sambaGroupMapping
@@ -4515,8 +4515,8 @@ displayName: Candecor Project Team
 description: Group for Project Team of "Candecor" Customer
 memberUid: accadm
 
-dn: cn=cti-can,ou=groups,dc=example,dc=org
-cn: cti-can
+dn: cn=devs-can,ou=groups,dc=example,dc=org
+cn: devs-can
 objectClass: top
 objectClass: posixGroup
 objectClass: sambaGroupMapping
@@ -4527,8 +4527,8 @@ displayName: Candecor Developer Group
 description: Group of Developers of "Candecor" Customer
 memberUid: accadm
 
-dn: cn=cad-bic,ou=groups,dc=example,dc=org
-cn: cad-bic
+dn: cn=admin-bic,ou=groups,dc=example,dc=org
+cn: admin-bic
 objectClass: top
 objectClass: posixGroup
 objectClass: sambaGroupMapping
@@ -4539,8 +4539,8 @@ displayName: Bicol Admin Group
 description: Group for Admins of "Bicol" Customer
 memberUid: accadm
 
-dn: cn=cpt-bic,ou=groups,dc=example,dc=org
-cn: cpt-bic
+dn: cn=team-bic,ou=groups,dc=example,dc=org
+cn: team-bic
 objectClass: top
 objectClass: posixGroup
 objectClass: sambaGroupMapping
@@ -4551,8 +4551,8 @@ displayName: Bicol Project Team
 description: Group for Project Team of "Bicol" Customer
 memberUid: accadm
 
-dn: cn=cti-bic,ou=groups,dc=example,dc=org
-cn: cti-bic
+dn: cn=devs-bic,ou=groups,dc=example,dc=org
+cn: devs-bic
 objectClass: top
 objectClass: posixGroup
 objectClass: sambaGroupMapping
@@ -4563,8 +4563,8 @@ displayName: Bicol Developer Group
 description: Group of Developers of "Bicol" Customer
 memberUid: accadm
 
-dn: cn=cad-fle,ou=groups,dc=example,dc=org
-cn: cad-fle
+dn: cn=admin-fle,ou=groups,dc=example,dc=org
+cn: admin-fle
 objectClass: top
 objectClass: posixGroup
 objectClass: sambaGroupMapping
@@ -4575,8 +4575,8 @@ displayName: Flexigen Admin Group
 description: Group for Admins of "Flexigen" Customer
 memberUid: accadm
 
-dn: cn=cpt-fle,ou=groups,dc=example,dc=org
-cn: cpt-fle
+dn: cn=team-fle,ou=groups,dc=example,dc=org
+cn: team-fle
 objectClass: top
 objectClass: posixGroup
 objectClass: sambaGroupMapping
@@ -4587,8 +4587,8 @@ displayName: Flexigen Project Team
 description: Group for Project Team of "Flexigen" Customer
 memberUid: accadm
 
-dn: cn=cti-fle,ou=groups,dc=example,dc=org
-cn: cti-fle
+dn: cn=devs-fle,ou=groups,dc=example,dc=org
+cn: devs-fle
 objectClass: top
 objectClass: posixGroup
 objectClass: sambaGroupMapping
@@ -4599,8 +4599,8 @@ displayName: Flexigen Developer Group
 description: Group of Developers of "Flexigen" Customer
 memberUid: accadm
 
-dn: cn=cad-pro,ou=groups,dc=example,dc=org
-cn: cad-pro
+dn: cn=admin-pro,ou=groups,dc=example,dc=org
+cn: admin-pro
 objectClass: top
 objectClass: posixGroup
 objectClass: sambaGroupMapping
@@ -4611,8 +4611,8 @@ displayName: Prosure Admin Group
 description: Group for Admins of "Prosure" Customer
 memberUid: accadm
 
-dn: cn=cpt-pro,ou=groups,dc=example,dc=org
-cn: cpt-pro
+dn: cn=team-pro,ou=groups,dc=example,dc=org
+cn: team-pro
 objectClass: top
 objectClass: posixGroup
 objectClass: sambaGroupMapping
@@ -4623,8 +4623,8 @@ displayName: Prosure Project Team
 description: Group for Project Team of "Prosure" Customer
 memberUid: accadm
 
-dn: cn=cti-pro,ou=groups,dc=example,dc=org
-cn: cti-pro
+dn: cn=devs-pro,ou=groups,dc=example,dc=org
+cn: devs-pro
 objectClass: top
 objectClass: posixGroup
 objectClass: sambaGroupMapping
@@ -4635,8 +4635,8 @@ displayName: Prosure Developer Group
 description: Group of Developers of "Prosure" Customer
 memberUid: accadm
 
-dn: cn=cad-son,ou=groups,dc=example,dc=org
-cn: cad-son
+dn: cn=admin-son,ou=groups,dc=example,dc=org
+cn: admin-son
 objectClass: top
 objectClass: posixGroup
 objectClass: sambaGroupMapping
@@ -4647,8 +4647,8 @@ displayName: Songlines Admin Group
 description: Group for Admins of "Songlines" Customer
 memberUid: accadm
 
-dn: cn=cpt-son,ou=groups,dc=example,dc=org
-cn: cpt-son
+dn: cn=team-son,ou=groups,dc=example,dc=org
+cn: team-son
 objectClass: top
 objectClass: posixGroup
 objectClass: sambaGroupMapping
@@ -4659,8 +4659,8 @@ displayName: Songlines Project Team
 description: Group for Project Team of "Songlines" Customer
 memberUid: accadm
 
-dn: cn=cti-son,ou=groups,dc=example,dc=org
-cn: cti-son
+dn: cn=devs-son,ou=groups,dc=example,dc=org
+cn: devs-son
 objectClass: top
 objectClass: posixGroup
 objectClass: sambaGroupMapping
@@ -4671,8 +4671,8 @@ displayName: Songlines Developer Group
 description: Group of Developers of "Songlines" Customer
 memberUid: accadm
 
-dn: cn=cad-qui,ou=groups,dc=example,dc=org
-cn: cad-qui
+dn: cn=admin-qui,ou=groups,dc=example,dc=org
+cn: admin-qui
 objectClass: top
 objectClass: posixGroup
 objectClass: sambaGroupMapping
@@ -4683,8 +4683,8 @@ displayName: Quinex Admin Group
 description: Group for Admins of "Quinex" Customer
 memberUid: accadm
 
-dn: cn=cpt-qui,ou=groups,dc=example,dc=org
-cn: cpt-qui
+dn: cn=team-qui,ou=groups,dc=example,dc=org
+cn: team-qui
 objectClass: top
 objectClass: posixGroup
 objectClass: sambaGroupMapping
@@ -4695,8 +4695,8 @@ displayName: Quinex Project Team
 description: Group for Project Team of "Quinex" Customer
 memberUid: accadm
 
-dn: cn=cti-qui,ou=groups,dc=example,dc=org
-cn: cti-qui
+dn: cn=devs-qui,ou=groups,dc=example,dc=org
+cn: devs-qui
 objectClass: top
 objectClass: posixGroup
 objectClass: sambaGroupMapping
@@ -4707,8 +4707,8 @@ displayName: Quinex Developer Group
 description: Group of Developers of "Quinex" Customer
 memberUid: accadm
 
-dn: cn=cad-gal,ou=groups,dc=example,dc=org
-cn: cad-gal
+dn: cn=admin-gal,ou=groups,dc=example,dc=org
+cn: admin-gal
 objectClass: top
 objectClass: posixGroup
 objectClass: sambaGroupMapping
@@ -4719,8 +4719,8 @@ displayName: Gallaxia Admin Group
 description: Group for Admins of "Gallaxia" Customer
 memberUid: accadm
 
-dn: cn=cpt-gal,ou=groups,dc=example,dc=org
-cn: cpt-gal
+dn: cn=team-gal,ou=groups,dc=example,dc=org
+cn: team-gal
 objectClass: top
 objectClass: posixGroup
 objectClass: sambaGroupMapping
@@ -4731,8 +4731,8 @@ displayName: Gallaxia Project Team
 description: Group for Project Team of "Gallaxia" Customer
 memberUid: accadm
 
-dn: cn=cti-gal,ou=groups,dc=example,dc=org
-cn: cti-gal
+dn: cn=devs-gal,ou=groups,dc=example,dc=org
+cn: devs-gal
 objectClass: top
 objectClass: posixGroup
 objectClass: sambaGroupMapping
@@ -4743,8 +4743,8 @@ displayName: Gallaxia Developer Group
 description: Group of Developers of "Gallaxia" Customer
 memberUid: accadm
 
-dn: cn=cad-dar,ou=groups,dc=example,dc=org
-cn: cad-dar
+dn: cn=admin-dar,ou=groups,dc=example,dc=org
+cn: admin-dar
 objectClass: top
 objectClass: posixGroup
 objectClass: sambaGroupMapping
@@ -4755,8 +4755,8 @@ displayName: Darwinium Admin Group
 description: Group for Admins of "Darwinium" Customer
 memberUid: accadm
 
-dn: cn=cpt-dar,ou=groups,dc=example,dc=org
-cn: cpt-dar
+dn: cn=team-dar,ou=groups,dc=example,dc=org
+cn: team-dar
 objectClass: top
 objectClass: posixGroup
 objectClass: sambaGroupMapping
@@ -4767,8 +4767,8 @@ displayName: Darwinium Project Team
 description: Group for Project Team of "Darwinium" Customer
 memberUid: accadm
 
-dn: cn=cti-dar,ou=groups,dc=example,dc=org
-cn: cti-dar
+dn: cn=devs-dar,ou=groups,dc=example,dc=org
+cn: devs-dar
 objectClass: top
 objectClass: posixGroup
 objectClass: sambaGroupMapping
@@ -4779,8 +4779,8 @@ displayName: Darwinium Developer Group
 description: Group of Developers of "Darwinium" Customer
 memberUid: accadm
 
-dn: cn=cad-pyr,ou=groups,dc=example,dc=org
-cn: cad-pyr
+dn: cn=admin-pyr,ou=groups,dc=example,dc=org
+cn: admin-pyr
 objectClass: top
 objectClass: posixGroup
 objectClass: sambaGroupMapping
@@ -4791,8 +4791,8 @@ displayName: Pyramia Admin Group
 description: Group for Admins of "Pyramia" Customer
 memberUid: accadm
 
-dn: cn=cpt-pyr,ou=groups,dc=example,dc=org
-cn: cpt-pyr
+dn: cn=team-pyr,ou=groups,dc=example,dc=org
+cn: team-pyr
 objectClass: top
 objectClass: posixGroup
 objectClass: sambaGroupMapping
@@ -4803,8 +4803,8 @@ displayName: Pyramia Project Team
 description: Group for Project Team of "Pyramia" Customer
 memberUid: accadm
 
-dn: cn=cti-pyr,ou=groups,dc=example,dc=org
-cn: cti-pyr
+dn: cn=devs-pyr,ou=groups,dc=example,dc=org
+cn: devs-pyr
 objectClass: top
 objectClass: posixGroup
 objectClass: sambaGroupMapping
@@ -4815,8 +4815,8 @@ displayName: Pyramia Developer Group
 description: Group of Developers of "Pyramia" Customer
 memberUid: accadm
 
-dn: cn=cad-duo,ou=groups,dc=example,dc=org
-cn: cad-duo
+dn: cn=admin-duo,ou=groups,dc=example,dc=org
+cn: admin-duo
 objectClass: top
 objectClass: posixGroup
 objectClass: sambaGroupMapping
@@ -4827,8 +4827,8 @@ displayName: Duoflex Admin Group
 description: Group for Admins of "Duoflex" Customer
 memberUid: accadm
 
-dn: cn=cpt-duo,ou=groups,dc=example,dc=org
-cn: cpt-duo
+dn: cn=team-duo,ou=groups,dc=example,dc=org
+cn: team-duo
 objectClass: top
 objectClass: posixGroup
 objectClass: sambaGroupMapping
@@ -4839,8 +4839,8 @@ displayName: Duoflex Project Team
 description: Group for Project Team of "Duoflex" Customer
 memberUid: accadm
 
-dn: cn=cti-duo,ou=groups,dc=example,dc=org
-cn: cti-duo
+dn: cn=devs-duo,ou=groups,dc=example,dc=org
+cn: devs-duo
 objectClass: top
 objectClass: posixGroup
 objectClass: sambaGroupMapping
@@ -4851,8 +4851,8 @@ displayName: Duoflex Developer Group
 description: Group of Developers of "Duoflex" Customer
 memberUid: accadm
 
-dn: cn=cad-ram,ou=groups,dc=example,dc=org
-cn: cad-ram
+dn: cn=admin-ram,ou=groups,dc=example,dc=org
+cn: admin-ram
 objectClass: top
 objectClass: posixGroup
 objectClass: sambaGroupMapping
@@ -4863,8 +4863,8 @@ displayName: Rameon Admin Group
 description: Group for Admins of "Rameon" Customer
 memberUid: accadm
 
-dn: cn=cpt-ram,ou=groups,dc=example,dc=org
-cn: cpt-ram
+dn: cn=team-ram,ou=groups,dc=example,dc=org
+cn: team-ram
 objectClass: top
 objectClass: posixGroup
 objectClass: sambaGroupMapping
@@ -4875,8 +4875,8 @@ displayName: Rameon Project Team
 description: Group for Project Team of "Rameon" Customer
 memberUid: accadm
 
-dn: cn=cti-ram,ou=groups,dc=example,dc=org
-cn: cti-ram
+dn: cn=devs-ram,ou=groups,dc=example,dc=org
+cn: devs-ram
 objectClass: top
 objectClass: posixGroup
 objectClass: sambaGroupMapping
@@ -4887,8 +4887,8 @@ displayName: Rameon Developer Group
 description: Group of Developers of "Rameon" Customer
 memberUid: accadm
 
-dn: cn=cad-gee,ou=groups,dc=example,dc=org
-cn: cad-gee
+dn: cn=admin-gee,ou=groups,dc=example,dc=org
+cn: admin-gee
 objectClass: top
 objectClass: posixGroup
 objectClass: sambaGroupMapping
@@ -4899,8 +4899,8 @@ displayName: Geekus Admin Group
 description: Group for Admins of "Geekus" Customer
 memberUid: accadm
 
-dn: cn=cpt-gee,ou=groups,dc=example,dc=org
-cn: cpt-gee
+dn: cn=team-gee,ou=groups,dc=example,dc=org
+cn: team-gee
 objectClass: top
 objectClass: posixGroup
 objectClass: sambaGroupMapping
@@ -4911,8 +4911,8 @@ displayName: Geekus Project Team
 description: Group for Project Team of "Geekus" Customer
 memberUid: accadm
 
-dn: cn=cti-gee,ou=groups,dc=example,dc=org
-cn: cti-gee
+dn: cn=devs-gee,ou=groups,dc=example,dc=org
+cn: devs-gee
 objectClass: top
 objectClass: posixGroup
 objectClass: sambaGroupMapping

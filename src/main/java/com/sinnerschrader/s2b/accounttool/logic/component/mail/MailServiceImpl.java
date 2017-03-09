@@ -45,6 +45,10 @@ public class MailServiceImpl implements MailService
 
 	private static final String TEMPLATE_REQUESTACCESS_BODY_URL = "mail/requestAccessToGroup.body.txt";
 
+	private static final String TEMPLATE_NOTIFY_UNMAINTAINED_USERS_SUBJECT_URL = "mail/unmaintainedUsers.subject.txt";
+
+	private static final String TEMPLATE_NOTIFY_UNMAINTAINED_USERS_BODY_URL = "mail/unmaintainedUsers.body.txt";
+
 	@Autowired
 	private PebbleEngine pebbleEngine;
 
@@ -90,6 +94,19 @@ public class MailServiceImpl implements MailService
 		return sendMail(receipients, TEMPLATE_REQUESTACCESS_SUBJECT_URL, TEMPLATE_REQUESTACCESS_BODY_URL, params);
 	}
 
+	@Override
+	public boolean sendNotificationOnUnmaintainedAccounts(String[] receipients,
+		Map<String, List<User>> unmaintainedUsers)
+	{
+		final Map<String, Object> params = new LinkedHashMap<>();
+		params.putAll(unmaintainedUsers);
+		params.put("publicDomain", publicDomain);
+		return sendMail(receipients,
+			TEMPLATE_NOTIFY_UNMAINTAINED_USERS_SUBJECT_URL,
+			TEMPLATE_NOTIFY_UNMAINTAINED_USERS_BODY_URL,
+			params);
+	}
+
 	private String loadTemplate(String templateUrl, Map<String, Object> params) throws IOException
 	{
 		try
@@ -109,6 +126,17 @@ public class MailServiceImpl implements MailService
 	private boolean sendMail(List<User> receipients, String subjectTemplateUrl, String bodyTemplateUrl,
 		Map<String, Object> templateModels)
 	{
+		final String[] to = receipients.stream()
+			.map(User::getMail)
+			.filter(StringUtils::isNotBlank)
+			.collect(Collectors.toList())
+			.toArray(new String[0]);
+		return sendMail(to, subjectTemplateUrl, bodyTemplateUrl, templateModels);
+	}
+
+	private boolean sendMail(String[] to, String subjectTemplateUrl, String bodyTemplateUrl,
+		Map<String, Object> templateModels)
+	{
 		final String messageID = UUID.randomUUID().toString();
 		Map<String, Object> context = new LinkedHashMap<>(templateModels);
 		context.put("messageID", messageID);
@@ -118,11 +146,6 @@ public class MailServiceImpl implements MailService
 		{
 			final String subject = loadTemplate(subjectTemplateUrl, context);
 			final String body = loadTemplate(bodyTemplateUrl, context);
-			String[] to = receipients.stream()
-				.map(User::getMail)
-				.filter(StringUtils::isNotBlank)
-				.collect(Collectors.toList())
-				.toArray(new String[0]);
 
 			if (log.isDebugEnabled() || logOnly)
 			{

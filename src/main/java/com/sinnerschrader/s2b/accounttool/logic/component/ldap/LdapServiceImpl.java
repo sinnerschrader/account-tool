@@ -444,7 +444,7 @@ public class LdapServiceImpl implements LdapService
 		List<Modification> changes = new ArrayList<>();
 
 		changes.add(new Modification(ModificationType.REPLACE, "szzStatus", "active"));
-		changes.add(new Modification(ModificationType.REPLACE, "szzLastPassStatus", "inactive"));
+		changes.add(new Modification(ModificationType.REPLACE, "szzMailStatus", "active"));
 		if (StringUtils.equalsAny(ldapUser.getTitle(), freelancerValues) ||
 			StringUtils.equalsAny(ldapUser.getDescription(), freelancerValues))
 		{
@@ -486,7 +486,7 @@ public class LdapServiceImpl implements LdapService
 
 		List<Modification> changes = new ArrayList<>();
 		changes.add(new Modification(ModificationType.REPLACE, "szzStatus", "inactive"));
-		changes.add(new Modification(ModificationType.REPLACE, "szzLastPassStatus", "inactive"));
+		changes.add(new Modification(ModificationType.REPLACE, "szzMailStatus", "inactive"));
 		try
 		{
 			LDAPResult result = connection.modify(ldapUser.getDn(), changes);
