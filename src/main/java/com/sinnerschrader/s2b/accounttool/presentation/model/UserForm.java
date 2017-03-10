@@ -124,51 +124,17 @@ public class UserForm implements Serializable
 		this.mailStatus = user.getSzzMailStatus().name();
 		this.email = user.getMail();
 
-		try
+		if (user.getBirthDate() != null)
 		{
-			this.birthDate =
-				DateTimeHelper
-					.toDateString(LocalDate.of(1972, user.getSzzBirthMonth(), user.getSzzBirthDay()), BIRTHDAY_PATTERN);
+			this.birthDate = DateTimeHelper.toDateString(user.getBirthDate(), BIRTHDAY_PATTERN);
 		}
-		catch (Exception e)
+		if (user.getEmployeeEntryDate() != null)
 		{
-			if (user.getSzzBirthDay() != null && user.getSzzBirthMonth() != null)
-			{
-				this.birthDate = StringUtils.leftPad(user.getSzzBirthDay().toString(), 2, "0") + "." +
-					StringUtils.leftPad(user.getSzzBirthMonth().toString(), 2, "0");
-			}
+			this.entryDate = DateTimeHelper.toDateString(user.getEmployeeEntryDate(), DATE_PATTERN);
 		}
-		try
+		if (user.getEmployeeExitDate() != null)
 		{
-			this.entryDate =
-				DateTimeHelper
-					.toDateString(LocalDate.of(user.getSzzEntryYear(), user.getSzzEntryMonth(), user.getSzzEntryDay()),
-						DATE_PATTERN);
-		}
-		catch (Exception e)
-		{
-			if (user.getSzzEntryDay() != null && user.getSzzEntryMonth() != null && user.getSzzEntryYear() != null)
-			{
-				this.entryDate = StringUtils.leftPad(user.getSzzEntryDay().toString(), 2, "0") + "." +
-					StringUtils.leftPad(user.getSzzEntryMonth().toString(), 2, "0") + "." +
-					StringUtils.leftPad(user.getSzzEntryYear().toString(), 4, "0");
-			}
-		}
-		try
-		{
-			this.exitDate =
-				DateTimeHelper
-					.toDateString(LocalDate.of(user.getSzzExitYear(), user.getSzzExitMonth(), user.getSzzExitDay()),
-						DATE_PATTERN);
-		}
-		catch (Exception e)
-		{
-			if (user.getSzzExitDay() != null && user.getSzzExitMonth() != null && user.getSzzExitYear() != null)
-			{
-				this.exitDate = StringUtils.leftPad(user.getSzzExitDay().toString(), 2, "0") + "." +
-					StringUtils.leftPad(user.getSzzExitMonth().toString(), 2, "0") + "." +
-					StringUtils.leftPad(user.getSzzExitYear().toString(), 4, "0");
-			}
+			this.entryDate = DateTimeHelper.toDateString(user.getEmployeeExitDate(), DATE_PATTERN);
 		}
 	}
 
@@ -210,8 +176,7 @@ public class UserForm implements Serializable
 			lastName,
 			null,
 			null,
-			(birth != null) ? birth.getMonthValue() : null,
-			(birth != null) ? birth.getDayOfMonth() : null,
+			birth,
 			null,
 			null,
 			null,
@@ -219,6 +184,8 @@ public class UserForm implements Serializable
 			User.State.fromString(status),
 			User.State.fromString(mailStatus),
 			null,
+			entry,
+			exit,
 			team,
 			type,
 			telephoneNumber,
@@ -226,12 +193,6 @@ public class UserForm implements Serializable
 			employeeNumber,
 			title,
 			location,
-			entry.getDayOfMonth(),
-			entry.getMonthValue(),
-			entry.getYear(),
-			exit.getDayOfMonth(),
-			exit.getMonthValue(),
-			exit.getYear(),
 			null,
 			ldapConfiguration.getCompaniesAsMap().get(company),
 			company

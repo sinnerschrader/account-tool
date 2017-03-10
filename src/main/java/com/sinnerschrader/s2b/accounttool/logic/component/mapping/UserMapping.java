@@ -4,19 +4,25 @@ import com.sinnerschrader.s2b.accounttool.config.ldap.LdapConfiguration;
 import com.sinnerschrader.s2b.accounttool.logic.entity.User;
 import com.unboundid.ldap.sdk.SearchResultEntry;
 
+import java.time.DateTimeException;
+import java.time.LocalDate;
 import java.util.Arrays;
 import java.util.Map;
 
 import org.apache.commons.lang3.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.CollectionUtils;
 
 
 /**
- *
+ * Converter for Users from LDAP to Application
  */
 public class UserMapping implements ModelMaping<User>
 {
+
+	private static final Logger log = LoggerFactory.getLogger(UserMapping.class);
 
 	@Autowired
 	private LdapConfiguration ldapConfiguration;
@@ -28,9 +34,21 @@ public class UserMapping implements ModelMaping<User>
 			return null;
 
 		Map.Entry<String, String> company = getCompany(entry.getDN(), entry.getAttributeValue("o"));
+		final String dn = entry.getDN();
+		final LocalDate birthDate = parseDate(dn, false, 1972,
+			entry.getAttributeValueAsInteger("szzBirthMonth"),
+			entry.getAttributeValueAsInteger("szzBirthDay"));
+		final LocalDate entryDate = parseDate(dn, true,
+			entry.getAttributeValueAsInteger("szzEntryYear"),
+			entry.getAttributeValueAsInteger("szzEntryMonth"),
+			entry.getAttributeValueAsInteger("szzEntryDay"));
+		final LocalDate exitDate = parseDate(dn, true,
+			entry.getAttributeValueAsInteger("szzExitYear"),
+			entry.getAttributeValueAsInteger("szzExitMonth"),
+			entry.getAttributeValueAsInteger("szzExitDay"));
 
 		return new User(
-			entry.getDN(),
+			dn,
 			entry.getAttributeValue("uid"),
 			entry.getAttributeValueAsInteger("uidNumber"),
 			entry.getAttributeValueAsInteger("gidNumber"),
@@ -41,8 +59,7 @@ public class UserMapping implements ModelMaping<User>
 			entry.getAttributeValue("sn"),
 			entry.getAttributeValue("homeDirectory"),
 			entry.getAttributeValue("loginShell"),
-			entry.getAttributeValueAsInteger("szzBirthMonth"),
-			entry.getAttributeValueAsInteger("szzBirthDay"),
+			birthDate,
 			entry.getAttributeValue("sambaSID"),
 			entry.getAttributeValue("sambaPasswordHistory"),
 			entry.getAttributeValue("sambaAcctFlags"),
@@ -50,6 +67,8 @@ public class UserMapping implements ModelMaping<User>
 			User.State.fromString(entry.getAttributeValue("szzStatus")),
 			User.State.fromString(entry.getAttributeValue("szzMailStatus")),
 			entry.getAttributeValueAsLong("sambaPwdLastSet"),
+			entryDate,
+			exitDate,
 			entry.getAttributeValue("ou"),
 			entry.getAttributeValue("description"),
 			entry.getAttributeValue("telephoneNumber"),
@@ -57,12 +76,6 @@ public class UserMapping implements ModelMaping<User>
 			entry.getAttributeValue("employeeNumber"),
 			entry.getAttributeValue("title"),
 			entry.getAttributeValue("l"),
-			entry.getAttributeValueAsInteger("szzEntryDay"),
-			entry.getAttributeValueAsInteger("szzEntryMonth"),
-			entry.getAttributeValueAsInteger("szzEntryYear"),
-			entry.getAttributeValueAsInteger("szzExitDay"),
-			entry.getAttributeValueAsInteger("szzExitMonth"),
-			entry.getAttributeValueAsInteger("szzExitYear"),
 			entry.getAttributeValue("szzPublicKey"),
 			company.getValue(),
 			company.getKey()
@@ -79,6 +92,26 @@ public class UserMapping implements ModelMaping<User>
 			}
 		}
 		return extractCompanyFromDn(dn);
+	}
+
+	private LocalDate parseDate(String dn, boolean required, Integer year, Integer month, Integer day)
+	{
+		try
+		{
+			return LocalDate.of(year, month, day);
+		}
+		catch (DateTimeException dte)
+		{
+			log.error("Could not parse date on account " + dn, dte);
+		}
+		catch (Exception e)
+		{
+			if (required)
+			{
+				log.error("Date seems to be uncomplete on account " + dn, e);
+			}
+		}
+		return null;
 	}
 
 	@Deprecated

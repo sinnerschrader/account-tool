@@ -15,7 +15,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 
 /**
- *
+ * Converter for Groups from LDAP to Application
  */
 public class GroupMapping implements ModelMaping<Group>
 {

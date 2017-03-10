@@ -619,15 +619,15 @@ public class LdapServiceImpl implements LdapService
 			}
 
 			// Birthday with Day and Month
-			if (user.getSzzBirthDay() != null && user.getSzzBirthMonth() != null)
+			if (user.getBirthDate() != null)
 			{
-				LocalDate birth = user.getSzzBirthDate();
+				LocalDate birth = user.getBirthDate();
 				attributes.add(new Attribute("szzBirthDay", String.valueOf(birth.getDayOfMonth())));
 				attributes.add(new Attribute("szzBirthMonth", String.valueOf(birth.getMonthValue())));
 			}
 
 			// Entry Date
-			LocalDate entry = user.getSzzEntryDate();
+			LocalDate entry = user.getEmployeeEntryDate();
 			if (entry == null)
 			{
 				throw new BusinessException("Entry could not be null", "user.entry.required");
@@ -637,7 +637,7 @@ public class LdapServiceImpl implements LdapService
 			attributes.add(new Attribute("szzEntryYear", String.valueOf(entry.getYear())));
 
 			// Exit Date
-			LocalDate exit = user.getSzzExitDate();
+			LocalDate exit = user.getEmployeeExitDate();
 			if (exit == null)
 			{
 				throw new BusinessException("Exit could not be null", "user.exit.required");
@@ -897,28 +897,23 @@ public class LdapServiceImpl implements LdapService
 			}
 
 			// Birthday with Day and Month
-			LocalDate birth = user.getSzzBirthDate();
-			if (birth != null &&
-				(isChanged(birth.getDayOfMonth(), ldapUser.getSzzBirthDay()) ||
-					isChanged(birth.getMonthValue(), ldapUser.getSzzBirthMonth())))
+			LocalDate birth = user.getBirthDate();
+			if (birth != null && isChanged(birth, ldapUser.getBirthDate()))
 			{
 				changes.add(new Modification(ModificationType.REPLACE,
 					"szzBirthDay", String.valueOf(birth.getDayOfMonth())));
 				changes.add(new Modification(ModificationType.REPLACE,
 					"szzBirthMonth", String.valueOf(birth.getMonthValue())));
 			}
-			else if (birth == null && ldapUser.getSzzBirthDay() != null)
+			else if (birth == null && ldapUser.getBirthDate() != null)
 			{
 				changes.add(new Modification(ModificationType.DELETE, "szzBirthDay"));
 				changes.add(new Modification(ModificationType.DELETE, "szzBirthMonth"));
 			}
 
 			// Entry Date
-			LocalDate entry = user.getSzzEntryDate();
-			if (entry != null &&
-				(isChanged(entry.getDayOfMonth(), ldapUser.getSzzEntryDay()) ||
-					isChanged(entry.getMonthValue(), ldapUser.getSzzEntryMonth()) ||
-					isChanged(entry.getYear(), ldapUser.getSzzEntryYear())))
+			LocalDate entry = user.getEmployeeEntryDate();
+			if (entry != null && isChanged(entry, ldapUser.getEmployeeEntryDate()))
 			{
 				changes.add(new Modification(ModificationType.REPLACE,
 					"szzEntryDay", String.valueOf(entry.getDayOfMonth())));
@@ -929,11 +924,8 @@ public class LdapServiceImpl implements LdapService
 			}
 
 			// Exit Date
-			LocalDate exit = user.getSzzExitDate();
-			if (exit != null &&
-				(isChanged(exit.getDayOfMonth(), ldapUser.getSzzExitDay()) ||
-					isChanged(exit.getMonthValue(), ldapUser.getSzzExitMonth()) ||
-					isChanged(exit.getYear(), ldapUser.getSzzExitYear())))
+			LocalDate exit = user.getEmployeeExitDate();
+			if (exit != null && isChanged(exit, ldapUser.getEmployeeExitDate()))
 			{
 				changes.add(new Modification(ModificationType.REPLACE,
 					"szzExitDay", String.valueOf(exit.getDayOfMonth())));

@@ -7,6 +7,7 @@ import com.sinnerschrader.s2b.accounttool.logic.entity.User;
 import com.sinnerschrader.s2b.accounttool.logic.exception.BusinessException;
 import com.unboundid.ldap.sdk.LDAPConnection;
 
+import java.time.LocalDate;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -79,11 +80,9 @@ public class LdapServiceTests
 		List<GrantedAuthority> grantedAuthorities = groups.stream()
 			.map(group -> new SimpleGrantedAuthority(group.getCn()))
 			.collect(Collectors.toList());
-		LdapUserDetails currentUser =
-			new LdapUserDetails(user.getDn(), user.getUid(), user.getDisplayName(),
-				ldapUserPassword, ldapUserCompany, grantedAuthorities, false, true);
 
-		this.currentUser = currentUser;
+		this.currentUser = new LdapUserDetails(user.getDn(), user.getUid(), user.getDisplayName(),
+			ldapUserPassword, ldapUserCompany, grantedAuthorities, false, true);
 
 		connection.close();
 	}
@@ -178,8 +177,7 @@ public class LdapServiceTests
 			lastName,
 			null,
 			null,
-			7,
-			1,
+			LocalDate.of(1972, 7, 1),
 			null,
 			null,
 			null,
@@ -187,6 +185,8 @@ public class LdapServiceTests
 			User.State.active,
 			User.State.active,
 			null,
+			LocalDate.of(1990, 1, 1),
+			LocalDate.of(2100, 12, 31),
 			"Team Instinct",
 			"Imaginary Employee",
 			"",
@@ -194,12 +194,6 @@ public class LdapServiceTests
 			employeeNumber,
 			"Not a real Person",
 			"Hamburg",
-			1,
-			1,
-			1990,
-			31,
-			12,
-			2100,
 			null,
 			"Example - Company 2",
 			"e1c2"
