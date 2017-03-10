@@ -426,13 +426,6 @@
 									<newVersion>${project.version}${version.phase}-${git.commit.id.abbrev}</newVersion>
 								</configuration>
 							</execution>
-							<execution>
-								<id>version-revert</id>
-								<phase>deploy</phase>
-								<goals>
-									<goal>revert</goal>
-								</goals>
-							</execution>
 						</executions>
 					</plugin>
 				</plugins>
