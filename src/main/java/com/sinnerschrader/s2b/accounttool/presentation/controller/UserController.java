@@ -204,6 +204,7 @@ public class UserController
 				{
 					message = "user.activated";
 					ldapService.activate(connection, user);
+					ldapBusinessService.addDefaultGroups(user);
 					log.info("{} activated the user {} right now", details.getUid(), user.getUid());
 					logService.event("logging.logstash.event.user.activate",
 						"success", details.getUid(), user.getUid());
@@ -212,6 +213,7 @@ public class UserController
 				{
 					message = "user.deactivated";
 					ldapService.deactivate(connection, user);
+					ldapBusinessService.delDefaulGroups(user);
 					log.info("{} deactivated the user {} right now", details.getUid(), user.getUid());
 					logService.event("logging.logstash.event.user.deactivate",
 						"success", details.getUid(), user.getUid());
@@ -276,6 +278,7 @@ public class UserController
 		{
 			User newUser = ldapService.insert(connection, userForm.createUserEntityFromForm(ldapConfiguration));
 			String password = ldapService.resetPassword(connection, newUser);
+			ldapBusinessService.addDefaultGroups(newUser);
 			globalMessageFactory.store(request,
 				globalMessageFactory.createInfo("user.create.success", newUser.getUid(), password));
 			log.info("{} created a new account with uid {}", currentUser.getUid(), newUser.getUid());

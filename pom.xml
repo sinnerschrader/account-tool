@@ -370,7 +370,7 @@
 		<profile>
 			<id>release</id>
 			<properties>
-				<!-- Remove suffix to perform a clean version number -->
+				<!-- Remove suffix to perform a clean semver version -->
 				<version.phase></version.phase>
 			</properties>
 			<build>
@@ -413,6 +413,9 @@
 						</executions>
 					</plugin>
 					<plugin>
+						<!-- Used for proper versioning on all areas. 					-->
+						<!-- CI: .travis.yml reverts this on manually before release 	-->
+						<!-- Searching for a better solution 							-->
 						<groupId>org.codehaus.mojo</groupId>
 						<artifactId>versions-maven-plugin</artifactId>
 						<executions>

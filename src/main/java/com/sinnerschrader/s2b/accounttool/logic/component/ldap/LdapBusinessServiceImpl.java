@@ -24,13 +24,11 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
-import org.springframework.stereotype.Component;
 
 
 /**
  *
  */
-@Component
 public class LdapBusinessServiceImpl implements LdapBusinessService, InitializingBean
 {
 
@@ -205,13 +203,13 @@ public class LdapBusinessServiceImpl implements LdapBusinessService, Initializin
 	@Override
 	public void addDefaultGroups(User user)
 	{
-
+		log.warn("Add user to default groups is currently not implemented");
 	}
 
 	@Override
 	public void delDefaulGroups(User user)
 	{
-
+		log.warn("Remove user from default groups is currently not implemented");
 	}
 
 }
