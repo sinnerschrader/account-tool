@@ -49,9 +49,9 @@ public class MailServiceImpl implements MailService
 
 	private static final String TEMPLATE_NOTIFY_UNMAINTAINED_USERS_BODY_URL = "mail/unmaintainedUsers.body.txt";
 
-  private static final String TEMPLATE_ACCOUNTCHANGE_SUBJECT_URL = "mail/accountChange.subject.txt";
+	private static final String TEMPLATE_ACCOUNTCHANGE_SUBJECT_URL = "mail/accountChange.subject.txt";
 
-  private static final String TEMPLATE_ACCOUNTCHANGE_BODY_URL = "mail/accountChange.body.txt";
+	private static final String TEMPLATE_ACCOUNTCHANGE_BODY_URL = "mail/accountChange.body.txt";
 
 	@Autowired
 	private PebbleEngine pebbleEngine;
@@ -74,15 +74,15 @@ public class MailServiceImpl implements MailService
 	@Value("${spring.mail.logOnly}")
 	private boolean logOnly;
 
-  public boolean sendMailForAccountChange(User currentUser, String action)
-  {
+	public boolean sendMailForAccountChange(User currentUser, String action)
+	{
 		final Map<String, Object> params = new LinkedHashMap<>();
 		params.put("profile", currentUser);
 		params.put("action", action);
-    params.put("publicDomain", publicDomain);
-    return sendMail(Collections.singletonList(currentUser),
+		params.put("publicDomain", publicDomain);
+		return sendMail(Collections.singletonList(currentUser),
 			TEMPLATE_ACCOUNTCHANGE_SUBJECT_URL, TEMPLATE_ACCOUNTCHANGE_BODY_URL, params);
-  }
+	}
 
 	public boolean sendMailForPasswordReset(LdapUserDetails currentUser, User user, String newPassword)
 	{

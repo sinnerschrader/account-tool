@@ -46,8 +46,8 @@ public class ProfileController
 	@Autowired
 	private LdapService ldapService;
 
-  @Autowired
-  private MailService mailService;
+	@Autowired
+	private MailService mailService;
 
 	@Resource(name = "changeProfileFormValidator")
 	private ChangeProfileFormValidator changeProfileFormValidator;
@@ -97,7 +97,7 @@ public class ProfileController
 				String state = res ? "sucess" : "failure";
 				log.info("{} changed his/her password", details.getUid());
 				logService.event("logging.logstash.event.password-change", state, details.getUid());
-        mailService.sendMailForAccountChange(ldapUser, "passwordChanged");
+				mailService.sendMailForAccountChange(ldapUser, "passwordChanged");
 			}
 			else
 			{
@@ -105,10 +105,10 @@ public class ProfileController
 				{
 					ldapService.update(connection, updatedUser);
 					log.info("{} updated his/her account informations", details.getUid());
-          if (form.isPublicKeyChange()) 
-          {
-            mailService.sendMailForAccountChange(ldapUser, "sshKeyUpdated");
-          }
+					if (form.isPublicKeyChange())
+					{
+						mailService.sendMailForAccountChange(ldapUser, "sshKeyUpdated");
+					}
 				}
 				catch (BusinessException be)
 				{
