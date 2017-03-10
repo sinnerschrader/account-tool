@@ -160,7 +160,7 @@
 			<tbody>
 				<tr>
 					<td class="mdl-data-table__cell--non-numeric s2act-data-table__cell--header">Entry Date</td>
-					<td colspan="2" class="mdl-data-table__cell--non-numeric s2act-data-table__cell--value">{{ user.szzEntryDay | numberformat("00") }}.{{ user.szzEntryMonth | numberformat("00")  }}.{{ user.szzEntryYear | numberformat("0000")  }}</td>
+					<td colspan="2" class="mdl-data-table__cell--non-numeric s2act-data-table__cell--value">{{ user.employeeEntryDate.dayOfMonth | numberformat("00") }}.{{ user.employeeEntryDate.monthValue | numberformat("00")  }}.{{ user.employeeEntryDate.year | numberformat("0000")  }}</td>
 				</tr>
 				<tr>
 					<td class="mdl-data-table__cell--non-numeric s2act-data-table__cell--header">Title</td>

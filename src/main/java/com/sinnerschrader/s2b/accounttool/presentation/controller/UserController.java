@@ -160,9 +160,9 @@ public class UserController
 		authorizationService.ensureUserAdministration(details);
 
 		// half security check, if readonly field was manipulated
-		if (StringUtils.equals(userForm.getUid(), userId))
+		if (!StringUtils.equals(userForm.getUid(), userId))
 		{
-			userForm.setUid(userId);
+			throw new IllegalArgumentException("Form submit was modified");
 		}
 
 		userFormValidator.validate(userForm, bindingResult);

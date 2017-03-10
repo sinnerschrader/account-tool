@@ -111,7 +111,7 @@ public class LdapBusinessServiceImpl implements LdapBusinessService, Initializin
 				{
 					for (User user : users)
 					{
-						LocalDate exitDate = user.getSzzExitDate();
+						LocalDate exitDate = user.getEmployeeExitDate();
 						if (exitDate != null && user.getSzzStatus() == User.State.active)
 						{
 							if (exitDate.isBefore(today))
@@ -156,6 +156,12 @@ public class LdapBusinessServiceImpl implements LdapBusinessService, Initializin
 	@Scheduled(cron = "${ldap-management.jobs.notifyAboutUnmaintained.cronExpr}")
 	protected void notifyAboutUnmaintained()
 	{
+		if (!managementConfiguration.getJobs().getNotifyAboutUnmaintained().isActive()
+			|| !managementConfiguration.getJobs().isActive())
+		{
+			return;
+		}
+
 		if (userCache.size() > 0)
 		{
 			final String[] to = managementConfiguration.getNotifyReceipients().toArray(new String[0]);
