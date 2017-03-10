@@ -29,20 +29,20 @@ before_script:
 
 script:
   - ./mvnw --batch-mode -s .settings.xml clean
-  - ./mvnw --batch-mode -s .settings.xml -P security org.owasp:dependency-check-maven:update-only
   - ./mvnw --batch-mode -s .settings.xml -P security org.owasp:dependency-check-maven:check
   - ./mvnw --batch-mode -s .settings.xml package
 
 before_deploy:
   - ./mvnw --batch-mode -s .settings.xml -P release clean package
-  - ./mvnw versions:revert
+  - ./mvnw --batch-mode -s .settings.xml -P release versions:revert
 
 deploy:
   provider: packagecloud
   username: ${PACKAGECLOUD_USER}
   token: ${PACKAGECLOUD_TOKEN}
-  repository: "vikgru/account-tool"
+  repository: "account-tool"
   dist: "ubuntu/xenial"
   package_glob: "target/*.deb"
+  skip_cleanup: true
   on:
     branch: master
