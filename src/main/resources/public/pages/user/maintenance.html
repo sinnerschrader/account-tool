@@ -1,104 +1,123 @@
 {% extends "pages/template/authenticated.html" %}
 
 {% block content %}
-<div class="mdl-grid">
-	<div class="mdl-cell mdl-cell--12-col mdl-cell--8-col-tablet mdl-cell--4-col-phone mdl-cell--order-0-phone">
-		<h2 class="s2act-sectionHeadline">
-			<span>User - Maintenance</span>
-		</h2>
-	</div>
-	<div class="mdl-cell mdl-cell--6-col mdl-cell--8-col-tablet mdl-cell--4-col-phone mdl-cell--order-0-phone">
-		<h4 class="s2act-sectionSubHeadline">{{ message('user.management.leaving', (leavingUsers | length)) }}</h4>
-		<div class="mdl-list s2act-groupList">
-			{% if leavingUsers is not empty %}
-			{% for user in leavingUsers %}
-			<div class="mdl-list__item mdl-list__item--two-line s2act-userList__item">
-				<span class="mdl-list__item-primary-content">
-					<i class="material-icons mdl-list__item-avatar">account_circle</i>
-					<span>{{ user.displayName }}</span>
-					<span class="uid">({{ user.uid }})</span>
-					<span class="mdl-list__item-sub-title">{{ user.o }}</span>
-				</span>
-				<span class="mdl-list__item-secondary-action">
-					<a href="/user/edit/{{ user.uid }}"
-					   class="mdl-button mdl-js-button mdl-button--fab mdl-button--mini-fab mdl-button--raised s2act-action s2act-action--edit">
-						<i class="material-icons">edit</i>
-					</a>
-				</span>
+<div class="mdl-grid mdl-grid--no-spacing">
+	<div class="mdl-cell mdl-cell--12-col mdl-cell--8-col-tablet mdl-cell--4-col-phone">
+		<div class="mdl-tabs mdl-js-tabs mdl-js-ripple-effect s2act-tabs">
+			<div class="mdl-tabs__tab-bar s2act-tabs__tab-bar">
+				<a href="#leaving" class="mdl-tabs__tab is-active">Leaving employees</a>
+				<a href="#leaved" class="mdl-tabs__tab">Leaved employees</a>
+				<a href="#mail" class="mdl-tabs__tab">E-Mail Accounts</a>
 			</div>
-			{% endfor %}
-			{% else %}
-			<div class="mdl-list__item s2act-groupList__item">
-					<span class="mdl-list__item-primary-content">
-						<i class="material-icons mdl-list__item-avatar">info</i>
-						<span>No users will leave in the next weeks</span>
-					</span>
+
+			<div class="mdl-tabs__panel is-active" id="leaving">
+				<div class="mdl-grid">
+					<div class="mdl-cell mdl-cell--12-col mdl-cell--8-col-tablet mdl-cell--4-col-phone">
+						<h2 class="s2act-sectionHeadline">{{ message('user.management.leaving')}}</h2>
+						<div class="mdl-list s2act-groupList">
+							{% if leavingUsers is not empty %}
+							<p>{{ message('user.management.foundResults', (leavingUsers | length)) }}</p>
+							{% for user in leavingUsers %}
+							<div class="mdl-list__item mdl-list__item--two-line s2act-userList__item">
+								<span class="mdl-list__item-primary-content">
+									<i class="material-icons mdl-list__item-avatar">account_circle</i>
+									<span>{{ user.displayName }}</span>
+									<span class="uid">({{ user.uid }})</span>
+									<span class="mdl-list__item-sub-title">{{ user.o }}</span>
+								</span>
+								<span class="mdl-list__item-secondary-action">
+								<a href="/user/edit/{{ user.uid }}" class="mdl-button mdl-js-button mdl-button--fab mdl-button--mini-fab mdl-button--raised s2act-action s2act-action--edit">
+									<i class="material-icons">edit</i>
+								</a>
+							</span>
+							</div>
+							{% endfor %}
+							{% else %}
+							<div class="mdl-list__item s2act-groupList__item">
+								<span class="mdl-list__item-primary-content">
+									<i class="material-icons mdl-list__item-avatar">info</i>
+									<span>No employee will leave the company in the next weeks</span>
+								</span>
+							</div>
+							{% endif %}
+						</div>
+					</div>
+				</div>
 			</div>
-			{% endif %}
+
+			<div class="mdl-tabs__panel" id="leaved">
+				<div class="mdl-grid">
+					<div class="mdl-cell mdl-cell--12-col mdl-cell--8-col-tablet mdl-cell--4-col-phone">
+						<h2 class="s2act-sectionHeadline">{{ message('user.management.unmaintained')}}</h2>
+
+						<div class="mdl-list s2act-groupList">
+							{% if unmaintainedUsers is not empty %}
+							<p>{{ message('user.management.foundResults', (unmaintainedUsers | length)) }}</p>
+							{% for user in unmaintainedUsers %}
+							<div class="mdl-list__item mdl-list__item--two-line s2act-userList__item">
+								<span class="mdl-list__item-primary-content">
+									<i class="material-icons mdl-list__item-avatar">account_circle</i>
+									<span>{{ user.displayName }}</span>
+									<span class="uid">({{ user.uid }})</span>
+									<span class="mdl-list__item-sub-title">{{ user.o }}</span>
+								</span>
+								<span class="mdl-list__item-secondary-action">
+									<a href="/user/edit/{{ user.uid }}" class="mdl-button mdl-js-button mdl-button--fab mdl-button--mini-fab mdl-button--raised s2act-action s2act-action--edit">
+										<i class="material-icons">edit</i>
+									</a>
+								</span>
+							</div>
+							{% endfor %}
+							{% else %}
+							<div class="mdl-list__item s2act-groupList__item">
+								<span class="mdl-list__item-primary-content">
+									<i class="material-icons mdl-list__item-avatar">info</i>
+									<span>No active accounts for deactivating found</span>
+								</span>
+							</div>
+							{% endif %}
+						</div>
+					</div>
+				</div>
+			</div>
+
+			<div class="mdl-tabs__panel" id="mail">
+				<div class="mdl-grid">
+					<div class="mdl-cell mdl-cell--12-col mdl-cell--8-col-tablet mdl-cell--4-col-phone">
+						<h2 class="s2act-sectionHeadline">{{ message('user.management.mails')}}</h2>
+						<div class="mdl-list s2act-groupList">
+							{% if unmaintainedMailUsers is not empty %}
+							<p>{{ message('user.management.foundResults', (unmaintainedMailUsers | length)) }}</p>
+							{% for user in unmaintainedMailUsers %}
+							<div class="mdl-list__item mdl-list__item--two-line s2act-userList__item">
+								<span class="mdl-list__item-primary-content">
+									<i class="material-icons mdl-list__item-avatar">account_circle</i>
+									<span>{{ user.displayName }}</span>
+									<span class="uid">({{ user.uid }})</span>
+									<span class="mdl-list__item-sub-title">{{ user.o }}</span>
+								</span>
+								<span class="mdl-list__item-secondary-action">
+									<a href="/user/edit/{{ user.uid }}" class="mdl-button mdl-js-button mdl-button--fab mdl-button--mini-fab mdl-button--raised s2act-action s2act-action--edit">
+										<i class="material-icons">edit</i>
+									</a>
+								</span>
+							</div>
+							{% endfor %}
+							{% else %}
+							<div class="mdl-list__item s2act-groupList__item">
+								<span class="mdl-list__item-primary-content">
+									<i class="material-icons mdl-list__item-avatar">info</i>
+									<span>No unused E-Mail accounts found</span>
+								</span>
+							</div>
+							{% endif %}
+						</div>
+
+					</div>
+				</div>
+			</div>
+
 		</div>
 	</div>
-
-	<div class="mdl-cell mdl-cell--6-col mdl-cell--8-col-tablet mdl-cell--4-col-phone mdl-cell--order-0-phone">
-		<h4 class="s2act-sectionSubHeadline">{{ message('user.management.mails', (unmaintainedMailUsers | length)) }}</h4>
-		<div class="mdl-list s2act-groupList">
-			{% if unmaintainedMailUsers is not empty %}
-			{% for user in unmaintainedMailUsers %}
-			<div class="mdl-list__item mdl-list__item--two-line s2act-userList__item">
-				<span class="mdl-list__item-primary-content">
-					<i class="material-icons mdl-list__item-avatar">account_circle</i>
-					<span>{{ user.displayName }}</span>
-					<span class="uid">({{ user.uid }})</span>
-					<span class="mdl-list__item-sub-title">{{ user.o }}</span>
-				</span>
-				<span class="mdl-list__item-secondary-action">
-					<a href="/user/edit/{{ user.uid }}"
-					   class="mdl-button mdl-js-button mdl-button--fab mdl-button--mini-fab mdl-button--raised s2act-action s2act-action--edit">
-						<i class="material-icons">edit</i>
-					</a>
-				</span>
-			</div>
-			{% endfor %}
-			{% else %}
-			<div class="mdl-list__item s2act-groupList__item">
-					<span class="mdl-list__item-primary-content">
-						<i class="material-icons mdl-list__item-avatar">info</i>
-						<span>No inactive users with active E-Mail Account found</span>
-					</span>
-			</div>
-			{% endif %}
-		</div>
-	</div>
-
-	<div class="mdl-cell mdl-cell--12-col mdl-cell--8-col-tablet mdl-cell--4-col-phone mdl-cell--order-0-phone">
-		<h4 class="s2act-sectionSubHeadline">{{ message('user.management.unmaintained', (unmaintainedUsers | length)) }}</h4>
-		<div class="mdl-list s2act-groupList">
-			{% if unmaintainedUsers is not empty %}
-			{% for user in unmaintainedUsers %}
-			<div class="mdl-list__item mdl-list__item--two-line s2act-userList__item">
-				<span class="mdl-list__item-primary-content">
-					<i class="material-icons mdl-list__item-avatar">account_circle</i>
-					<span>{{ user.displayName }}</span>
-					<span class="uid">({{ user.uid }})</span>
-					<span class="mdl-list__item-sub-title">{{ user.o }}</span>
-				</span>
-				<span class="mdl-list__item-secondary-action">
-					<a href="/user/edit/{{ user.uid }}"
-					   class="mdl-button mdl-js-button mdl-button--fab mdl-button--mini-fab mdl-button--raised s2act-action s2act-action--edit">
-						<i class="material-icons">edit</i>
-					</a>
-				</span>
-			</div>
-			{% endfor %}
-			{% else %}
-			<div class="mdl-list__item s2act-groupList__item">
-					<span class="mdl-list__item-primary-content">
-						<i class="material-icons mdl-list__item-avatar">info</i>
-						<span>No unmaintained users found</span>
-					</span>
-			</div>
-			{% endif %}
-		</div>
-	</div>
-
 </div>
 {% endblock %}
