@@ -14,7 +14,7 @@ import java.util.Map;
 public interface MailService
 {
 
-  boolean sendMailForAccountChange(User currentUser, String event);
+	boolean sendMailForAccountChange(User currentUser, String event);
 
 	boolean sendMailForPasswordReset(LdapUserDetails currentUser, User user, String newPassword);
 
