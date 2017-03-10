@@ -1,3 +1,5 @@
+[![Build Status](https://travis-ci.org/sinnerschrader/account-tool.svg?branch=master)](https://travis-ci.org/sinnerschrader/account-tool)
+
 # SinnerSchrader Account Tool
 
 ![Logo](/src/main/resources/public/static/favicons/mstile-144x144.png)

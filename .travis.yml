@@ -1,7 +1,4 @@
 language: java
-# install openjdk 8 manually since travis currently has no support for it
-#jdk:
-#  - openjdk8
 
 cache:
   directories:
@@ -45,4 +42,4 @@ deploy:
   package_glob: "target/*.deb"
   skip_cleanup: true
   on:
-    branch: master
+    tags: true
