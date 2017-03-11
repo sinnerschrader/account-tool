@@ -1,4 +1,5 @@
 [![Build Status](https://travis-ci.org/sinnerschrader/account-tool.svg?branch=master)](https://travis-ci.org/sinnerschrader/account-tool)
+[![Known Vulnerabilities](https://snyk.io/test/github/sinnerschrader/account-tool/badge.svg)](https://snyk.io/test/github/sinnerschrader/account-tool)
 
 # SinnerSchrader Account Tool
 
@@ -10,9 +11,6 @@
 * Install Java JDK 1.8.x (Oracle or OpenJDK)
 * Install NodeJS 7.x and NPM
 * Install a Maven or Use Maven Wrapper inside the Project
-  * Check if the wrapper is running `./mvnw --version`
-  * Perform the Maven Security Steps (independant which maven you use!) 
-    * Google for "Maven Security" it will be described on an Apache Website
 
 ### Run the application 
 * Run `mvn clean spring-boot:run` or `./mvnw clean spring-boot:run` 
@@ -81,6 +79,3 @@ Please make a research about LDAP Schema files on the internet, if you need more
 * 03-testuser.ldif
   * A dump of users, with reseted passwords to default values. Every User has the password `testuser` in the embeded LDAP.
   * The reset password is required, to perform serveral check about the permissions, because the tool has to handle different views on different permissions.
-
-##### Update Testuser File (03-testuser.ldif)
-Please set to all users in this file the same password. `userPassword: testuser`
