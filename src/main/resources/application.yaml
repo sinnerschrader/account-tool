@@ -103,6 +103,9 @@ ldap:
     - "e1c1:Example - Company 1"
     - "e1c2:Example - Company 2"
 
+# =============================================================
+# = LDAP Management Configuration for Background Jobs
+# =============================================================
 ldap-management:
   user:
     bindDN: ""
@@ -172,7 +175,7 @@ server:
       http-only: "true"
       secure: "true"
   tomcat:
-    max-threads: "10"
+    max-threads: "25"
     min-spare-threads: "5"
 
 # =============================================================

@@ -55,6 +55,9 @@ spring:
 #   # The key within the String have to match the Key part within ldap.config.userDN.
 #   # Order is relevant to the UI Dropdown order, not to the Order of userDN Entries.
 
+# =============================================================
+# = LDAP Management Configuration for Background Jobs
+# =============================================================
 #ldap-management:
 #  user:
 #    bindDN: "A full DN of a technical user which has read-only permissions"
@@ -69,6 +72,15 @@ spring:
 #    notifyAboutUnmaintained:
 #      active: "true|false if the job should run or not"
 #      cronExpr: "Cron expression how often the Job should be run (Default: every Monday at 10 o'Clock)"
+
+# =============================================================
+# = Configurable Default Values for new Users
+# =============================================================
+#user:
+#  smbIdPrefix: "Generated SambaSID Prefix for new Accounts. Default: S-1-5-21-1519197630-1730194083-1312870134-"
+#  sambaFlags: "Default: [U          ]"
+#  homeDirPrefix: "Prefix for Home directories. Default: /export/home/"
+#  loginShell: "Default Shell of the user. Default: /bin/false"
 
 # =============================================================
 # = Domain for E-Mail generation and Validation (Required)

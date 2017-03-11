@@ -6,14 +6,19 @@
 		<cpe>cpe:/a:sun:javamail</cpe>
 	</suppress>
 	<suppress>
-		<notes><![CDATA[file name: tomcat-embed-core-8.5.9.jar]]></notes>
+		<notes><![CDATA[file name: tomcat-embed-core-8.5.11.jar]]></notes>
 		<gav regex="true">^org\.apache\.tomcat\.embed:tomcat-embed.*:.*$</gav>
 		<cve>CVE-2016-6325</cve>
 	</suppress>
 	<suppress>
-		<notes><![CDATA[file name: tomcat-embed-core-8.5.9.jar]]></notes>
+		<notes><![CDATA[file name: tomcat-embed-core-8.5.11.jar]]></notes>
 		<gav regex="true">^org\.apache\.tomcat\.embed:tomcat-embed.*:.*$</gav>
 		<cve>CVE-2016-5425</cve>
+	</suppress>
+	<suppress>
+		<notes><![CDATA[file name: tomcat-embed-core-8.5.11.jar]]></notes>
+		<gav regex="true">^org\.apache\.tomcat\.embed:tomcat-embed.*:.*$</gav>
+		<cve>CVE-2017-6056</cve>
 	</suppress>
 	<suppress>
 		<notes><![CDATA[file name: spring-boot-1.4.4.RELEASE.jar]]></notes>
