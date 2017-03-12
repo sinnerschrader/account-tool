@@ -1,6 +1,11 @@
 language: java
 dist: xenial
-sudo: false
+sudo: required
+
+addons:
+  apt:
+    packages:
+      - openjdk-8-jdk
 
 cache:
   directories:
