@@ -1,24 +1,22 @@
 language: java
+dist: xenial
+sudo: false
 
 cache:
   directories:
     - $HOME/.m2/repository/
+    - $HOME/.m2/wrapper/
     - node_modules
 
 notifications:
   email:
     on_success: never
 
-dist: xenial
-sudo: required
-
 before_install:
   - export NODE_VERSION="7.4.0"
-  - export DEBIAN_FRONTEND="noninteractive"
 
 install:
   - nvm install $NODE_VERSION
-  - gem install package_cloud
 
 before_script:
   - export MAVEN_OPTS="-Xmx256m"
