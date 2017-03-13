@@ -664,21 +664,7 @@ public class LdapServiceImpl implements LdapService
 				};
 				throw new BusinessException("LDAP rejected creation of user", "user.create.failed", args);
 			}
-
-			User newUser = getUserByUid(connection, username);
-			List<String> defaultGroupsToAdd = ldapConfiguration.getDefaultGroups();
-			if (defaultGroupsToAdd != null && !defaultGroupsToAdd.isEmpty())
-			{
-				for (String groupCn : defaultGroupsToAdd)
-				{
-					Group group = getGroupByCN(connection, groupCn);
-					if (group != null)
-					{
-						addUserToGroup(connection, newUser, group);
-					}
-				}
-			}
-			return newUser;
+			return getUserByUid(connection, username);
 		}
 		catch (LDAPException le)
 		{

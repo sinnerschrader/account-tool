@@ -6,6 +6,7 @@ import com.sinnerschrader.s2b.accounttool.config.ldap.LdapConfiguration;
 import com.sinnerschrader.s2b.accounttool.config.ldap.LdapManagementConfiguration;
 import com.sinnerschrader.s2b.accounttool.logic.DateTimeHelper;
 import com.sinnerschrader.s2b.accounttool.logic.component.mail.MailService;
+import com.sinnerschrader.s2b.accounttool.logic.entity.Group;
 import com.sinnerschrader.s2b.accounttool.logic.entity.User;
 import com.unboundid.ldap.sdk.LDAPConnection;
 import com.unboundid.ldap.sdk.LDAPException;
@@ -203,13 +204,73 @@ public class LdapBusinessServiceImpl implements LdapBusinessService, Initializin
 	@Override
 	public void addDefaultGroups(User user)
 	{
-		log.warn("Add user to default groups is currently not implemented");
+		LDAPConnection connection = null;
+		List<String> defaultGroups = ldapConfiguration.getDefaultGroups();
+		if (defaultGroups == null || defaultGroups.isEmpty())
+		{
+			log.debug("No default groups defined, skipped adding user to default groups");
+			return;
+		}
+		try
+		{
+			connection = createManagementConnection();
+			for (String groupCn : defaultGroups)
+			{
+				Group group = ldapService.getGroupByCN(connection, groupCn);
+				if (group != null)
+				{
+					ldapService.addUserToGroup(connection, user, group);
+				}
+			}
+			log.debug("Added user to {} default groups", defaultGroups.size());
+		}
+		catch (LDAPException le)
+		{
+			log.error("Could not add user to default groups", le);
+		}
+		finally
+		{
+			if (connection != null)
+			{
+				connection.close();
+			}
+		}
 	}
 
 	@Override
 	public void delDefaulGroups(User user)
 	{
-		log.warn("Remove user from default groups is currently not implemented");
+		LDAPConnection connection = null;
+		List<String> defaultGroups = ldapConfiguration.getDefaultGroups();
+		if (defaultGroups == null || defaultGroups.isEmpty())
+		{
+			log.debug("No default groups defined, skipped removing user from default groups");
+			return;
+		}
+		try
+		{
+			connection = createManagementConnection();
+			for (String groupCn : defaultGroups)
+			{
+				Group group = ldapService.getGroupByCN(connection, groupCn);
+				if (group != null)
+				{
+					ldapService.removeUserFromGroup(connection, user, group);
+				}
+			}
+			log.debug("Removed user from {} default groups", defaultGroups.size());
+		}
+		catch (LDAPException le)
+		{
+			log.error("Could not remove user from default groups", le);
+		}
+		finally
+		{
+			if (connection != null)
+			{
+				connection.close();
+			}
+		}
 	}
 
 }

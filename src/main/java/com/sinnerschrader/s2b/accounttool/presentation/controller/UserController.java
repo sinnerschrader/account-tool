@@ -193,8 +193,6 @@ public class UserController
 				}
 				if (userForm.isResetpassword())
 				{
-					//
-					//hidePassword = mailService.sendMailForPasswordReset(details, user, password);
 					log.info("{} reseted the password of user {}", details.getUid(), user.getUid());
 					logService.event("logging.logstash.event.user.password-reset",
 						"success", details.getUid(), user.getUid());
