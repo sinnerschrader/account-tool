@@ -38,7 +38,7 @@ public interface LdapService
 
 	Group removeUserFromGroup(LDAPConnection connection, User user, Group group);
 
-	String resetPassword(LDAPConnection connection, User user);
+	String resetPassword(LDAPConnection connection, User user) throws BusinessException;
 
 	User activate(LDAPConnection connection, User user);
 
@@ -48,6 +48,6 @@ public interface LdapService
 
 	User update(LDAPConnection connection, User user) throws BusinessException;
 
-	boolean changePassword(LDAPConnection connection, LdapUserDetails currentUser, String password);
+	boolean changePassword(LDAPConnection connection, LdapUserDetails currentUser, String password) throws BusinessException;
 
 }
