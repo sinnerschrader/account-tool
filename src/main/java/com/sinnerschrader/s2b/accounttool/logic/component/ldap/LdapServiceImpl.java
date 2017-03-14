@@ -386,13 +386,13 @@ public class LdapServiceImpl implements LdapService
 	}
 
 	@Override
-	public String resetPassword(LDAPConnection connection, User user)
+	public String resetPassword(LDAPConnection connection, User user) throws BusinessException
 	{
 		return changePassword(connection, user, RandomStringUtils.randomAlphanumeric(32, 33));
 	}
 
 	@Override
-	public boolean changePassword(LDAPConnection connection, LdapUserDetails currentUser, String password)
+	public boolean changePassword(LDAPConnection connection, LdapUserDetails currentUser, String password) throws BusinessException
 	{
 		User user = getUserByUid(connection, currentUser.getUsername());
 		String newPassword = changePassword(connection, user, password);
@@ -403,10 +403,20 @@ public class LdapServiceImpl implements LdapService
 		return true;
 	}
 
-	private String changePassword(LDAPConnection connection, User user, String newPassword)
+	private String changePassword(LDAPConnection connection, User user, String newPassword) throws BusinessException
 	{
 		final String timestamp = String.valueOf(System.currentTimeMillis() / 1000L);
 		User ldapUser = getUserByUid(connection, user.getUid());
+
+		String[] ldapNameGecos = ldapUser.getGecos().toLowerCase().split("\\s+");
+
+		if ( StringUtils.containsIgnoreCase(newPassword, ldapUser.getUid())
+			|| StringUtils.containsIgnoreCase(newPassword, ldapUser.getSn())
+			|| StringUtils.containsIgnoreCase(newPassword, ldapUser.getGivenName())
+			|| StringUtils.containsAny(newPassword.toLowerCase(), ldapNameGecos))
+		{
+			throw new BusinessException("Password can't contain user data.","user.changePassword.failed");
+		}
 
 		List<Modification> changes = new ArrayList<>();
 		changes.add(new Modification(ModificationType.REPLACE, "userPassword", passwordEncrypter.encrypt(newPassword)));

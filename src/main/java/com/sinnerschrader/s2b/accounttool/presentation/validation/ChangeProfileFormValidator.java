@@ -145,7 +145,7 @@ public class ChangeProfileFormValidator implements Validator
 			List<String> codes = result.getErrorCodes();
 			if (codes.isEmpty())
 			{
-				// this is a fallback, if no message and no sugesstions are provided
+				// this is a fallback, if no message and no suggestions are provided
 				errors.rejectValue("password", "passwordValidation.general.error", "The password is too weak");
 			}
 			else

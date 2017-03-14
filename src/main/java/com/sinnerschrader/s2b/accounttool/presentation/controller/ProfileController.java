@@ -78,7 +78,7 @@ public class ProfileController
 		@RequestAttribute(name = WebConstants.ATTR_CONNECTION) LDAPConnection connection,
 		@ModelAttribute(name = FORMNAME) ChangeProfile form,
 		RedirectAttributes attr,
-		BindingResult bindingResult)
+		BindingResult bindingResult) throws BusinessException
 	{
 		LdapUserDetails details = RequestUtils.getCurrentUserDetails();
 		changeProfileFormValidator.validate(form, bindingResult);
@@ -89,19 +89,19 @@ public class ProfileController
 		}
 		else
 		{
-			User ldapUser = ldapService.getUserByUid(connection, details.getUid());
-			User updatedUser = form.createUserEntityFromForm(ldapUser);
-			if (form.isPasswordChange())
+			try
 			{
-				boolean res = ldapService.changePassword(connection, details, form.getPassword());
-				String state = res ? "sucess" : "failure";
-				log.info("{} changed his/her password", details.getUid());
-				logService.event("logging.logstash.event.password-change", state, details.getUid());
-				mailService.sendMailForAccountChange(ldapUser, "passwordChanged");
-			}
-			else
-			{
-				try
+				User ldapUser = ldapService.getUserByUid(connection, details.getUid());
+				User updatedUser = form.createUserEntityFromForm(ldapUser);
+				if (form.isPasswordChange())
+				{
+					boolean res = ldapService.changePassword(connection, details, form.getPassword());
+					String state = res ? "sucess" : "failure";
+					log.info("{} changed his/her password", details.getUid());
+					logService.event("logging.logstash.event.password-change", state, details.getUid());
+					mailService.sendMailForAccountChange(ldapUser, "passwordChanged");
+				}
+				else
 				{
 					ldapService.update(connection, updatedUser);
 					log.info("{} updated his/her account informations", details.getUid());
@@ -110,12 +110,12 @@ public class ProfileController
 						mailService.sendMailForAccountChange(ldapUser, "sshKeyUpdated");
 					}
 				}
-				catch (BusinessException be)
-				{
-					bindingResult.reject(be.getCode(), be.getArgs(), "Could not create user");
-					attr.addFlashAttribute(BindingResult.class.getName() + "." + FORMNAME, bindingResult);
-					attr.addFlashAttribute(FORMNAME, form);
-				}
+			}
+			catch (BusinessException be)
+			{
+				bindingResult.reject(be.getCode(), be.getArgs(), "Could not update profile");
+				attr.addFlashAttribute(BindingResult.class.getName() + "." + FORMNAME, bindingResult);
+				attr.addFlashAttribute(FORMNAME, form);
 			}
 		}
 		return "redirect:/profile";
