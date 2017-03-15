@@ -72,6 +72,9 @@ public class LdapServiceImpl implements LdapService
 	@Value("${user.loginShell}")
 	private String loginShell;
 
+	@Value("${user.appendCompanyOnDisplayName}")
+	private boolean appendCompanyOnDisplayName = false;
+
 	@Resource(name = "passwordEncrypter")
 	private Encrypter passwordEncrypter;
 
@@ -392,7 +395,8 @@ public class LdapServiceImpl implements LdapService
 	}
 
 	@Override
-	public boolean changePassword(LDAPConnection connection, LdapUserDetails currentUser, String password) throws BusinessException
+	public boolean changePassword(LDAPConnection connection, LdapUserDetails currentUser, String password)
+		throws BusinessException
 	{
 		User user = getUserByUid(connection, currentUser.getUsername());
 		String newPassword = changePassword(connection, user, password);
@@ -410,12 +414,12 @@ public class LdapServiceImpl implements LdapService
 
 		String[] ldapNameGecos = ldapUser.getGecos().toLowerCase().split("\\s+");
 
-		if ( StringUtils.containsIgnoreCase(newPassword, ldapUser.getUid())
+		if (StringUtils.containsIgnoreCase(newPassword, ldapUser.getUid())
 			|| StringUtils.containsIgnoreCase(newPassword, ldapUser.getSn())
 			|| StringUtils.containsIgnoreCase(newPassword, ldapUser.getGivenName())
 			|| StringUtils.containsAny(newPassword.toLowerCase(), ldapNameGecos))
 		{
-			throw new BusinessException("Password can't contain user data.","user.changePassword.failed");
+			throw new BusinessException("Password can't contain user data.", "user.changePassword.failed");
 		}
 
 		List<Modification> changes = new ArrayList<>();
@@ -607,7 +611,7 @@ public class LdapServiceImpl implements LdapService
 			attributes.add(new Attribute("givenName", user.getGivenName()));
 			attributes.add(new Attribute("sn", user.getSn()));
 			attributes.add(new Attribute("cn", fullName));
-			attributes.add(new Attribute("displayName", displayName));
+			attributes.add(new Attribute("displayName", appendCompanyOnDisplayName ? displayName : fullName));
 			attributes.add(new Attribute("gecos", asciify(fullName)));
 
 			// Organisational Entries
