@@ -144,7 +144,6 @@ public class MainController
 		model.addObject("applicationContextStartupDate", contextStartupDate);
 		model.addObject("applicationContextRunningSince", new PrettyTime().formatUnrounded(contextStartupDate));
 		model.addObject("activeProfiles", activeProfiles);
-		model.addObject("env", environment);
 		return model;
 	}
 

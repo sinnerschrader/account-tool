@@ -38,6 +38,7 @@ app:
   build-time: "@git.commit.time@"
   build-by: "@git.commit.user.name@"
   build-on: "@os.name@ (v@os.version@, arch: @os.arch@)"
+  issues: "https://github.com/sinnerschrader/account-tool/issues"
 versions:
   spring-boot: "@project.parent.version@"
   spring-core: "@spring.version@"
