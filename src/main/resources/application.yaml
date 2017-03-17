@@ -18,7 +18,7 @@ spring:
     default-encoding: "@project.build.sourceEncoding@"
     from: "accounttool@${domain.primary}"
     reply: "no-reply@${domain.primary}"
-    host: "smtp.{domain.primary}"
+    host: "smtp.${domain.primary}"
     port: "25"
     username:
     password:

@@ -58,7 +58,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter
 	public void configure(WebSecurity web) throws Exception
 	{
 		log.debug("Setting up access for static resources and CSP Report");
-		web.ignoring().antMatchers("/csp-report", "/extensions/**", "/static/**");
+		web.ignoring().antMatchers("/csp-report", "/extensions/**", "/static/**", "/management/**");
 	}
 
 	@Override
