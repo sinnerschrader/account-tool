@@ -29,6 +29,13 @@ spring:
 #            enable: "Use StartTLS; default: true"
 
 # =============================================================
+# = Application Settings
+# =============================================================
+#app:
+#  issues: "Custom BugTracking System, for internal useage. Default is set to GitHub Issues URL"
+# Note: Please also create Issues or Feature Requests on GitHub, if you miss something.
+
+# =============================================================
 # = LDAP Configuration (Required)
 # =============================================================
 #ldap:
