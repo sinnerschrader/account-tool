@@ -3,6 +3,7 @@ package com.sinnerschrader.s2b.accounttool.presentation.controller;
 import com.sinnerschrader.s2b.accounttool.config.WebConstants;
 import com.sinnerschrader.s2b.accounttool.config.authentication.LdapUserDetails;
 import com.sinnerschrader.s2b.accounttool.config.ldap.LdapConfiguration;
+import com.sinnerschrader.s2b.accounttool.config.ldap.LdapGroupPrefixes;
 import com.sinnerschrader.s2b.accounttool.logic.LogService;
 import com.sinnerschrader.s2b.accounttool.logic.component.authorization.AuthorizationService;
 import com.sinnerschrader.s2b.accounttool.logic.component.ldap.LdapService;
@@ -215,7 +216,6 @@ public class GroupController
 		@RequestParam(name = "all", defaultValue = "false", required = false) boolean listAllGroups)
 	{
 		LdapUserDetails details = RequestUtils.getCurrentUserDetails();
-		authorizationService.ensureGroupAdministration(details, groupCN);
 		Group group = ldapService.getGroupByCN(connection, groupCN);
 		Group adminGroup = group;
 
@@ -233,7 +233,8 @@ public class GroupController
 		{
 			if (!adminGroup.isAdminGroup())
 			{
-				String adminGroupCN = StringUtils.replace(groupCN, "s2f", "s2a");
+				LdapGroupPrefixes gp = ldapConfiguration.getGroupPrefixes();
+				String adminGroupCN = StringUtils.replace(groupCN, gp.getTeam(), gp.getAdmin());
 				adminGroup = ldapService.getGroupByCN(connection, adminGroupCN);
 				if (adminGroup == null || !adminGroup.isAdminGroup())
 				{
