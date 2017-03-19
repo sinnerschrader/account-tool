@@ -54,30 +54,6 @@
 					</div>
 				</div>
 			</form>
-			{% if displayWelcomeInformation %}
-			<div class="mdl-cell mdl-cell--12-col mdl-cell--8-col-tablet mdl-cell--4-col-phone">
-				<h2 class="s2act-helpHeadline">
-					<span>Why do I have to register a second time?</span>
-					<a href="#" class="js_attributeButton mdl-button mdl-js-button mdl-button--icon"
-					   data-toggleid="helpText-doubleLogin">
-						<i class="material-icons">help_outline</i>
-					</a>
-				</h2>
-				<div id="helpText-doubleLogin" class="s2act-togglArea s2act-helpArea">
-					<p>
-						The Account Tool is running behind a OAuth Proxy. This Proxy secures the Account Tool for
-						invalid
-						requests and forces to authenticate you with you S2 Google Account.
-						You will not see the OAuth Login mask for a longer time, till your auth cookie will be
-						invalidated.
-					</p>
-					<p>
-						The credentials between Google Apps and our LDAP can and schould differ,
-						so you have to login separate with your SinnerSchrader account and password now.
-					</p>
-				</div>
-			</div>
-			{% endif %}
 		</div>
 	</div>
 </div>

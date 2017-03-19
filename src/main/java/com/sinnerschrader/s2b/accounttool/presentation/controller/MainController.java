@@ -92,7 +92,6 @@ public class MainController
 		}
 		model.addObject("selectedCompany", company);
 		model.addObject("companies", ldapConfiguration.getCompaniesAsMap());
-		model.addObject("displayWelcomeInformation", (company == null || company.isEmpty()));
 		return model;
 	}
 
