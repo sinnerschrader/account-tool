@@ -28,13 +28,13 @@ before_script:
   - nvm use $NODE_VERSION
 
 script:
-  - ./mvnw --batch-mode -s .settings.xml clean
-  - ./mvnw --batch-mode -s .settings.xml -P security org.owasp:dependency-check-maven:check
-  - ./mvnw --batch-mode -s .settings.xml package
+  - ./mvnw --batch-mode clean
+  - ./mvnw --batch-mode -P security org.owasp:dependency-check-maven:check
+  - ./mvnw --batch-mode package
 
 before_deploy:
-  - ./mvnw --batch-mode -s .settings.xml -P release clean package
-  - ./mvnw --batch-mode -s .settings.xml -P release versions:revert
+  - ./mvnw --batch-mode -P release clean package
+  - ./mvnw --batch-mode -P release versions:revert
 
 deploy:
   provider: packagecloud
