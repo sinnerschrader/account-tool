@@ -134,7 +134,7 @@ public class UserForm implements Serializable
 		}
 		if (user.getEmployeeExitDate() != null)
 		{
-			this.entryDate = DateTimeHelper.toDateString(user.getEmployeeExitDate(), DATE_PATTERN);
+			this.exitDate = DateTimeHelper.toDateString(user.getEmployeeExitDate(), DATE_PATTERN);
 		}
 	}
 

@@ -46,6 +46,7 @@ ldap-management:
 # = Appserver Configuration
 # =============================================================
 server:
+  use-forward-headers: "false"
   session:
     persistent: "true"
     store-dir: "@project.build.outputDirectory@"

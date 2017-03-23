@@ -163,6 +163,7 @@ endpoints:
 # = Appserver Configuration
 # =============================================================
 server:
+  use-forward-headers: "true"
   address:
   http:
     port: "0"
