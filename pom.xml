@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?><!--suppress MavenModelInspection -->
-<project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://maven.apache.org/POM/4.0.0" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://maven.apache.org/POM/4.0.0"
+		 xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>com.sinnerschrader.s2b</groupId>
 	<artifactId>account-tool</artifactId>
@@ -20,7 +21,7 @@
 		<groupId>org.springframework.boot</groupId>
 		<artifactId>spring-boot-starter-parent</artifactId>
 		<version>1.5.2.RELEASE</version>
-		<relativePath />
+		<relativePath/>
 	</parent>
 	<properties>
 		<version.phase>-SNAPSHOT</version.phase>
@@ -56,7 +57,7 @@
 		</dependency>
 
 		<dependency>
-			<!-- ldap client api and embeded ldap server: GPLv2.0, LGPLv2.1 -->
+			<!-- ldap client api and embedded ldap server: GPLv2.0, LGPLv2.1 -->
 			<groupId>com.unboundid</groupId>
 			<artifactId>unboundid-ldapsdk</artifactId>
 			<version>${unboundid-ldapsdk.version}</version>
@@ -386,8 +387,10 @@
 									<goal>download-licenses</goal>
 								</goals>
 								<configuration>
-									<licensesConfigFile>${project.basedir}/src/main/resources/licenses.xml</licensesConfigFile>
-									<licensesOutputFile>${project.build.directory}/classes/licenses.xml</licensesOutputFile>
+									<licensesConfigFile>${project.basedir}/src/main/resources/licenses.xml
+									</licensesConfigFile>
+									<licensesOutputFile>${project.build.directory}/classes/licenses.xml
+									</licensesOutputFile>
 								</configuration>
 							</execution>
 						</executions>

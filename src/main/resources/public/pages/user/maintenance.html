@@ -13,7 +13,8 @@
 			<div class="mdl-tabs__panel is-active" id="leaving">
 				<div class="mdl-grid">
 					<div class="mdl-cell mdl-cell--12-col mdl-cell--8-col-tablet mdl-cell--4-col-phone">
-						<h2 class="s2act-sectionHeadline">{{ message('user.management.leaving', env.getProperty('ldap-management.leavingUsersInCW')) }}</h2>
+						<h2 class="s2act-sectionHeadline">{{ message('user.management.leaving',
+							env.getProperty('ldap-management.leavingUsersInCW')) }}</h2>
 						<div class="mdl-list s2act-groupList">
 							{% if leavingUsers is not empty %}
 							<p>{{ message('user.management.foundResults', (leavingUsers | length)) }}</p>
@@ -26,7 +27,8 @@
 									<span class="mdl-list__item-sub-title">{{ user.o }}</span>
 								</span>
 								<span class="mdl-list__item-secondary-action">
-								<a href="/user/edit/{{ user.uid }}" class="mdl-button mdl-js-button mdl-button--fab mdl-button--mini-fab mdl-button--raised s2act-action s2act-action--edit">
+								<a href="/user/edit/{{ user.uid }}"
+								   class="mdl-button mdl-js-button mdl-button--fab mdl-button--mini-fab mdl-button--raised s2act-action s2act-action--edit">
 									<i class="material-icons">edit</i>
 								</a>
 							</span>
@@ -62,7 +64,8 @@
 									<span class="mdl-list__item-sub-title">{{ user.o }}</span>
 								</span>
 								<span class="mdl-list__item-secondary-action">
-									<a href="/user/edit/{{ user.uid }}" class="mdl-button mdl-js-button mdl-button--fab mdl-button--mini-fab mdl-button--raised s2act-action s2act-action--edit">
+									<a href="/user/edit/{{ user.uid }}"
+									   class="mdl-button mdl-js-button mdl-button--fab mdl-button--mini-fab mdl-button--raised s2act-action s2act-action--edit">
 										<i class="material-icons">edit</i>
 									</a>
 								</span>
@@ -97,7 +100,8 @@
 									<span class="mdl-list__item-sub-title">{{ user.o }}</span>
 								</span>
 								<span class="mdl-list__item-secondary-action">
-									<a href="/user/edit/{{ user.uid }}" class="mdl-button mdl-js-button mdl-button--fab mdl-button--mini-fab mdl-button--raised s2act-action s2act-action--edit">
+									<a href="/user/edit/{{ user.uid }}"
+									   class="mdl-button mdl-js-button mdl-button--fab mdl-button--mini-fab mdl-button--raised s2act-action s2act-action--edit">
 										<i class="material-icons">edit</i>
 									</a>
 								</span>

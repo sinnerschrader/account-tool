@@ -1,6 +1,6 @@
 let toggles = document.getElementsByClassName('js_switch');
-Array.from(toggles).forEach(function(element) {
-	element.addEventListener('click', function() {
+Array.from(toggles).forEach(function (element) {
+	element.addEventListener('click', function () {
 		let checkedValue = this.getAttribute('data-checkedValue');
 		let uncheckValue = this.getAttribute('data-uncheckValue');
 

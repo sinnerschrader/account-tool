@@ -13,14 +13,16 @@
 		{% if showAllGroups %}
 		<h2 class="s2act-sectionHeadline">
 			<span>All Groups </span>
-			<a href="/group{{ selectedGroup is not null ? ('/' + selectedGroup.cn) : '' }}" class="mdl-button mdl-js-button mdl-button--icon">
+			<a href="/group{{ selectedGroup is not null ? ('/' + selectedGroup.cn) : '' }}"
+			   class="mdl-button mdl-js-button mdl-button--icon">
 				<i class="material-icons">expand_less</i>
 			</a>
 		</h2>
 		{% else %}
 		<h2 class="s2act-sectionHeadline">
 			<span>Your Groups </span>
-			<a href="/group{{ selectedGroup is not null ? ('/' + selectedGroup.cn) : '' }}?all=true" class="mdl-button mdl-js-button mdl-button--icon">
+			<a href="/group{{ selectedGroup is not null ? ('/' + selectedGroup.cn) : '' }}?all=true"
+			   class="mdl-button mdl-js-button mdl-button--icon">
 				<i class="material-icons">expand_more</i>
 			</a>
 		</h2>
@@ -62,7 +64,8 @@
 		{% elseif not isMemberOf(selectedGroup) %}
 		<h2 class="s2act-sectionHeadline">
 			<span>Request access</span>
-			<form class="s2act-buttonForm s2act-buttonForm--right" action="/group/{{ selectedGroup.cn }}/authorize{{ showAllGroups ? '?all=true' : '' }}" method="post">
+			<form class="s2act-buttonForm s2act-buttonForm--right"
+				  action="/group/{{ selectedGroup.cn }}/authorize{{ showAllGroups ? '?all=true' : '' }}" method="post">
 				<input type="hidden" name="{{request.getAttribute('_csrf').parameterName}}"
 					   value="{{request.getAttribute('_csrf').token}}"/>
 				<button class="mdl-button mdl-js-button mdl-button--primary mdl-button--raised">
@@ -72,29 +75,30 @@
 		</h2>
 		{% endif %}
 		<h2 class="s2act-sectionHeadline">Members of {{ selectedGroup.cn }}</h2>
-			<div class="mdl-list s2act-userList">
-				{% for user in usersByGroup %}
-				<div class="mdl-list__item mdl-list__item--two-line s2act-groupList__item">
+		<div class="mdl-list s2act-userList">
+			{% for user in usersByGroup %}
+			<div class="mdl-list__item mdl-list__item--two-line s2act-groupList__item">
 					<span class="mdl-list__item-primary-content">
 						<i class="material-icons mdl-list__item-avatar">account_circle</i>
 						<span>{{ user.displayName }}</span>
 						<span class="uid">({{ user.uid }})</span>
 						<span class="mdl-list__item-sub-title mdl-cell--hide-phone">{{ user.o }}</span>
 					</span>
-					<form class="mdl-list__item-secondary-action s2act-action--delete"
-						  action="/group/{{ selectedGroup.cn }}/deluser/{{ user.uid }}{{ showAllGroups ? '?all=true' : '' }}" method="post">
-						<input type="hidden" name="all" value="{{showAllGroups}}"/>
-						<input type="hidden" name="{{request.getAttribute('_csrf').parameterName}}"
-							   value="{{request.getAttribute('_csrf').token}}"/>
-						{% if isGroupAdmin(selectedGroup.cn) %}
-						<button class="mdl-button mdl-js-button mdl-button--fab mdl-button--mini-fab mdl-button--raised s2act-action s2act-action--delete">
-							<i class="material-icons">delete</i>
-						</button>
-						{% endif %}
-					</form>
-				</div>
-				{% endfor %}
+				<form class="mdl-list__item-secondary-action s2act-action--delete"
+					  action="/group/{{ selectedGroup.cn }}/deluser/{{ user.uid }}{{ showAllGroups ? '?all=true' : '' }}"
+					  method="post">
+					<input type="hidden" name="all" value="{{showAllGroups}}"/>
+					<input type="hidden" name="{{request.getAttribute('_csrf').parameterName}}"
+						   value="{{request.getAttribute('_csrf').token}}"/>
+					{% if isGroupAdmin(selectedGroup.cn) %}
+					<button class="mdl-button mdl-js-button mdl-button--fab mdl-button--mini-fab mdl-button--raised s2act-action s2act-action--delete">
+						<i class="material-icons">delete</i>
+					</button>
+					{% endif %}
+				</form>
 			</div>
+			{% endfor %}
+		</div>
 	</div>
 	{% endif %}
 </div>

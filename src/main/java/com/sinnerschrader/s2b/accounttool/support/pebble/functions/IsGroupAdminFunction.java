@@ -9,36 +9,29 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
+/** Pebble Function to check on markup if the current user is a groupAdmin */
+public class IsGroupAdminFunction implements Function {
 
-/**
- * Pebble Function to check on markup if the current user is a groupAdmin
- */
-public class IsGroupAdminFunction implements Function
-{
+  public static final String FUNCTION_NAME = "isGroupAdmin";
 
-	public static final String FUNCTION_NAME = "isGroupAdmin";
+  private static final String GROUP_PARAM_NAME = "groupCn";
 
-	private static final String GROUP_PARAM_NAME = "groupCn";
+  private AuthorizationService authorizationService;
 
-	private AuthorizationService authorizationService;
+  public IsGroupAdminFunction(AuthorizationService authorizationService) {
+    this.authorizationService = authorizationService;
+  }
 
-	public IsGroupAdminFunction(AuthorizationService authorizationService)
-	{
-		this.authorizationService = authorizationService;
-	}
+  @Override
+  public List<String> getArgumentNames() {
+    return Collections.singletonList(GROUP_PARAM_NAME);
+  }
 
-	@Override
-	public List<String> getArgumentNames()
-	{
-		return Collections.singletonList(GROUP_PARAM_NAME);
-	}
-
-	@Override
-	public Object execute(Map<String, Object> args)
-	{
-		LdapUserDetails currentUser = RequestUtils.getCurrentUserDetails();
-		String groupCn = (String) args.get(GROUP_PARAM_NAME);
-		return authorizationService.isGroupAdmin(currentUser, groupCn) || authorizationService.isAdmin(currentUser);
-	}
-
+  @Override
+  public Object execute(Map<String, Object> args) {
+    LdapUserDetails currentUser = RequestUtils.getCurrentUserDetails();
+    String groupCn = (String) args.get(GROUP_PARAM_NAME);
+    return authorizationService.isGroupAdmin(currentUser, groupCn)
+        || authorizationService.isAdmin(currentUser);
+  }
 }

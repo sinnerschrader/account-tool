@@ -25,123 +25,151 @@
 				<col width="48px">
 			</colgroup>
 			<tbody>
-				<tr>
-					<td class="mdl-data-table__cell--non-numeric s2act-data-table__cell--header">
-						<span>Name</span>
-						<span class="uid">(uid)</span>
-					</td>
-					<td colspan="2" class="mdl-data-table__cell--non-numeric s2act-data-table__cell--value">
-						<span>{{ user.sn }}, {{ user.givenName }}</span>
-						<span class="uid">({{ user.uid }})</span>
-					</td>
-				</tr>
-				<tr>
-					<td class="mdl-data-table__cell--non-numeric s2act-data-table__cell--header">E-Mail</td>
-					<td colspan="2" class="mdl-data-table__cell--non-numeric s2act-data-table__cell--value">{{ user.mail }}</td>
-				</tr>
-				<tr>
-					<td class="mdl-data-table__cell--non-numeric s2act-data-table__cell--header">State</td>
-					<td colspan="2" class="mdl-data-table__cell--non-numeric s2act-data-table__cell--value">{{ user.szzStatus.name }}</td>
-				</tr>
+			<tr>
+				<td class="mdl-data-table__cell--non-numeric s2act-data-table__cell--header">
+					<span>Name</span>
+					<span class="uid">(uid)</span>
+				</td>
+				<td colspan="2" class="mdl-data-table__cell--non-numeric s2act-data-table__cell--value">
+					<span>{{ user.sn }}, {{ user.givenName }}</span>
+					<span class="uid">({{ user.uid }})</span>
+				</td>
+			</tr>
+			<tr>
+				<td class="mdl-data-table__cell--non-numeric s2act-data-table__cell--header">E-Mail</td>
+				<td colspan="2" class="mdl-data-table__cell--non-numeric s2act-data-table__cell--value">{{ user.mail
+					}}
+				</td>
+			</tr>
+			<tr>
+				<td class="mdl-data-table__cell--non-numeric s2act-data-table__cell--header">State</td>
+				<td colspan="2" class="mdl-data-table__cell--non-numeric s2act-data-table__cell--value">{{
+					user.szzStatus.name }}
+				</td>
+			</tr>
 
-				<tr id="changePasswordValue">
-					<td class="mdl-data-table__cell--non-numeric s2act-data-table__cell--header">Password</td>
-					<td class="mdl-data-table__cell--non-numeric s2act-data-table__cell--value"><span>Changed {{ user.prettyLastPasswordChange }}</span></td>
-					<td class="mdl-data-table__cell--non-numeric s2act-data-table__cell--value">
-						<button class="js_attributeButton mdl-button mdl-js-button mdl-button--icon" data-toggleid="changePasswordForm">
-							<i class="material-icons">edit</i>
-						</button>
-					</td>
-				</tr>
-				<!-- Change Password -->
-				<tr id="changePasswordForm" class="s2act-attributeForm {{hasFieldErrors(formName, 'oldPassword') or hasFieldErrors(formName, 'password') or hasFieldErrors(formName, 'passwordRepeat') ? 'active' : ''}}">
-					<td colspan="3" class="mdl-data-table__cell--non-numeric s2act-data-table__cell--value">
-						<form name="changeProfileForm" action="/profile/change" method="post">
-							<input type="hidden" name="{{request.getAttribute('_csrf').parameterName}}" value="{{request.getAttribute('_csrf').token}}" />
-							<input type="hidden" name="publicKey" value="{{ changeProfileForm.publicKey }}" />
-							<input type="hidden" name="telephone" value="{{ changeProfileForm.telephone }}" />
-							<input type="hidden" name="mobile" value="{{ changeProfileForm.mobile }}" />
-							<div class="s2act-textfield mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
-								<input class="mdl-textfield__input" type="password" name="oldPassword" id="oldPassword" value="{{ changeProfileForm.oldPassword }}">
-								<label class="mdl-textfield__label" for="oldPassword">Current Password</label>
-								<span class="mdl-textfield__error">Please enter you current password</span>
-							</div>
-							<div class="s2act-textfield mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
-								<input class="js_passwordStrength mdl-textfield__input" type="password" name="password" id="password" value="{{ changeProfileForm.password }}">
-								<label class="mdl-textfield__label" for="password">Password</label>
-								<span class="js_passwordStrengthMessage mdl-textfield__error">Password error</span>
-							</div>
-							<div class="s2act-textfield mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
-								<input class="js_passwordMatch mdl-textfield__input" type="password" name="passwordRepeat" id="passwordRepeat" data-matchid="password" value="{{ changeProfileForm.passwordRepeat }}">
-								<label class="mdl-textfield__label" for="passwordRepeat">Password repeat</label>
-								<span class="mdl-textfield__error">Passwords don't match</span>
-							</div>
-							<div class="s2act-buttonRow">
-								<input type="submit" name="changePassword" value="Save" class="s2act-button--right mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--primary" />
-							</div>
-						</form>
-					</td>
-				</tr>
+			<tr id="changePasswordValue">
+				<td class="mdl-data-table__cell--non-numeric s2act-data-table__cell--header">Password</td>
+				<td class="mdl-data-table__cell--non-numeric s2act-data-table__cell--value"><span>Changed {{ user.prettyLastPasswordChange }}</span>
+				</td>
+				<td class="mdl-data-table__cell--non-numeric s2act-data-table__cell--value">
+					<button class="js_attributeButton mdl-button mdl-js-button mdl-button--icon"
+							data-toggleid="changePasswordForm">
+						<i class="material-icons">edit</i>
+					</button>
+				</td>
+			</tr>
+			<!-- Change Password -->
+			<tr id="changePasswordForm"
+				class="s2act-attributeForm {{hasFieldErrors(formName, 'oldPassword') or hasFieldErrors(formName, 'password') or hasFieldErrors(formName, 'passwordRepeat') ? 'active' : ''}}">
+				<td colspan="3" class="mdl-data-table__cell--non-numeric s2act-data-table__cell--value">
+					<form name="changeProfileForm" action="/profile/change" method="post">
+						<input type="hidden" name="{{request.getAttribute('_csrf').parameterName}}"
+							   value="{{request.getAttribute('_csrf').token}}"/>
+						<input type="hidden" name="publicKey" value="{{ changeProfileForm.publicKey }}"/>
+						<input type="hidden" name="telephone" value="{{ changeProfileForm.telephone }}"/>
+						<input type="hidden" name="mobile" value="{{ changeProfileForm.mobile }}"/>
+						<div class="s2act-textfield mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+							<input class="mdl-textfield__input" type="password" name="oldPassword" id="oldPassword"
+								   value="{{ changeProfileForm.oldPassword }}">
+							<label class="mdl-textfield__label" for="oldPassword">Current Password</label>
+							<span class="mdl-textfield__error">Please enter you current password</span>
+						</div>
+						<div class="s2act-textfield mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+							<input class="js_passwordStrength mdl-textfield__input" type="password" name="password"
+								   id="password" value="{{ changeProfileForm.password }}">
+							<label class="mdl-textfield__label" for="password">Password</label>
+							<span class="js_passwordStrengthMessage mdl-textfield__error">Password error</span>
+						</div>
+						<div class="s2act-textfield mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+							<input class="js_passwordMatch mdl-textfield__input" type="password" name="passwordRepeat"
+								   id="passwordRepeat" data-matchid="password"
+								   value="{{ changeProfileForm.passwordRepeat }}">
+							<label class="mdl-textfield__label" for="passwordRepeat">Password repeat</label>
+							<span class="mdl-textfield__error">Passwords don't match</span>
+						</div>
+						<div class="s2act-buttonRow">
+							<input type="submit" name="changePassword" value="Save"
+								   class="s2act-button--right mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--primary"/>
+						</div>
+					</form>
+				</td>
+			</tr>
 
-				<tr id="changePhoneValue">
-					<td class="mdl-data-table__cell--non-numeric s2act-data-table__cell--header">Phone: <br /> Mobile:</td>
-					<td class="mdl-data-table__cell--non-numeric s2act-data-table__cell--value">{{ user.telephoneNumber | default("No telephone number") }} <br /> {{ user.mobile | default("No mobile number") }}</td>
-					<td class="mdl-data-table__cell--non-numeric s2act-data-table__cell--value">
-						<button class="js_attributeButton mdl-button mdl-js-button mdl-button--icon" data-toggleid="changePhoneForm">
-							<i class="material-icons">edit</i>
-						</button>
-					</td>
-				</tr>
-				<!-- Change Phones -->
-				<tr id="changePhoneForm" class="s2act-attributeForm {{hasFieldErrors(formName, 'telephone') or hasFieldErrors(formName, 'mobile') ? 'active' : ''}}">
-					<td colspan="3" class="mdl-data-table__cell--non-numeric s2act-data-table__cell--value">
-						<form name="changeProfileForm" action="/profile/change" method="post">
-							<input type="hidden" name="{{request.getAttribute('_csrf').parameterName}}" value="{{request.getAttribute('_csrf').token}}" />
-							<input type="hidden" name="publicKey" value="{{ changeProfileForm.publicKey }}" />
-							<div class="s2act-textfield mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
-								<input class="mdl-textfield__input" type="text" name="telephone" id="telephone" value="{{ changeProfileForm.telephone }}" pattern="\+?[0-9 ()]+">
-								<label class="mdl-textfield__label" for="telephone">(Business) Telephone</label>
-								<span class="mdl-textfield__error">Please define a valid telephone number</span>
-							</div>
-							<div class="s2act-textfield mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
-								<input class="mdl-textfield__input" type="text" name="mobile" id="mobile" value="{{ changeProfileForm.mobile }}" pattern="\+?[0-9 ()]+">
-								<label class="mdl-textfield__label" for="mobile">(Business) Mobile</label>
-								<span class="mdl-textfield__error">Please define a valid mobile number</span>
-							</div>
-							<div class="s2act-buttonRow">
-								<input type="submit" name="changePhones" value="Save" class="s2act-button--right mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--primary" />
-							</div>
-						</form>
-					</td>
-				</tr>
+			<tr id="changePhoneValue">
+				<td class="mdl-data-table__cell--non-numeric s2act-data-table__cell--header">Phone: <br/> Mobile:</td>
+				<td class="mdl-data-table__cell--non-numeric s2act-data-table__cell--value">{{ user.telephoneNumber |
+					default("No telephone number") }} <br/> {{ user.mobile | default("No mobile number") }}
+				</td>
+				<td class="mdl-data-table__cell--non-numeric s2act-data-table__cell--value">
+					<button class="js_attributeButton mdl-button mdl-js-button mdl-button--icon"
+							data-toggleid="changePhoneForm">
+						<i class="material-icons">edit</i>
+					</button>
+				</td>
+			</tr>
+			<!-- Change Phones -->
+			<tr id="changePhoneForm"
+				class="s2act-attributeForm {{hasFieldErrors(formName, 'telephone') or hasFieldErrors(formName, 'mobile') ? 'active' : ''}}">
+				<td colspan="3" class="mdl-data-table__cell--non-numeric s2act-data-table__cell--value">
+					<form name="changeProfileForm" action="/profile/change" method="post">
+						<input type="hidden" name="{{request.getAttribute('_csrf').parameterName}}"
+							   value="{{request.getAttribute('_csrf').token}}"/>
+						<input type="hidden" name="publicKey" value="{{ changeProfileForm.publicKey }}"/>
+						<div class="s2act-textfield mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+							<input class="mdl-textfield__input" type="text" name="telephone" id="telephone"
+								   value="{{ changeProfileForm.telephone }}" pattern="\+?[0-9 ()]+">
+							<label class="mdl-textfield__label" for="telephone">(Business) Telephone</label>
+							<span class="mdl-textfield__error">Please define a valid telephone number</span>
+						</div>
+						<div class="s2act-textfield mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+							<input class="mdl-textfield__input" type="text" name="mobile" id="mobile"
+								   value="{{ changeProfileForm.mobile }}" pattern="\+?[0-9 ()]+">
+							<label class="mdl-textfield__label" for="mobile">(Business) Mobile</label>
+							<span class="mdl-textfield__error">Please define a valid mobile number</span>
+						</div>
+						<div class="s2act-buttonRow">
+							<input type="submit" name="changePhones" value="Save"
+								   class="s2act-button--right mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--primary"/>
+						</div>
+					</form>
+				</td>
+			</tr>
 
-				<tr id="changePublicKeyValue" class="">
-					<td class="mdl-data-table__cell--non-numeric s2act-data-table__cell--header">SSH Public Key</td>
-					<td class="mdl-data-table__cell--non-numeric s2act-data-table__cell--value">{{ user.szzPublicKey | abbreviate(26) | default("No public key") }}</td>
-					<td class="mdl-data-table__cell--non-numeric s2act-data-table__cell--value">
-						<button class="js_attributeButton mdl-cell--hide-phone mdl-button mdl-js-button mdl-button--icon" data-toggleid="changePublicKeyForm">
-							<i class="material-icons">edit</i>
-						</button>
-					</td>
-				</tr>
-				<!-- Change SSH Pubkey -->
-				<tr id="changePublicKeyForm" class="s2act-attributeForm {{hasFieldErrors(formName, 'publicKey') ? 'active' : ''}}">
-					<td colspan="3" class="mdl-data-table__cell--non-numeric s2act-data-table__cell--value">
-						<form name="changeProfileForm" action="/profile/change" method="post">
-							<input type="hidden" name="{{request.getAttribute('_csrf').parameterName}}" value="{{request.getAttribute('_csrf').token}}" />
-							<input type="hidden" name="telephone" value="{{ changeProfileForm.telephone }}" />
-							<input type="hidden" name="mobile" value="{{ changeProfileForm.mobile }}" />
+			<tr id="changePublicKeyValue" class="">
+				<td class="mdl-data-table__cell--non-numeric s2act-data-table__cell--header">SSH Public Key</td>
+				<td class="mdl-data-table__cell--non-numeric s2act-data-table__cell--value">{{ user.szzPublicKey |
+					abbreviate(26) | default("No public key") }}
+				</td>
+				<td class="mdl-data-table__cell--non-numeric s2act-data-table__cell--value">
+					<button class="js_attributeButton mdl-cell--hide-phone mdl-button mdl-js-button mdl-button--icon"
+							data-toggleid="changePublicKeyForm">
+						<i class="material-icons">edit</i>
+					</button>
+				</td>
+			</tr>
+			<!-- Change SSH Pubkey -->
+			<tr id="changePublicKeyForm"
+				class="s2act-attributeForm {{hasFieldErrors(formName, 'publicKey') ? 'active' : ''}}">
+				<td colspan="3" class="mdl-data-table__cell--non-numeric s2act-data-table__cell--value">
+					<form name="changeProfileForm" action="/profile/change" method="post">
+						<input type="hidden" name="{{request.getAttribute('_csrf').parameterName}}"
+							   value="{{request.getAttribute('_csrf').token}}"/>
+						<input type="hidden" name="telephone" value="{{ changeProfileForm.telephone }}"/>
+						<input type="hidden" name="mobile" value="{{ changeProfileForm.mobile }}"/>
 
-							<div class="s2act-textfield mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
-								<textarea class="mdl-textfield__input" type="text" rows= "16" id="publicKey" name="publicKey">{{ changeProfileForm.publicKey }}</textarea>
-								<label class="mdl-textfield__label" for="publicKey">SSH Public Key</label>
-							</div>
-							<div class="s2act-buttonRow">
-								<input type="submit" name="changePublicKey" value="Save" class="s2act-button--right mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--primary" />
-							</div>
-						</form>
-					</td>
-				</tr>
+						<div class="s2act-textfield mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+							<textarea class="mdl-textfield__input" type="text" rows="16" id="publicKey"
+									  name="publicKey">{{ changeProfileForm.publicKey }}</textarea>
+							<label class="mdl-textfield__label" for="publicKey">SSH Public Key</label>
+						</div>
+						<div class="s2act-buttonRow">
+							<input type="submit" name="changePublicKey" value="Save"
+								   class="s2act-button--right mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--primary"/>
+						</div>
+					</form>
+				</td>
+			</tr>
 
 			</tbody>
 		</table>
@@ -158,26 +186,35 @@
 				<col width="48px">
 			</colgroup>
 			<tbody>
-				<tr>
-					<td class="mdl-data-table__cell--non-numeric s2act-data-table__cell--header">Entry Date</td>
-					<td colspan="2" class="mdl-data-table__cell--non-numeric s2act-data-table__cell--value">{{ user.employeeEntryDate.dayOfMonth | numberformat("00") }}.{{ user.employeeEntryDate.monthValue | numberformat("00")  }}.{{ user.employeeEntryDate.year | numberformat("0000")  }}</td>
-				</tr>
-				<tr>
-					<td class="mdl-data-table__cell--non-numeric s2act-data-table__cell--header">Title</td>
-					<td colspan="2" class="mdl-data-table__cell--non-numeric s2act-data-table__cell--value">{{ user.title }}</td>
-				</tr>
-				<tr>
-					<td class="mdl-data-table__cell--non-numeric s2act-data-table__cell--header">Location</td>
-					<td colspan="2" class="mdl-data-table__cell--non-numeric s2act-data-table__cell--value">{{ user.l }}</td>
-				</tr>
-				<tr>
-					<td class="mdl-data-table__cell--non-numeric s2act-data-table__cell--header">Employment</td>
-					<td colspan="2" class="mdl-data-table__cell--non-numeric s2act-data-table__cell--value">{{ user.description }}</td>
-				</tr>
-				<tr>
-					<td class="mdl-data-table__cell--non-numeric s2act-data-table__cell--header">Team</td>
-					<td colspan="2" class="mdl-data-table__cell--non-numeric s2act-data-table__cell--value">{{ user.ou }}</td>
-				</tr>
+			<tr>
+				<td class="mdl-data-table__cell--non-numeric s2act-data-table__cell--header">Entry Date</td>
+				<td colspan="2" class="mdl-data-table__cell--non-numeric s2act-data-table__cell--value">{{
+					user.employeeEntryDate.dayOfMonth | numberformat("00") }}.{{ user.employeeEntryDate.monthValue |
+					numberformat("00") }}.{{ user.employeeEntryDate.year | numberformat("0000") }}
+				</td>
+			</tr>
+			<tr>
+				<td class="mdl-data-table__cell--non-numeric s2act-data-table__cell--header">Title</td>
+				<td colspan="2" class="mdl-data-table__cell--non-numeric s2act-data-table__cell--value">{{ user.title
+					}}
+				</td>
+			</tr>
+			<tr>
+				<td class="mdl-data-table__cell--non-numeric s2act-data-table__cell--header">Location</td>
+				<td colspan="2" class="mdl-data-table__cell--non-numeric s2act-data-table__cell--value">{{ user.l }}
+				</td>
+			</tr>
+			<tr>
+				<td class="mdl-data-table__cell--non-numeric s2act-data-table__cell--header">Employment</td>
+				<td colspan="2" class="mdl-data-table__cell--non-numeric s2act-data-table__cell--value">{{
+					user.description }}
+				</td>
+			</tr>
+			<tr>
+				<td class="mdl-data-table__cell--non-numeric s2act-data-table__cell--header">Team</td>
+				<td colspan="2" class="mdl-data-table__cell--non-numeric s2act-data-table__cell--value">{{ user.ou }}
+				</td>
+			</tr>
 			</tbody>
 		</table>
 	</div>

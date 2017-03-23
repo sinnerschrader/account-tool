@@ -2,32 +2,33 @@
 
 {% block content %}
 {% if users is not empty %}
-	<h4 class="s2act-sectionSubHeadline">{{ message('searchResult.users', (users | length)) }}</h4>
-	<div class="mdl-list s2act-groupList">
-		{% for user in users %}
-		<div class="mdl-list__item mdl-list__item--two-line s2act-userList__item">
+<h4 class="s2act-sectionSubHeadline">{{ message('searchResult.users', (users | length)) }}</h4>
+<div class="mdl-list s2act-groupList">
+	{% for user in users %}
+	<div class="mdl-list__item mdl-list__item--two-line s2act-userList__item">
 			<span class="mdl-list__item-primary-content">
 				<i class="material-icons mdl-list__item-avatar">account_circle</i>
 				<span>{{ user.displayName }}</span>
 				<span class="uid">({{ user.uid }})</span>
 				<span class="mdl-list__item-sub-title">{{ user.o }}</span>
 			</span>
-			<span class="mdl-list__item-secondary-action">
-				<a href="/user/edit/{{ user.uid }}" class="mdl-button mdl-js-button mdl-button--fab mdl-button--mini-fab mdl-button--raised s2act-action s2act-action--edit">
+		<span class="mdl-list__item-secondary-action">
+				<a href="/user/edit/{{ user.uid }}"
+				   class="mdl-button mdl-js-button mdl-button--fab mdl-button--mini-fab mdl-button--raised s2act-action s2act-action--edit">
 					<i class="material-icons">edit</i>
 				</a>
 			</span>
-		</div>
-		{% endfor %}
 	</div>
+	{% endfor %}
+</div>
 {% else %}
-	<div class="mdl-list s2act-groupList">
-		<div class="mdl-list__item s2act-groupList__item">
+<div class="mdl-list s2act-groupList">
+	<div class="mdl-list__item s2act-groupList__item">
 			<span class="mdl-list__item-primary-content">
 				<i class="material-icons mdl-list__item-avatar">info</i>
 				<span>No users found</span>
 			</span>
-		</div>
 	</div>
+</div>
 {% endif %}
 {% endblock %}
