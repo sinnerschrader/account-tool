@@ -186,9 +186,8 @@ server:
 # =============================================================
 zxcvbn:
   dictionary:
-    active: "top500,custom"
+    active: "top500"
     top500: "classpath:/zxcvbn/top500-worst-passwords.dic"
-    custom: "classpath:/zxcvbn/custom.dic"
 
 # =============================================================
 # = Logging
