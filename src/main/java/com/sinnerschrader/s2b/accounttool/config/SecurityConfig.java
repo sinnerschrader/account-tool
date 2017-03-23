@@ -4,14 +4,6 @@ import com.sinnerschrader.s2b.accounttool.config.authentication.LdapAuthenticati
 import com.sinnerschrader.s2b.accounttool.config.authentication.LdapUserDetails;
 import com.sinnerschrader.s2b.accounttool.config.authentication.LdapUserDetailsAuthenticationProvider;
 import com.sinnerschrader.s2b.accounttool.config.ldap.LdapConfiguration;
-
-import java.io.IOException;
-
-import javax.servlet.ServletException;
-import javax.servlet.http.Cookie;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,13 +21,17 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.web.authentication.ForwardAuthenticationSuccessHandler;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 
+import javax.servlet.ServletException;
+import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
 
 @Configuration
 @EnableWebSecurity
 @Order(SecurityProperties.ACCESS_OVERRIDE_ORDER)
 @EnableGlobalMethodSecurity(securedEnabled = true)
-public class SecurityConfig extends WebSecurityConfigurerAdapter
-{
+public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
 	private static final Logger log = LoggerFactory.getLogger(SecurityConfig.class);
 
@@ -55,71 +51,66 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter
 	private boolean httpOnlyCookie = true;
 
 	@Override
-	public void configure(WebSecurity web) throws Exception
-	{
+	public void configure(WebSecurity web) throws Exception {
 		log.debug("Setting up access for static resources and CSP Report");
 		web.ignoring().antMatchers("/csp-report", "/extensions/**", "/static/**", "/management/**");
 	}
 
 	@Override
-	protected void configure(HttpSecurity http) throws Exception
-	{
+	protected void configure(HttpSecurity http) throws Exception {
 		log.debug("Setting up authorization");
 		http.formLogin()
-			.loginPage("/login")
-			.loginProcessingUrl("/login")
-			.permitAll()
-			.authenticationDetailsSource(authenticationDetailsSource())
-			.successHandler(new CustomAuthenticationSuccessHandler("/"))
-			.and()
-			.logout()
-			.logoutUrl("/logout")
-			.permitAll()
-			.and()
-			.exceptionHandling()
-			.accessDeniedPage("/403")
-			.and()
-			.authorizeRequests()
-			.antMatchers("/version", "/license")
-			.permitAll()
-			.and()
-			.authorizeRequests()
-			.anyRequest()
-			.authenticated()
-			.and()
-			.sessionManagement()
-			.sessionFixation().newSession()
-			.and()
-			.csrf()
-			.and()
-			.headers()
-			.contentSecurityPolicy(contentSecurityPolicy)
-		;
+				.loginPage("/login")
+				.loginProcessingUrl("/login")
+				.permitAll()
+				.authenticationDetailsSource(authenticationDetailsSource())
+				.successHandler(new CustomAuthenticationSuccessHandler("/"))
+				.and()
+				.logout()
+				.logoutUrl("/logout")
+				.permitAll()
+				.and()
+				.exceptionHandling()
+				.accessDeniedPage("/403")
+				.and()
+				.authorizeRequests()
+				.antMatchers("/version", "/license")
+				.permitAll()
+				.and()
+				.authorizeRequests()
+				.anyRequest()
+				.authenticated()
+				.and()
+				.sessionManagement()
+				.sessionFixation()
+				.newSession()
+				.and()
+				.csrf()
+				.and()
+				.headers()
+				.contentSecurityPolicy(contentSecurityPolicy);
 	}
 
-	private WebAuthenticationDetailsSource authenticationDetailsSource()
-	{
+	private WebAuthenticationDetailsSource authenticationDetailsSource() {
 		return new LdapAuthenticationDetailsSource(ldapConfiguration);
 	}
 
 	@Autowired
-	public void configureGlobal(AuthenticationManagerBuilder auth) throws Exception
-	{
+	public void configureGlobal(AuthenticationManagerBuilder auth) throws Exception {
 		auth.authenticationProvider(userDetailsAuthenticationProvider);
 	}
 
-	private final class CustomAuthenticationSuccessHandler extends ForwardAuthenticationSuccessHandler
-	{
+	private final class CustomAuthenticationSuccessHandler
+			extends ForwardAuthenticationSuccessHandler {
 
-		CustomAuthenticationSuccessHandler(String forwardUrl)
-		{
+		CustomAuthenticationSuccessHandler(String forwardUrl) {
 			super(forwardUrl);
 		}
 
 		@Override
-		public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response,
-			Authentication authentication) throws IOException, ServletException
-		{
+		public void onAuthenticationSuccess(
+				HttpServletRequest request, HttpServletResponse response, Authentication authentication)
+				throws IOException, ServletException {
 			// set the company cookie for company pre selection on login
 			LdapUserDetails details = (LdapUserDetails) authentication.getPrincipal();
 			Cookie companyCookie = new Cookie(WebConstants.COMPANY_COOKIE_NAME, details.getCompany());
@@ -129,7 +120,5 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter
 			response.addCookie(companyCookie);
 			super.onAuthenticationSuccess(request, response, authentication);
 		}
-
 	}
-
 }

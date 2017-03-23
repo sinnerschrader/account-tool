@@ -4,12 +4,10 @@ import com.sinnerschrader.s2b.accounttool.logic.entity.User;
 
 import java.util.List;
 
-
 /**
  * LDAP Business Service for scheduling tasks and perform cleanups.
  */
-public interface LdapBusinessService
-{
+public interface LdapBusinessService {
 
 	List<User> getUnmaintainedExternals();
 
@@ -20,5 +18,4 @@ public interface LdapBusinessService
 	void addDefaultGroups(User user);
 
 	void delDefaulGroups(User user);
-
 }

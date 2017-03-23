@@ -1,14 +1,11 @@
 package com.sinnerschrader.s2b.accounttool.config.authentication;
 
 import com.sinnerschrader.s2b.accounttool.config.ldap.LdapConfiguration;
+import org.springframework.security.web.authentication.WebAuthenticationDetails;
 
 import javax.servlet.http.HttpServletRequest;
 
-import org.springframework.security.web.authentication.WebAuthenticationDetails;
-
-
-public class LdapAuthenticationDetails extends WebAuthenticationDetails
-{
+public class LdapAuthenticationDetails extends WebAuthenticationDetails {
 
 	private final String userDN;
 
@@ -18,8 +15,7 @@ public class LdapAuthenticationDetails extends WebAuthenticationDetails
 
 	private final String company;
 
-	LdapAuthenticationDetails(LdapConfiguration ldapConfiguration, HttpServletRequest request)
-	{
+	LdapAuthenticationDetails(LdapConfiguration ldapConfiguration, HttpServletRequest request) {
 		super(request);
 		this.username = request.getParameter("uid");
 		this.password = request.getParameter("password");
@@ -27,24 +23,19 @@ public class LdapAuthenticationDetails extends WebAuthenticationDetails
 		this.userDN = ldapConfiguration.getUserBind(username, company);
 	}
 
-	public String getUserDN()
-	{
+	public String getUserDN() {
 		return userDN;
 	}
 
-	public String getUsername()
-	{
+	public String getUsername() {
 		return username;
 	}
 
-	public String getPassword()
-	{
+	public String getPassword() {
 		return password;
 	}
 
-	public String getCompany()
-	{
+	public String getCompany() {
 		return company;
 	}
-
 }

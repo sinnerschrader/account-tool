@@ -1,73 +1,73 @@
 <!doctype html>
 {% import "pages/template/macros.html" %}
 <html lang="en">
-	<head>
-		<meta charset="UTF-8">
-		<meta http-equiv="X-UA-Compatible" content="IE=edge">
-		<meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0">
-		<meta name="mobile-web-app-capable" content="yes">
-		<title>{% block title %}SinnerSchrader - Account Tool{% endblock %}</title>
+<head>
+	<meta charset="UTF-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0">
+	<meta name="mobile-web-app-capable" content="yes">
+	<title>{% block title %}SinnerSchrader - Account Tool{% endblock %}</title>
 
-		<!-- Mobile Tweaks -->
-		<link rel="apple-touch-icon" sizes="180x180" href="/static/favicons/apple-touch-icon.png">
-		<link rel="icon" type="image/png" href="/static/favicons/favicon-32x32.png" sizes="32x32">
-		<link rel="icon" type="image/png" href="/static/favicons/favicon-16x16.png" sizes="16x16">
-		<link rel="manifest" href="/static/favicons/manifest.json">
-		<link rel="mask-icon" href="/static/favicons/safari-pinned-tab.svg" color="#4502da">
-		<meta name="theme-color" content="#4502da">
-		<link rel="shortcut icon" href="/static/favicons/favicon.ico" type="image/x-icon"/>
+	<!-- Mobile Tweaks -->
+	<link rel="apple-touch-icon" sizes="180x180" href="/static/favicons/apple-touch-icon.png">
+	<link rel="icon" type="image/png" href="/static/favicons/favicon-32x32.png" sizes="32x32">
+	<link rel="icon" type="image/png" href="/static/favicons/favicon-16x16.png" sizes="16x16">
+	<link rel="manifest" href="/static/favicons/manifest.json">
+	<link rel="mask-icon" href="/static/favicons/safari-pinned-tab.svg" color="#4502da">
+	<meta name="theme-color" content="#4502da">
+	<link rel="shortcut icon" href="/static/favicons/favicon.ico" type="image/x-icon"/>
 
-		<!-- Page styles -->
-		<link rel="stylesheet"
-			  href="https://fonts.googleapis.com/css?family=Roboto:regular,bold,italic,thin,light,bolditalic,black,medium&amp;lang=en"/>
-		<link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons"/>
-		<link rel="stylesheet" href="/extensions/account-tool.min.css?v={{time}}"/>
-	</head>
-	<body>
-		<div class="mdl-layout mdl-js-layout mdl-layout--fixed-header">
-			<div class="s2act-header mdl-layout__header mdl-layout__header--waterfall">
-				<div class="mdl-layout__header-row mdl-layout__header-row--center">
-					<!-- Desktop -->
-					<span class="mdl-cell--hide-tablet mdl-cell--hide-phone mdl-layout-title s2act-title">{{ logo() }}</span>
+	<!-- Page styles -->
+	<link rel="stylesheet"
+		  href="https://fonts.googleapis.com/css?family=Roboto:regular,bold,italic,thin,light,bolditalic,black,medium&amp;lang=en"/>
+	<link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons"/>
+	<link rel="stylesheet" href="/extensions/account-tool.min.css?v={{time}}"/>
+</head>
+<body>
+<div class="mdl-layout mdl-js-layout mdl-layout--fixed-header">
+	<div class="s2act-header mdl-layout__header mdl-layout__header--waterfall">
+		<div class="mdl-layout__header-row mdl-layout__header-row--center">
+			<!-- Desktop -->
+			<span class="mdl-cell--hide-tablet mdl-cell--hide-phone mdl-layout-title s2act-title">{{ logo() }}</span>
 
-					<!-- Mobile -->
-					<div class="s2act-header-spacer mdl-layout-spacer"></div>
-					<span class="mdl-layout-title s2act-title s2act-mobile-title">{{ logo() }}</span>
-					<div class="s2act-header-spacer mdl-layout-spacer"></div>
-				</div>
-			</div>
-			<div class="s2act-content s2act-loginContent mdl-layout__content">
-				<div class="s2act-content__inner">{% block content %}Default content goes here. {% endblock%}</div>
-				<footer class="mdl-mini-footer s2act-footer">
-					<div class="mdl-mini-footer__left-section">
-						<ul class="mdl-mini-footer__link-list">
-							<li>
-								<a href="https://www.sinnerschrader.com" target="_blank">
-									<i class="material-icons">open_in_new</i>
-									<span>www.sinnerschrader.com</span>
-								</a>
-							</li>
-						</ul>
-					</div>
-					<div class="mdl-mini-footer__right-section">
-						<ul class="mdl-mini-footer__link-list">
-							<li>
-								<a href="{{ env.getProperty('app.issues') }}" target="_blank">
-									<i class="material-icons">bug_report</i>
-									<span>Found a Bug?</span>
-								</a>
-							</li>
-							<li>
-								<a href="/license">
-									<i class="material-icons">copyright</i>
-									<span>License</span>
-								</a>
-							</li>
-						</ul>
-					</div>
-				</footer>
-			</div>
+			<!-- Mobile -->
+			<div class="s2act-header-spacer mdl-layout-spacer"></div>
+			<span class="mdl-layout-title s2act-title s2act-mobile-title">{{ logo() }}</span>
+			<div class="s2act-header-spacer mdl-layout-spacer"></div>
 		</div>
-		<script async src="/extensions/account-tool.min.js?v={{time}}"></script>
-	</body>
+	</div>
+	<div class="s2act-content s2act-loginContent mdl-layout__content">
+		<div class="s2act-content__inner">{% block content %}Default content goes here. {% endblock%}</div>
+		<footer class="mdl-mini-footer s2act-footer">
+			<div class="mdl-mini-footer__left-section">
+				<ul class="mdl-mini-footer__link-list">
+					<li>
+						<a href="https://www.sinnerschrader.com" target="_blank">
+							<i class="material-icons">open_in_new</i>
+							<span>www.sinnerschrader.com</span>
+						</a>
+					</li>
+				</ul>
+			</div>
+			<div class="mdl-mini-footer__right-section">
+				<ul class="mdl-mini-footer__link-list">
+					<li>
+						<a href="{{ env.getProperty('app.issues') }}" target="_blank">
+							<i class="material-icons">bug_report</i>
+							<span>Found a Bug?</span>
+						</a>
+					</li>
+					<li>
+						<a href="/license">
+							<i class="material-icons">copyright</i>
+							<span>License</span>
+						</a>
+					</li>
+				</ul>
+			</div>
+		</footer>
+	</div>
+</div>
+<script async src="/extensions/account-tool.min.js?v={{time}}"></script>
+</body>
 </html>

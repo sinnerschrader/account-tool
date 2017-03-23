@@ -1,18 +1,16 @@
 package com.sinnerschrader.s2b.accounttool.logic.entity;
 
+import org.apache.commons.lang3.StringUtils;
+
 import java.beans.Transient;
 import java.util.List;
 
-import org.apache.commons.lang3.StringUtils;
-
-
 /**
- * Interface for different Implementations of Groups.
- * We currently use mainly posixGroups in LDAP, but will use also groupOfNames or groupOfUniqueNames.
- * This Interface combines the relevant informations of all of them and provides a type information
+ * Interface for different Implementations of Groups. We currently use mainly posixGroups in LDAP,
+ * but will use also groupOfNames or groupOfUniqueNames. This Interface combines the relevant
+ * informations of all of them and provides a type information
  */
-public interface Group extends Comparable<Group>
-{
+public interface Group extends Comparable<Group> {
 
 	/**
 	 * The LDAP DN of the Group
@@ -57,20 +55,17 @@ public interface Group extends Comparable<Group>
 	List<String> getObjectClasses();
 
 	/**
-	 * Checks if the current uidOrDN is a member of this group. You have to use this method twice,
-	 * to check if a user is member of the group. Prefer hasMember(User user) where posible.
+	 * Checks if the current uidOrDN is a member of this group. You have to use this method twice, to
+	 * check if a user is member of the group. Prefer hasMember(User user) where posible.
 	 *
 	 * @param uidOrDN the uid or dn of the user.
-	 *
 	 * @return if the uid or dn is in the list.
 	 */
-	default boolean hasMember(String uidOrDN)
-	{
+	default boolean hasMember(String uidOrDN) {
 		return getMemberIds().contains(uidOrDN);
 	}
 
-	default boolean hasMember(User user)
-	{
+	default boolean hasMember(User user) {
 		return hasMember(user.getUid()) || hasMember(user.getDn());
 	}
 
@@ -83,8 +78,7 @@ public interface Group extends Comparable<Group>
 	 * @return state if it is an admin group or not.
 	 */
 	@Transient
-	default boolean isAdminGroup()
-	{
+	default boolean isAdminGroup() {
 		return getGroupClassification() == GroupClassification.ADMIN;
 	}
 
@@ -94,8 +88,7 @@ public interface Group extends Comparable<Group>
 	 * @return state if it is an admin group or not.
 	 */
 	@Transient
-	default boolean isTechnicalGroup()
-	{
+	default boolean isTechnicalGroup() {
 		return getGroupClassification() == GroupClassification.TECHNICAL;
 	}
 
@@ -105,41 +98,38 @@ public interface Group extends Comparable<Group>
 	 * @return state if it is an admin group or not.
 	 */
 	@Transient
-	default boolean isTeamGroup()
-	{
+	default boolean isTeamGroup() {
 		return getGroupClassification() == GroupClassification.TEAM;
 	}
 
 	/**
 	 * Extracts the Prefix from group cn. This prefixes handles some classification on groups.
 	 * <p>
-	 * Example: devs-customer, admin-customer or team-customer will result in "devs", "admin" and "team"
+	 * <p>Example: devs-customer, admin-customer or team-customer will result in "devs", "admin" and
+	 * "team"
 	 *
 	 * @return the prefix of the group or empty string if the group name is not prefixed.
 	 */
 	@Transient
-	default String getGroupPrefix()
-	{
+	default String getGroupPrefix() {
 		final String cn = getCn();
 		final String separator = "-";
-		if (cn.contains(separator))
-		{
+		if (cn.contains(separator)) {
 			return cn.split(separator)[0];
 		}
 		return "";
 	}
 
 	/**
-	 * Returns the Name of the Group without the prefix of the group. If there are several groups for the same
-	 * area/customer this will return the same name.
+	 * Returns the Name of the Group without the prefix of the group. If there are several groups for
+	 * the same area/customer this will return the same name.
 	 * <p>
-	 * Example: team-customer, admin-customer or devs-customer will result on both to "customer"
+	 * <p>Example: team-customer, admin-customer or devs-customer will result on both to "customer"
 	 *
 	 * @return the name without prefix
 	 */
 	@Transient
-	default String getName()
-	{
+	default String getName() {
 		final String separator = "-";
 		final String cn = getCn();
 		int pos = Math.max(cn.indexOf(separator) + 1, 0);
@@ -147,21 +137,19 @@ public interface Group extends Comparable<Group>
 	}
 
 	@Override
-	default int compareTo(Group o)
-	{
+	default int compareTo(Group o) {
 		int res = StringUtils.compareIgnoreCase(getName(), o.getName());
-		if (res == 0)
-		{
+		if (res == 0) {
 			res = StringUtils.compareIgnoreCase(getGroupPrefix(), o.getGroupPrefix());
 		}
 		return res;
 	}
 
 	/**
-	 * Classification of a Group if it is a Client Team Admin Group, Client Team Group, Technical Integration Group or unknown.
+	 * Classification of a Group if it is a Client Team Admin Group, Client Team Group, Technical
+	 * Integration Group or unknown.
 	 */
-	enum GroupClassification
-	{
+	enum GroupClassification {
 		ADMIN,
 		TEAM,
 		TECHNICAL,
@@ -171,24 +159,20 @@ public interface Group extends Comparable<Group>
 	/**
 	 * The LDAP Type which the Group Instance is respresenting.
 	 */
-	enum GroupType
-	{
+	enum GroupType {
 
 		/**
-		 * Spec: https://tools.ietf.org/html/rfc2307
-		 * Chapter: 2.2 and 4.
+		 * Spec: https://tools.ietf.org/html/rfc2307 Chapter: 2.2 and 4.
 		 */
 		Posix("posixGroup", "memberUid"),
 
 		/**
-		 * Spec: https://tools.ietf.org/html/rfc4519#page-22
-		 * Chapter: 3.5
+		 * Spec: https://tools.ietf.org/html/rfc4519#page-22 Chapter: 3.5
 		 */
 		GroupOfNames("groupOfNames", "member"),
 
 		/**
-		 * Spec: https://tools.ietf.org/html/rfc4519#page-22
-		 * Chapter: 3.6
+		 * Spec: https://tools.ietf.org/html/rfc4519#page-22 Chapter: 3.6
 		 */
 		GroupOfUniqueNames("groupOfUniqueNames", "uniqueMember");
 
@@ -196,22 +180,17 @@ public interface Group extends Comparable<Group>
 
 		private final String memberAttritube;
 
-		GroupType(String objectClass, String memberAttritube)
-		{
+		GroupType(String objectClass, String memberAttritube) {
 			this.objectClass = objectClass;
 			this.memberAttritube = memberAttritube;
 		}
 
-		public String getObjectClass()
-		{
+		public String getObjectClass() {
 			return objectClass;
 		}
 
-		public String getMemberAttritube()
-		{
+		public String getMemberAttritube() {
 			return memberAttritube;
 		}
-
 	}
-
 }

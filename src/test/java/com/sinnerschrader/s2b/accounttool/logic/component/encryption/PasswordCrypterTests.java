@@ -8,16 +8,13 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringRunner;
 
-
 @RunWith(SpringRunner.class)
 @SpringBootTest
 @ActiveProfiles({"test"})
-public class PasswordCrypterTests
-{
+public class PasswordCrypterTests {
 
 	@Test
-	public void testPasswordEncryption()
-	{
+	public void testPasswordEncryption() {
 		PasswordEncrypter crypter = new PasswordEncrypter();
 		String salt = RandomStringUtils.randomAlphanumeric(16);
 		String password = RandomStringUtils.randomAlphanumeric(32);
@@ -26,5 +23,4 @@ public class PasswordCrypterTests
 		Assert.assertNotEquals(password, crypter.encrypt(password));
 		Assert.assertNotEquals(crypter.encrypt(password), crypter.encrypt(password));
 	}
-
 }

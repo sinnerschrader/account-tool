@@ -26,7 +26,8 @@
 				<select id="company" name="company" class="mdl-selectfield__select">
 					<option value=""></option>
 					{% for company in companies %}
-					<option value="{{company.key}}" {{isSelected(editUserForm.company,company.key)}}>{{company.value}}</option>
+					<option value="{{company.key}}" {{isSelected(editUserForm.company,company.key)}}>{{company.value}}
+					</option>
 					{% endfor %}
 				</select>
 				<div class="mdl-selectfield__icon"><i class="material-icons">arrow_drop_down</i></div>

@@ -4,19 +4,14 @@ import com.sinnerschrader.s2b.accounttool.config.authentication.LdapUserDetails;
 import com.sinnerschrader.s2b.accounttool.config.ldap.LdapConfiguration;
 import com.sinnerschrader.s2b.accounttool.logic.DateTimeHelper;
 import com.sinnerschrader.s2b.accounttool.logic.entity.User;
+import org.apache.commons.lang3.StringUtils;
 
 import java.io.Serializable;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 
-import org.apache.commons.lang3.StringUtils;
-
-
-/**
- *
- */
-public class UserForm implements Serializable
-{
+/** */
+public class UserForm implements Serializable {
 
 	private static final String BIRTHDAY_PATTERN = "dd.MM";
 
@@ -73,8 +68,7 @@ public class UserForm implements Serializable
 	 */
 	private String exitDate;
 
-	public UserForm()
-	{
+	public UserForm() {
 		this.uid = "";
 		this.employeeNumber = "";
 		this.firstName = "";
@@ -96,17 +90,14 @@ public class UserForm implements Serializable
 		this.exitDate = DateTimeHelper.toDateString(entry.plusYears(50L).minusDays(1), DATE_PATTERN);
 	}
 
-	public UserForm(LdapUserDetails details)
-	{
+	public UserForm(LdapUserDetails details) {
 		this();
-		if (details != null)
-		{
+		if (details != null) {
 			this.company = details.getCompany();
 		}
 	}
 
-	public UserForm(User user)
-	{
+	public UserForm(User user) {
 		this();
 
 		this.uid = user.getUid();
@@ -124,310 +115,253 @@ public class UserForm implements Serializable
 		this.mailStatus = user.getSzzMailStatus().name();
 		this.email = user.getMail();
 
-		if (user.getBirthDate() != null)
-		{
+		if (user.getBirthDate() != null) {
 			this.birthDate = DateTimeHelper.toDateString(user.getBirthDate(), BIRTHDAY_PATTERN);
 		}
-		if (user.getEmployeeEntryDate() != null)
-		{
+		if (user.getEmployeeEntryDate() != null) {
 			this.entryDate = DateTimeHelper.toDateString(user.getEmployeeEntryDate(), DATE_PATTERN);
 		}
-		if (user.getEmployeeExitDate() != null)
-		{
+		if (user.getEmployeeExitDate() != null) {
 			this.exitDate = DateTimeHelper.toDateString(user.getEmployeeExitDate(), DATE_PATTERN);
 		}
 	}
 
-	public LocalDate getExitAsDate()
-	{
+	public LocalDate getExitAsDate() {
 		return LocalDate.parse(exitDate, DateTimeFormatter.ofPattern(DATE_PATTERN));
 	}
 
-	public LocalDate getBirthAsDate()
-	{
+	public LocalDate getBirthAsDate() {
 		// the year is not stored, but is a leap year for reasons
-		if (StringUtils.isNotBlank(birthDate))
-		{
+		if (StringUtils.isNotBlank(birthDate)) {
 			return LocalDate.parse(birthDate + ".1972", DateTimeFormatter.ofPattern(DATE_PATTERN));
 		}
 		return null;
 	}
 
-	public LocalDate getEntryAsDate()
-	{
+	public LocalDate getEntryAsDate() {
 		return LocalDate.parse(entryDate, DateTimeFormatter.ofPattern(DATE_PATTERN));
 	}
 
-	public User createUserEntityFromForm(LdapConfiguration ldapConfiguration)
-	{
+	public User createUserEntityFromForm(LdapConfiguration ldapConfiguration) {
 		LocalDate birth = getBirthAsDate();
 		LocalDate entry = getEntryAsDate();
 		LocalDate exit = getExitAsDate();
 
 		return new User(
-			null,
-			uid,
-			null,
-			null,
-			firstName + " " + lastName,
-			firstName + " " + lastName,
-			firstName + " " + lastName,
-			firstName,
-			lastName,
-			null,
-			null,
-			birth,
-			null,
-			null,
-			null,
-			email,
-			User.State.fromString(status),
-			User.State.fromString(mailStatus),
-			null,
-			entry,
-			exit,
-			team,
-			type,
-			telephoneNumber,
-			mobileNumber,
-			employeeNumber,
-			title,
-			location,
-			null,
-			ldapConfiguration.getCompaniesAsMap().get(company),
-			company
-		);
-
+				null,
+				uid,
+				null,
+				null,
+				firstName + " " + lastName,
+				firstName + " " + lastName,
+				firstName + " " + lastName,
+				firstName,
+				lastName,
+				null,
+				null,
+				birth,
+				null,
+				null,
+				null,
+				email,
+				User.State.fromString(status),
+				User.State.fromString(mailStatus),
+				null,
+				entry,
+				exit,
+				team,
+				type,
+				telephoneNumber,
+				mobileNumber,
+				employeeNumber,
+				title,
+				location,
+				null,
+				ldapConfiguration.getCompaniesAsMap().get(company),
+				company);
 	}
 
-	public boolean isChangeUser()
-	{
+	public boolean isChangeUser() {
 		return StringUtils.isNotBlank(save);
 	}
 
-	public boolean isDeactivateUser()
-	{
+	public boolean isDeactivateUser() {
 		return StringUtils.isNotBlank(deactivateUser);
 	}
 
-	public boolean isActivateUser()
-	{
+	public boolean isActivateUser() {
 		return StringUtils.isNotBlank(activateUser);
 	}
 
-	public boolean isResetpassword()
-	{
+	public boolean isResetpassword() {
 		return StringUtils.isNotBlank(resetPassword);
 	}
 
-	public String getSave()
-	{
+	public String getSave() {
 		return save;
 	}
 
-	public void setSave(String save)
-	{
+	public void setSave(String save) {
 		this.save = save;
 	}
 
-	public String getActivateUser()
-	{
+	public String getActivateUser() {
 		return activateUser;
 	}
 
-	public void setActivateUser(String activateUser)
-	{
+	public void setActivateUser(String activateUser) {
 		this.activateUser = activateUser;
 	}
 
-	public String getDeactivateUser()
-	{
+	public String getDeactivateUser() {
 		return deactivateUser;
 	}
 
-	public void setDeactivateUser(String deactivateUser)
-	{
+	public void setDeactivateUser(String deactivateUser) {
 		this.deactivateUser = deactivateUser;
 	}
 
-	public String getResetPassword()
-	{
+	public String getResetPassword() {
 		return resetPassword;
 	}
 
-	public void setResetPassword(String resetPassword)
-	{
+	public void setResetPassword(String resetPassword) {
 		this.resetPassword = resetPassword;
 	}
 
-	public String getUid()
-	{
+	public String getUid() {
 		return uid;
 	}
 
-	public void setUid(String uid)
-	{
+	public void setUid(String uid) {
 		this.uid = uid;
 	}
 
-	public String getEmployeeNumber()
-	{
+	public String getEmployeeNumber() {
 		return employeeNumber;
 	}
 
-	public void setEmployeeNumber(String employeeNumber)
-	{
+	public void setEmployeeNumber(String employeeNumber) {
 		this.employeeNumber = employeeNumber;
 	}
 
-	public String getFirstName()
-	{
+	public String getFirstName() {
 		return firstName;
 	}
 
-	public void setFirstName(String firstName)
-	{
+	public void setFirstName(String firstName) {
 		this.firstName = firstName;
 	}
 
-	public String getLastName()
-	{
+	public String getLastName() {
 		return lastName;
 	}
 
-	public void setLastName(String lastName)
-	{
+	public void setLastName(String lastName) {
 		this.lastName = lastName;
 	}
 
-	public String getCompany()
-	{
+	public String getCompany() {
 		return company;
 	}
 
-	public void setCompany(String company)
-	{
+	public void setCompany(String company) {
 		this.company = company;
 	}
 
-	public String getLocation()
-	{
+	public String getLocation() {
 		return location;
 	}
 
-	public void setLocation(String location)
-	{
+	public void setLocation(String location) {
 		this.location = location;
 	}
 
-	public String getTitle()
-	{
+	public String getTitle() {
 		return title;
 	}
 
-	public void setTitle(String title)
-	{
+	public void setTitle(String title) {
 		this.title = title;
 	}
 
-	public String getType()
-	{
+	public String getType() {
 		return type;
 	}
 
-	public void setType(String type)
-	{
+	public void setType(String type) {
 		this.type = type;
 	}
 
-	public String getTeam()
-	{
+	public String getTeam() {
 		return team;
 	}
 
-	public void setTeam(String team)
-	{
+	public void setTeam(String team) {
 		this.team = team;
 	}
 
-	public String getTelephoneNumber()
-	{
+	public String getTelephoneNumber() {
 		return telephoneNumber;
 	}
 
-	public void setTelephoneNumber(String telephoneNumber)
-	{
+	public void setTelephoneNumber(String telephoneNumber) {
 		this.telephoneNumber = telephoneNumber;
 	}
 
-	public String getMobileNumber()
-	{
+	public String getMobileNumber() {
 		return mobileNumber;
 	}
 
-	public void setMobileNumber(String mobileNumber)
-	{
+	public void setMobileNumber(String mobileNumber) {
 		this.mobileNumber = mobileNumber;
 	}
 
-	public String getStatus()
-	{
+	public String getStatus() {
 		return status;
 	}
 
-	public void setStatus(String status)
-	{
+	public void setStatus(String status) {
 		this.status = status;
 	}
 
-	public String getMailStatus()
-	{
+	public String getMailStatus() {
 		return mailStatus;
 	}
 
-	public void setMailStatus(String mailStatus)
-	{
+	public void setMailStatus(String mailStatus) {
 		this.mailStatus = mailStatus;
 	}
 
-	public String getBirthDate()
-	{
+	public String getBirthDate() {
 		return birthDate;
 	}
 
-	public void setBirthDate(String birthDate)
-	{
+	public void setBirthDate(String birthDate) {
 		this.birthDate = birthDate;
 	}
 
-	public String getEntryDate()
-	{
+	public String getEntryDate() {
 		return entryDate;
 	}
 
-	public void setEntryDate(String entryDate)
-	{
+	public void setEntryDate(String entryDate) {
 		this.entryDate = entryDate;
 	}
 
-	public String getExitDate()
-	{
+	public String getExitDate() {
 		return exitDate;
 	}
 
-	public void setExitDate(String exitDate)
-	{
+	public void setExitDate(String exitDate) {
 		this.exitDate = exitDate;
 	}
 
-	public String getEmail()
-	{
+	public String getEmail() {
 		return email;
 	}
 
-	public void setEmail(String email)
-	{
+	public void setEmail(String email) {
 		this.email = email;
 	}
-
 }

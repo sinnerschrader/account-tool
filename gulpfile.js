@@ -5,23 +5,23 @@ var config = {
 	target: 'target/classes/public/',
 	finalName: 'account-tool',
 	failAfterError: true
-}
+};
 
-var handleError = function(err) {
+var handleError = function (err) {
 	console.error(err);
-}
+};
 
 gulp.task('lint:js', () => {
 	var eslint = require('gulp-eslint');
 	var noop = require('gulp-noop');
-    return gulp.src([
+	return gulp.src([
 			config.source + 'extensions/js/**/*.js',
 			config.source + 'extensions/js/**/*.json',
 			'!node_modules/**'
-    	])
-        .pipe(eslint())
-        .pipe(eslint.format())
-        .pipe(config.failAfterError ? eslint.failAfterError() : noop());
+		])
+		.pipe(eslint())
+		.pipe(eslint.format())
+		.pipe(config.failAfterError ? eslint.failAfterError() : noop());
 });
 
 gulp.task("build:js", ['lint:js'], function () {
@@ -44,13 +44,13 @@ gulp.task("build:js", ['lint:js'], function () {
 		.pipe(buffer())
 		.pipe(gulp.dest(config.target + 'extensions/'))
 		.pipe(rename({suffix: '.min'}))
-		.pipe(sourcemaps.init({ loadMaps: true }))
+		.pipe(sourcemaps.init({loadMaps: true}))
 		.pipe(uglify())
 		.pipe(sourcemaps.write('./'))
 		.pipe(gulp.dest(config.target + 'extensions/'));
 });
 
-gulp.task('build:css', function() {
+gulp.task('build:css', function () {
 	var sass = require('gulp-sass');
 	var sourcemaps = require('gulp-sourcemaps');
 	var autoprefixer = require('gulp-autoprefixer');
@@ -60,7 +60,7 @@ gulp.task('build:css', function() {
 	return gulp.src(config.source + 'extensions/css/index.scss')
 		.pipe(rename(config.finalName + '.css'))
 		.pipe(sourcemaps.init())
-	 	.pipe(sass({ style: 'expanded' }).on('error', sass.logError))
+		.pipe(sass({style: 'expanded'}).on('error', sass.logError))
 		.pipe(autoprefixer('last 2 version'))
 		.pipe(gulp.dest(config.target + 'extensions/'))
 		.pipe(rename({suffix: '.min'}))
@@ -69,12 +69,12 @@ gulp.task('build:css', function() {
 		.pipe(gulp.dest(config.target + 'extensions/'));
 });
 
-gulp.task('build:copy-resources', function() {
-	var copyResources = [config.source + '**', '!'+ config.source + '**/*.svg'];
-	gulp.src(copyResources ).pipe(gulp.dest(config.target));
+gulp.task('build:copy-resources', function () {
+	var copyResources = [config.source + '**', '!' + config.source + '**/*.svg'];
+	gulp.src(copyResources).pipe(gulp.dest(config.target));
 });
 
-gulp.task('watch', function() {
+gulp.task('watch', function () {
 	gulp.watch(config.source + '**', ['build:copy-resources']);
 	gulp.watch(config.source + 'extensions/js/**/*.js', ['build:js']);
 	gulp.watch(config.source + 'extensions/css/**/*.scss', ['build:css']);
@@ -82,7 +82,7 @@ gulp.task('watch', function() {
 
 gulp.task('build', ['build:js', 'build:css']);
 
-gulp.task('development', function() {
+gulp.task('development', function () {
 	config.failAfterError = false;
 	gulp.start(['build', 'watch']);
 });
