@@ -1,6 +1,6 @@
 # This File overrides the default configuration
 #
-JAVA_OPTS="-Xmx512m -Xms64m"
+JAVA_OPTS="-Xmx512m -Xms64m -Djava.net.preferIPv4Stack=true -Djava.net.preferIPv4Addresses"
 
 # Controls the started profile of the application.
 SPRING_PROFILES_ACTIVE="production"
