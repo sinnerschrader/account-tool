@@ -69,16 +69,16 @@ This data was generated, but can be adjusted for specific testings over time.
 The test data and schema is stored under `src/main/resources/ldap/*` with two folders inside. The folder `schema` contains the LDAP schema files in an LDIF format which is required to validate the data which is stored in the `data` folder.
 
 ##### Schema files
-We currently use some of the default and publicly provided schema files (01-system to 06-ppolicy), but we require some extensions. The custom extension is the integration of the Samba schema to handle some Samba shares.
+We currently use some of the default and publicly provided schema files (`01-system` to `06-ppolicy`), but we require some extensions. The custom extension is the integration of the Samba schema to handle some Samba shares.
 The schema file 08-szz provides a custom extension for handling employees over time.
 
 Please research LDAP schema files on the internet, if you need more informations about the first schema files.
 
 ##### Data files
-* 01-company-structure.ldif
+* `01-company-structure.ldif`
   * Contains all OUs (Organizational Units) which describe the base company structure
-* 02-groups.ldif
+* `02-groups.ldif`
   * many groups which are used for customers / project Teams and third party services for example Jira, Git, etc.
-* 03-testuser.ldif
+* `03-testuser.ldif`
   * A dump of users, with reseted passwords to default values. Every user has the password `testuser` in the embeded LDAP.
-  * The reset password is required, to perform serveral checks about the permissions, because the tool has to handle different views for different permissions.
+  * The reset password is required, to perform several checks about the permissions, because the tool has to handle different views for different permissions.
