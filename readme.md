@@ -56,13 +56,9 @@ The groups are still stored globally under `ou=groups` to allow a collaboration 
 All groups have to be created twice. One with a team admin prefix and one with a team prefix. The idea of it, is that some project admins can administrate the team. The team admin groups are always the administrator groups of the normal customer projectteam Group. The absolute fallback is always the group you defined in `ldap.permissions.admins`, if no other admin group was found.
 
 ## Password checks via zxcvbn
-We are using the zxcvbn4j library, which is a java port of the original lib. You can find it on
-GitHub: https://github.com/nulab/zxcvbn4j
-In the folder `src/resources/zxcvbn` we stored two dictionary files. The first one is a custom crack dictionary.
-The second one is a public top 500 list of bad password ideas.
-You can find it on http://www.whatsmypass.com/the-top-500-worst-passwords-of-all-time
+We are using the zxcvbn4j library, which is a java port of the original lib. You can find it on GitHub: https://github.com/nulab/zxcvbn4j. In the folder `src/resources/zxcvbn` we store a dictionary that contains the public top 500 list of bad password ideas. You can find it on http://www.whatsmypass.com/the-top-500-worst-passwords-of-all-time
 
-Please update these lists regulary. Feel free to add more lists; you have to register each in the `application.yaml`.
+Please update this list regularly. Feel free to add more lists; you have to register each in the `application.yaml`.
 The lists can be extended, but keep in mind, that a very long list will have performance impacts on the check routines.
 
 ### Local Test Environment / Data
