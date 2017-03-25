@@ -29,7 +29,7 @@ Some of the noteworthy features are:
 * Open `localhost:8080` in your browser
 * Login with `accadm` and password `testuser`
 
-You can also login with any other contained in the test data set. The password is always `testuser`. Please refer to `src/main/resources/ldap/data/03-testuser.ldif` for further details.
+You can also login with any other user contained in the test data set. The password is always `testuser`. Please refer to `src/main/resources/ldap/data/03-testuser.ldif` for further details.
 
 ### Pull requests
 The master branch is protected an nobody can or should ever push to it! Every feature has to be integrated through a
