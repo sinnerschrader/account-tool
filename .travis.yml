@@ -40,7 +40,7 @@ deploy:
   provider: packagecloud
   username: ${PACKAGECLOUD_USER}
   token: ${PACKAGECLOUD_TOKEN}
-  repository: "account-tool"
+  repository: "szops"
   dist: "ubuntu/xenial"
   package_glob: "target/*.deb"
   skip_cleanup: true
