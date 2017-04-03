@@ -22,7 +22,7 @@ Some of the noteworthy features are:
 ### Prerequisits
 * Install Java JDK 1.8.x (Oracle or OpenJDK)
 * Install NodeJS 7.x and NPM
-* Install a Maven or Use Maven Wrapper inside the Project
+* Install a Maven (tested with Apache Maven 3.3.9) or, if that fails, use Maven Wrapper inside the Project
 
 ### Run the application
 * Run `mvn clean spring-boot:run` or `./mvnw clean spring-boot:run`
