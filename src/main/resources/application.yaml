@@ -164,7 +164,7 @@ endpoints:
 # =============================================================
 server:
   use-forward-headers: "true"
-  address:
+  address: "0.0.0.0"
   http:
     port: "0"
   compression:

@@ -1,0 +1,23 @@
+version: '3'
+
+services:
+  maildev:
+    image: djfarrelly/maildev
+    ports:
+      - '1080:80'
+  account-tool:
+    build: .
+    depends_on:
+      - maildev
+    environment:
+      MAILDEV_PROFILE: maildev
+    volumes:
+      - '.:/app'
+      - 'node-modules:/app/node_modules'
+      - 'target:/app/target'
+    ports:
+      - '8080:8080'
+
+volumes:
+  node-modules:
+  target:
