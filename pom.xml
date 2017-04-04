@@ -178,7 +178,10 @@
 				<groupId>org.springframework.boot</groupId>
 				<artifactId>spring-boot-maven-plugin</artifactId>
 				<configuration>
-					<profiles>development</profiles>
+					<profiles>
+						<profile>development</profile>
+						<profile>${env.MAILDEV_PROFILE}</profile>
+					</profiles>
 					<jvmArguments>
 						-Xmx256m -Xms64m -Xdebug -Xrunjdwp:transport=dt_socket,server=y,suspend=n,address=5005
 					</jvmArguments>
