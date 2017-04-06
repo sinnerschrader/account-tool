@@ -22,10 +22,6 @@ import com.sinnerschrader.s2b.accounttool.presentation.interceptor.GlobalMessage
 import com.sinnerschrader.s2b.accounttool.presentation.interceptor.LdapConnectionInterceptor;
 import com.sinnerschrader.s2b.accounttool.presentation.interceptor.RequestInterceptor;
 import com.sinnerschrader.s2b.accounttool.support.pebble.AccountToolExtension;
-
-import java.util.Arrays;
-import java.util.Locale;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -40,170 +36,144 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter
 import org.springframework.web.servlet.i18n.AcceptHeaderLocaleResolver;
 import org.springframework.web.servlet.resource.ResourceUrlEncodingFilter;
 
+import java.util.Arrays;
+import java.util.Locale;
 
 @Configuration
 @EnableAutoConfiguration
-public class ApplicationConfig extends WebMvcConfigurerAdapter
-{
+public class ApplicationConfig extends WebMvcConfigurerAdapter {
 
-	private static final Logger log = LoggerFactory.getLogger(ApplicationConfig.class);
+  private static final Logger log = LoggerFactory.getLogger(ApplicationConfig.class);
 
-	@Autowired
-	private Environment environment;
+  @Autowired private Environment environment;
 
-	private LdapConfiguration ldapConfiguration;
+  private LdapConfiguration ldapConfiguration;
 
-	private LdapManagementConfiguration ldapManagementConfiguration;
+  private LdapManagementConfiguration ldapManagementConfiguration;
 
-	private LdapService ldapService;
+  private LdapService ldapService;
 
-	private LdapBusinessService ldapBusinessService;
+  private LdapBusinessService ldapBusinessService;
 
-	private LdapConnectionInterceptor ldapConnectionInterceptor;
+  private LdapConnectionInterceptor ldapConnectionInterceptor;
 
-	private GlobalMessageInterceptor globalMessageInterceptor;
+  private GlobalMessageInterceptor globalMessageInterceptor;
 
-	private RequestInterceptor requestInterceptor;
+  private RequestInterceptor requestInterceptor;
 
-	@Override
-	public void addInterceptors(InterceptorRegistry registry)
-	{
-		registry.addInterceptor(requestInterceptor());
-		registry.addInterceptor(ldapConnectionInterceptor());
-		registry.addInterceptor(globalMessageInterceptor());
-	}
+  @Override
+  public void addInterceptors(InterceptorRegistry registry) {
+    registry.addInterceptor(requestInterceptor());
+    registry.addInterceptor(ldapConnectionInterceptor());
+    registry.addInterceptor(globalMessageInterceptor());
+  }
 
-	@Bean
-	public RequestInterceptor requestInterceptor()
-	{
-		if (requestInterceptor == null)
-		{
-			requestInterceptor = new RequestInterceptor(environment);
-		}
-		return requestInterceptor;
-	}
+  @Bean
+  public RequestInterceptor requestInterceptor() {
+    if (requestInterceptor == null) {
+      requestInterceptor = new RequestInterceptor(environment);
+    }
+    return requestInterceptor;
+  }
 
-	@Bean
-	public LdapConnectionInterceptor ldapConnectionInterceptor()
-	{
-		if (ldapConnectionInterceptor == null)
-		{
-			ldapConnectionInterceptor = new LdapConnectionInterceptor(ldapConfiguration);
-		}
-		return ldapConnectionInterceptor;
-	}
+  @Bean
+  public LdapConnectionInterceptor ldapConnectionInterceptor() {
+    if (ldapConnectionInterceptor == null) {
+      ldapConnectionInterceptor = new LdapConnectionInterceptor(ldapConfiguration);
+    }
+    return ldapConnectionInterceptor;
+  }
 
-	@Bean
-	public LocaleResolver localeResolver()
-	{
-		AcceptHeaderLocaleResolver resolver = new AcceptHeaderLocaleResolver();
-		resolver.setDefaultLocale(Locale.ENGLISH);
-		resolver.setSupportedLocales(Arrays.asList(Locale.ENGLISH, Locale.US));
-		return resolver;
-	}
+  @Bean
+  public LocaleResolver localeResolver() {
+    AcceptHeaderLocaleResolver resolver = new AcceptHeaderLocaleResolver();
+    resolver.setDefaultLocale(Locale.ENGLISH);
+    resolver.setSupportedLocales(Arrays.asList(Locale.ENGLISH, Locale.US));
+    return resolver;
+  }
 
-	@Bean
-	public GlobalMessageInterceptor globalMessageInterceptor()
-	{
-		if (globalMessageInterceptor == null)
-		{
-			globalMessageInterceptor = new GlobalMessageInterceptor();
-		}
-		return globalMessageInterceptor;
-	}
+  @Bean
+  public GlobalMessageInterceptor globalMessageInterceptor() {
+    if (globalMessageInterceptor == null) {
+      globalMessageInterceptor = new GlobalMessageInterceptor();
+    }
+    return globalMessageInterceptor;
+  }
 
-	@Bean
-	public ResourceUrlEncodingFilter resourceUrlEncodingFilter()
-	{
-		return new ResourceUrlEncodingFilter();
-	}
+  @Bean
+  public ResourceUrlEncodingFilter resourceUrlEncodingFilter() {
+    return new ResourceUrlEncodingFilter();
+  }
 
-	@Bean(name = "ldapConfiguration")
-	public LdapConfiguration ldapConfiguration()
-	{
-		if (ldapConfiguration == null)
-		{
-			ldapConfiguration = new LdapConfiguration();
-		}
-		return ldapConfiguration;
-	}
+  @Bean(name = "ldapConfiguration")
+  public LdapConfiguration ldapConfiguration() {
+    if (ldapConfiguration == null) {
+      ldapConfiguration = new LdapConfiguration();
+    }
+    return ldapConfiguration;
+  }
 
-	@Bean(name = "ldapService")
-	public LdapService ldapService()
-	{
-		if (ldapService == null)
-		{
-			ldapService = new LdapServiceImpl();
-		}
-		return ldapService;
-	}
+  @Bean(name = "ldapService")
+  public LdapService ldapService() {
+    if (ldapService == null) {
+      ldapService = new LdapServiceImpl();
+    }
+    return ldapService;
+  }
 
-	@Bean(name = "ldapManagementConfiguration")
-	public LdapManagementConfiguration ldapManagementConfiguration()
-	{
-		if (ldapManagementConfiguration == null)
-		{
-			ldapManagementConfiguration = new LdapManagementConfiguration();
-		}
-		return ldapManagementConfiguration;
-	}
+  @Bean(name = "ldapManagementConfiguration")
+  public LdapManagementConfiguration ldapManagementConfiguration() {
+    if (ldapManagementConfiguration == null) {
+      ldapManagementConfiguration = new LdapManagementConfiguration();
+    }
+    return ldapManagementConfiguration;
+  }
 
-	@Bean(name = "ldapBusinessService")
-	public LdapBusinessService ldapBusinessService()
-	{
-		if (ldapBusinessService == null)
-		{
-			ldapBusinessService = new LdapBusinessServiceImpl();
-		}
-		return ldapBusinessService;
-	}
+  @Bean(name = "ldapBusinessService")
+  public LdapBusinessService ldapBusinessService() {
+    if (ldapBusinessService == null) {
+      ldapBusinessService = new LdapBusinessServiceImpl();
+    }
+    return ldapBusinessService;
+  }
 
-	@Bean(name = "userMapping")
-	public ModelMaping<User> userMapping()
-	{
-		return new UserMapping();
-	}
+  @Bean(name = "userMapping")
+  public ModelMaping<User> userMapping() {
+    return new UserMapping();
+  }
 
-	@Bean(name = "groupMapping")
-	public ModelMaping<Group> groupMapping()
-	{
-		return new GroupMapping();
-	}
+  @Bean(name = "groupMapping")
+  public ModelMaping<Group> groupMapping() {
+    return new GroupMapping();
+  }
 
-	@Bean
-	public Extension springExtension()
-	{
-		return new SpringExtension();
-	}
+  @Bean
+  public Extension springExtension() {
+    return new SpringExtension();
+  }
 
-	@Bean
-	public Extension accountToolExtension()
-	{
-		return new AccountToolExtension();
-	}
+  @Bean
+  public Extension accountToolExtension() {
+    return new AccountToolExtension();
+  }
 
-	@Bean(name = "passwordEncrypter")
-	public Encrypter passwordEncrypter()
-	{
-		if (Arrays.asList(environment.getActiveProfiles()).contains("development"))
-		{
-			log.warn("Loading Plaintext crypter - dont use this on production");
-			return new PlainTextEncrypter();
-		}
-		return new PasswordEncrypter();
-	}
+  @Bean(name = "passwordEncrypter")
+  public Encrypter passwordEncrypter() {
+    if (Arrays.asList(environment.getActiveProfiles()).contains("development")) {
+      log.warn("Loading Plaintext crypter - dont use this on production");
+      return new PlainTextEncrypter();
+    }
+    return new PasswordEncrypter();
+  }
 
-	@Bean(name = "sambaEncrypter")
-	public Encrypter sambaEncrypter()
-	{
-		return new SambaEncrypter();
-	}
+  @Bean(name = "sambaEncrypter")
+  public Encrypter sambaEncrypter() {
+    return new SambaEncrypter();
+  }
 
-	@Bean(name = "ldapServer")
-	@Profile({"development", "test"})
-	public LDAPServer ldapServer()
-	{
-		return new LDAPServer();
-	}
-
+  @Bean(name = "ldapServer")
+  @Profile({"development", "test"})
+  public LDAPServer ldapServer() {
+    return new LDAPServer();
+  }
 }

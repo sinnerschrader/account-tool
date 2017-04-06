@@ -1,7 +1,6 @@
-
 let links = document.getElementsByClassName('js_attributeButton');
-Array.from(links).forEach(function(element) {
-	element.addEventListener('click', function(event) {
+Array.from(links).forEach(function (element) {
+	element.addEventListener('click', function (event) {
 		event.preventDefault();
 
 		let id = this.getAttribute('data-toggleid');

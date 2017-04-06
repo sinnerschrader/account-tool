@@ -10,26 +10,26 @@
 				<col width="55%">
 			</colgroup>
 			<tbody>
-				<tr>
-					<td class="mdl-data-table__cell--non-numeric">Startup Date</td>
-					<td>{{ applicationContextStartupDate | date("EEE, MMM dd, yyyy") }}</td>
-				</tr>
-				<tr>
-					<td class="mdl-data-table__cell--non-numeric">Startup Time</td>
-					<td>{{ applicationContextStartupDate | date("HH:mm:ss z") }}</td>
-				</tr>
-				<tr>
-					<td class="mdl-data-table__cell--non-numeric">Started</td>
-					<td>{{ applicationContextRunningSince }}</td>
-				</tr>
-				<tr>
-					<td class="mdl-data-table__cell--non-numeric">Loaded Profiles</td>
-					<td>{{ activeProfiles | join(', ') }}</td>
-				</tr>
-				<tr>
-					<td class="mdl-data-table__cell--non-numeric">Connected to LDAP</td>
-					<td>{{ env.getProperty('ldap.config.host') }}</td>
-				</tr>
+			<tr>
+				<td class="mdl-data-table__cell--non-numeric">Startup Date</td>
+				<td>{{ applicationContextStartupDate | date("EEE, MMM dd, yyyy") }}</td>
+			</tr>
+			<tr>
+				<td class="mdl-data-table__cell--non-numeric">Startup Time</td>
+				<td>{{ applicationContextStartupDate | date("HH:mm:ss z") }}</td>
+			</tr>
+			<tr>
+				<td class="mdl-data-table__cell--non-numeric">Started</td>
+				<td>{{ applicationContextRunningSince }}</td>
+			</tr>
+			<tr>
+				<td class="mdl-data-table__cell--non-numeric">Loaded Profiles</td>
+				<td>{{ activeProfiles | join(', ') }}</td>
+			</tr>
+			<tr>
+				<td class="mdl-data-table__cell--non-numeric">Connected to LDAP</td>
+				<td>{{ env.getProperty('ldap.config.host') }}</td>
+			</tr>
 			</tbody>
 		</table>
 	</div>
@@ -41,37 +41,37 @@
 				<col width="55%">
 			</colgroup>
 			<tbody>
-				<tr>
-					<td class="mdl-data-table__cell--non-numeric">{{ env.getProperty('app.name') }}</td>
-					<td>
-						<span>{{ env.getProperty('app.version') }}</span>
-						<span>({{ env.getProperty('app.revision') }})</span>
-					</td>
-				</tr>
-				<tr>
-					<td class="mdl-data-table__cell--non-numeric">Tomcat</td>
-					<td>{{ env.getProperty('versions.tomcat') }}</td>
-				</tr>
-				<tr>
-					<td class="mdl-data-table__cell--non-numeric">Spring Boot</td>
-					<td>{{ env.getProperty('versions.spring-boot') }}</td>
-				</tr>
-				<tr>
-					<td class="mdl-data-table__cell--non-numeric">Spring Core</td>
-					<td>{{ env.getProperty('versions.spring-core') }}</td>
-				</tr>
-				<tr>
-					<td class="mdl-data-table__cell--non-numeric">Spring Security</td>
-					<td>{{ env.getProperty('versions.spring-security') }}</td>
-				</tr>
-				<tr>
-					<td class="mdl-data-table__cell--non-numeric">Pebble</td>
-					<td>{{ env.getProperty('versions.spring-pebble') }}</td>
-				</tr>
-				<tr>
-					<td class="mdl-data-table__cell--non-numeric">UnboundID</td>
-					<td>{{ env.getProperty('versions.unboundid') }}</td>
-				</tr>
+			<tr>
+				<td class="mdl-data-table__cell--non-numeric">{{ env.getProperty('app.name') }}</td>
+				<td>
+					<span>{{ env.getProperty('app.version') }}</span>
+					<span>({{ env.getProperty('app.revision') }})</span>
+				</td>
+			</tr>
+			<tr>
+				<td class="mdl-data-table__cell--non-numeric">Tomcat</td>
+				<td>{{ env.getProperty('versions.tomcat') }}</td>
+			</tr>
+			<tr>
+				<td class="mdl-data-table__cell--non-numeric">Spring Boot</td>
+				<td>{{ env.getProperty('versions.spring-boot') }}</td>
+			</tr>
+			<tr>
+				<td class="mdl-data-table__cell--non-numeric">Spring Core</td>
+				<td>{{ env.getProperty('versions.spring-core') }}</td>
+			</tr>
+			<tr>
+				<td class="mdl-data-table__cell--non-numeric">Spring Security</td>
+				<td>{{ env.getProperty('versions.spring-security') }}</td>
+			</tr>
+			<tr>
+				<td class="mdl-data-table__cell--non-numeric">Pebble</td>
+				<td>{{ env.getProperty('versions.spring-pebble') }}</td>
+			</tr>
+			<tr>
+				<td class="mdl-data-table__cell--non-numeric">UnboundID</td>
+				<td>{{ env.getProperty('versions.unboundid') }}</td>
+			</tr>
 			</tbody>
 		</table>
 	</div>
@@ -83,19 +83,19 @@
 				<col width="40%">
 			</colgroup>
 			<tbody>
-				<tr>
-					<td class="mdl-data-table__cell--non-numeric">Architecture</td>
-					<td>{{ env.getProperty('os.arch') }}</td>
-				</tr>
-				<tr>
-					<td class="mdl-data-table__cell--non-numeric">{{ env.getProperty('java.runtime.name') }}
-					</td>
-					<td>{{ env.getProperty('java.version') }}</td>
-				</tr>
-				<tr>
-					<td class="mdl-data-table__cell--non-numeric">System Locale</td>
-					<td>{{ env.getProperty('user.language') }}.{{ env.getProperty('file.encoding') }}</td>
-				</tr>
+			<tr>
+				<td class="mdl-data-table__cell--non-numeric">Architecture</td>
+				<td>{{ env.getProperty('os.arch') }}</td>
+			</tr>
+			<tr>
+				<td class="mdl-data-table__cell--non-numeric">{{ env.getProperty('java.runtime.name') }}
+				</td>
+				<td>{{ env.getProperty('java.version') }}</td>
+			</tr>
+			<tr>
+				<td class="mdl-data-table__cell--non-numeric">System Locale</td>
+				<td>{{ env.getProperty('user.language') }}.{{ env.getProperty('file.encoding') }}</td>
+			</tr>
 			</tbody>
 		</table>
 	</div>
@@ -107,21 +107,21 @@
 				<col width="60%">
 			</colgroup>
 			<tbody>
-				<tr>
-					<td class="mdl-data-table__cell--non-numeric">Compiled on JDK</td>
-					<td>
-						<span class="infoPart">{{ env.getProperty('versions.java_build') }}</span>
-						<span class="infoPart">(Target: {{ env.getProperty('versions.java_target') }})</span>
-					</td>
-				</tr>
-				<tr>
-					<td class="mdl-data-table__cell--non-numeric">Build on</td>
-					<td>{{ env.getProperty('app.build-on') }}</td>
-				</tr>
-				<tr>
-					<td class="mdl-data-table__cell--non-numeric">Build by</td>
-					<td>{{ env.getProperty('app.build-by') }}</td>
-				</tr>
+			<tr>
+				<td class="mdl-data-table__cell--non-numeric">Compiled on JDK</td>
+				<td>
+					<span class="infoPart">{{ env.getProperty('versions.java_build') }}</span>
+					<span class="infoPart">(Target: {{ env.getProperty('versions.java_target') }})</span>
+				</td>
+			</tr>
+			<tr>
+				<td class="mdl-data-table__cell--non-numeric">Build on</td>
+				<td>{{ env.getProperty('app.build-on') }}</td>
+			</tr>
+			<tr>
+				<td class="mdl-data-table__cell--non-numeric">Build by</td>
+				<td>{{ env.getProperty('app.build-by') }}</td>
+			</tr>
 			</tbody>
 		</table>
 	</div>

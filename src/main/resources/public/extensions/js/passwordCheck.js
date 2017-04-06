@@ -1,6 +1,6 @@
 let passwordInputs = document.getElementsByClassName('js_passwordStrength');
-Array.from(passwordInputs).forEach(function(element) {
-	element.addEventListener('keyup', function() {
+Array.from(passwordInputs).forEach(function (element) {
+	element.addEventListener('keyup', function () {
 		let password = this.value;
 		let inputWrapper = this.parentNode;
 		let messageElement = inputWrapper.querySelector('.js_passwordStrengthMessage');
@@ -14,8 +14,8 @@ Array.from(passwordInputs).forEach(function(element) {
 });
 
 let passwordRepeatInputs = document.getElementsByClassName('js_passwordMatch');
-Array.from(passwordRepeatInputs).forEach(function(element) {
-	element.addEventListener('keyup', function() {
+Array.from(passwordRepeatInputs).forEach(function (element) {
+	element.addEventListener('keyup', function () {
 		let wrapper = this.parentNode;
 		let password = document.getElementById(this.getAttribute('data-matchid')).value;
 

@@ -1,118 +1,106 @@
 package com.sinnerschrader.s2b.accounttool.config.authentication;
 
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
+
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.userdetails.UserDetails;
+public class LdapUserDetails implements UserDetails, Serializable {
 
+  private final List<GrantedAuthority> grantedAuthorities;
 
-public class LdapUserDetails implements UserDetails, Serializable
-{
+  private final String dn;
 
-	private final List<GrantedAuthority> grantedAuthorities;
+  private final String displayName;
 
-	private final String dn;
+  private final String uid;
 
-	private final String displayName;
+  private final String company;
 
-	private final String uid;
+  private final boolean expired;
 
-	private final String company;
+  private final boolean enabled;
 
-	private final boolean expired;
+  private String password;
 
-	private final boolean enabled;
+  public LdapUserDetails(
+      String dn,
+      String uid,
+      String displayName,
+      String password,
+      String company,
+      List<GrantedAuthority> grantedAuthorities,
+      boolean expired,
+      boolean enabled) {
+    this.dn = dn;
+    this.uid = uid;
+    this.displayName = displayName;
+    this.password = password;
+    this.company = company;
+    this.expired = expired;
+    this.enabled = enabled;
+    this.grantedAuthorities = new ArrayList<>();
+    if (grantedAuthorities != null) {
+      this.grantedAuthorities.addAll(grantedAuthorities);
+    }
+  }
 
-	private String password;
+  public String getUid() {
+    return uid;
+  }
 
-	public LdapUserDetails(String dn,
-		String uid, String displayName, String password, String company,
-		List<GrantedAuthority> grantedAuthorities,
-		boolean expired, boolean enabled)
-	{
-		this.dn = dn;
-		this.uid = uid;
-		this.displayName = displayName;
-		this.password = password;
-		this.company = company;
-		this.expired = expired;
-		this.enabled = enabled;
-		this.grantedAuthorities = new ArrayList<>();
-		if (grantedAuthorities != null)
-		{
-			this.grantedAuthorities.addAll(grantedAuthorities);
-		}
-	}
+  public String getDisplayName() {
+    return displayName;
+  }
 
-	public String getUid()
-	{
-		return uid;
-	}
+  public String getCompany() {
+    return company;
+  }
 
-	public String getDisplayName()
-	{
-		return displayName;
-	}
+  @Override
+  public String getPassword() {
+    return password;
+  }
 
-	public String getCompany()
-	{
-		return company;
-	}
+  public void setPassword(String password) {
+    this.password = password;
+  }
 
-	@Override
-	public String getPassword()
-	{
-		return password;
-	}
+  public String getDn() {
+    return dn;
+  }
 
-	public void setPassword(String password)
-	{
-		this.password = password;
-	}
+  @Override
+  public String getUsername() {
+    return uid;
+  }
 
-	public String getDn()
-	{
-		return dn;
-	}
+  @Override
+  public Collection<? extends GrantedAuthority> getAuthorities() {
+    return Collections.unmodifiableList(grantedAuthorities);
+  }
 
-	@Override
-	public String getUsername()
-	{
-		return uid;
-	}
+  @Override
+  public boolean isAccountNonExpired() {
+    return !expired;
+  }
 
-	@Override
-	public Collection<? extends GrantedAuthority> getAuthorities()
-	{
-		return Collections.unmodifiableList(grantedAuthorities);
-	}
+  @Override
+  public boolean isAccountNonLocked() {
+    return true;
+  }
 
-	@Override
-	public boolean isAccountNonExpired()
-	{
-		return !expired;
-	}
+  @Override
+  public boolean isCredentialsNonExpired() {
+    return true;
+  }
 
-	@Override
-	public boolean isAccountNonLocked()
-	{
-		return true;
-	}
-
-	@Override
-	public boolean isCredentialsNonExpired()
-	{
-		return true;
-	}
-
-	@Override
-	public boolean isEnabled()
-	{
-		return enabled;
-	}
-
+  @Override
+  public boolean isEnabled() {
+    return enabled;
+  }
 }
