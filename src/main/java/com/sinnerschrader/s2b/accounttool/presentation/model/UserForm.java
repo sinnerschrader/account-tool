@@ -18,7 +18,7 @@ import org.apache.commons.lang3.StringUtils;
 public class UserForm implements Serializable
 {
 
-	private static final String BIRTHDAY_PATTERN = "dd.MM";
+	private static final String BIRTHDAY_PATTERN = "dd.MM.";
 
 	private static final String DATE_PATTERN = "dd.MM.yyyy";
 
