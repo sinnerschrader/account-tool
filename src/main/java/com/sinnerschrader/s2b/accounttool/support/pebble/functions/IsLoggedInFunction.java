@@ -7,25 +7,20 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
-
 /**
  * Simple Function to check if a user is logged in or not.
  */
-public class IsLoggedInFunction implements Function
-{
+public class IsLoggedInFunction implements Function {
 
 	public static final String FUNCTION_NAME = "isLoggedIn";
 
 	@Override
-	public List<String> getArgumentNames()
-	{
+	public List<String> getArgumentNames() {
 		return Collections.emptyList();
 	}
 
 	@Override
-	public Object execute(Map<String, Object> args)
-	{
+	public Object execute(Map<String, Object> args) {
 		return RequestUtils.getCurrentUserDetails() != null;
 	}
-
 }

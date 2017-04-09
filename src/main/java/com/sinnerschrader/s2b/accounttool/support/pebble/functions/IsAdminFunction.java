@@ -8,32 +8,26 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
-
 /**
  * Pebble Function to check if the current user is admin
  */
-public class IsAdminFunction implements Function
-{
+public class IsAdminFunction implements Function {
 
 	public static final String FUNCTION_NAME = "isAdmin";
 
 	private AuthorizationService authorizationService;
 
-	public IsAdminFunction(AuthorizationService authorizationService)
-	{
+	public IsAdminFunction(AuthorizationService authorizationService) {
 		this.authorizationService = authorizationService;
 	}
 
 	@Override
-	public List<String> getArgumentNames()
-	{
+	public List<String> getArgumentNames() {
 		return Collections.emptyList();
 	}
 
 	@Override
-	public Object execute(Map<String, Object> args)
-	{
+	public Object execute(Map<String, Object> args) {
 		return authorizationService.isAdmin(RequestUtils.getCurrentUserDetails());
 	}
-
 }

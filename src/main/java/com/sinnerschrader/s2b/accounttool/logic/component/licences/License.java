@@ -3,8 +3,7 @@ package com.sinnerschrader.s2b.accounttool.logic.component.licences;
 /**
  * Created by vikgru on 19/01/2017.
  */
-public class License
-{
+public class License {
 
 	private final String name;
 
@@ -14,31 +13,26 @@ public class License
 
 	private final String comments;
 
-	License(String name, String url, String distribution, String comments)
-	{
+	License(String name, String url, String distribution, String comments) {
 		this.name = name;
 		this.url = url;
 		this.distribution = distribution;
 		this.comments = comments;
 	}
 
-	public String getName()
-	{
+	public String getName() {
 		return name;
 	}
 
-	public String getUrl()
-	{
+	public String getUrl() {
 		return url;
 	}
 
-	public String getDistribution()
-	{
+	public String getDistribution() {
 		return distribution;
 	}
 
-	public String getComments()
-	{
+	public String getComments() {
 		return comments;
 	}
 }

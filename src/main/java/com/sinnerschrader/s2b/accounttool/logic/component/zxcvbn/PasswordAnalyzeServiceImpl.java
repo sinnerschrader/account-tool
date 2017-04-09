@@ -3,17 +3,6 @@ package com.sinnerschrader.s2b.accounttool.logic.component.zxcvbn;
 import com.nulabinc.zxcvbn.Feedback;
 import com.nulabinc.zxcvbn.Strength;
 import com.nulabinc.zxcvbn.Zxcvbn;
-
-import java.io.BufferedReader;
-import java.io.InputStreamReader;
-import java.util.Enumeration;
-import java.util.HashSet;
-import java.util.LinkedHashSet;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.ResourceBundle;
-import java.util.Set;
-
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -25,13 +14,13 @@ import org.springframework.core.io.Resource;
 import org.springframework.core.io.ResourceLoader;
 import org.springframework.stereotype.Service;
 
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+import java.util.*;
 
-/**
- *
- */
+/** */
 @Service("passwordAnalyzeService")
-public class PasswordAnalyzeServiceImpl implements PasswordAnalyzeService, InitializingBean
-{
+public class PasswordAnalyzeServiceImpl implements PasswordAnalyzeService, InitializingBean {
 
 	private static final Logger log = LoggerFactory.getLogger(PasswordAnalyzeServiceImpl.class);
 
@@ -50,45 +39,35 @@ public class PasswordAnalyzeServiceImpl implements PasswordAnalyzeService, Initi
 
 	private List<String> dictionary;
 
-	public PasswordAnalyzeServiceImpl()
-	{
+	public PasswordAnalyzeServiceImpl() {
 		zxcvbn = new Zxcvbn();
 		dictionary = new LinkedList<>();
 	}
 
 	@Override
-	public void afterPropertiesSet() throws Exception
-	{
-		if (dictionaryRefs == null)
-		{
+	public void afterPropertiesSet() throws Exception {
+		if (dictionaryRefs == null) {
 			throw new IllegalStateException("The List of Dictionary refs is not set");
 		}
 		Set<String> dictionaryFiles = new HashSet<>();
-		for (String ref : dictionaryRefs)
-		{
+		for (String ref : dictionaryRefs) {
 			ref = StringUtils.trimToEmpty(ref); // avoid spaces after seperator
 			String dict = StringUtils.trimToNull(environment.getProperty(DICTIONARY_PROP_PREFIX + ref));
-			if (dict != null)
-			{
+			if (dict != null) {
 				log.debug("Found dictionary {}", dict);
 				dictionaryFiles.add(dict);
 			}
 		}
 		Set<String> result = new LinkedHashSet<>();
-		for (String dictionaryFile : dictionaryFiles)
-		{
+		for (String dictionaryFile : dictionaryFiles) {
 			Resource res = resourceLoader.getResource(dictionaryFile);
-			if (res.exists())
-			{
+			if (res.exists()) {
 				Set<String> tmp = new LinkedHashSet<>();
-				try (BufferedReader br = new BufferedReader(new InputStreamReader(res.getInputStream())))
-				{
+				try (BufferedReader br = new BufferedReader(new InputStreamReader(res.getInputStream()))) {
 					String line;
-					while ((line = br.readLine()) != null)
-					{
+					while ((line = br.readLine()) != null) {
 						line = StringUtils.trimToNull(line);
-						if (line != null)
-						{
+						if (line != null) {
 							tmp.add(line);
 						}
 					}
@@ -102,26 +81,24 @@ public class PasswordAnalyzeServiceImpl implements PasswordAnalyzeService, Initi
 	}
 
 	@Override
-	public PasswordValidationResult analyze(String password)
-	{
+	public PasswordValidationResult analyze(String password) {
 		Strength strength = zxcvbn.measure(password, dictionary);
-		Feedback feedback = strength.getFeedback().withResourceBundle(new ResourceBundle()
-		{
+		Feedback feedback =
+				strength
+						.getFeedback()
+						.withResourceBundle(
+								new ResourceBundle() {
 
-			@Override
-			protected Object handleGetObject(String key)
-			{
-				return key;
-			}
+									@Override
+									protected Object handleGetObject(String key) {
+										return key;
+									}
 
-			@Override
-			public Enumeration<String> getKeys()
-			{
-				return null;
-			}
-
-		});
+									@Override
+									public Enumeration<String> getKeys() {
+										return null;
+									}
+								});
 		return new PasswordValidationResult(strength, feedback);
 	}
-
 }

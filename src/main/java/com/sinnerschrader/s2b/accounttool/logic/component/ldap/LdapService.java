@@ -8,9 +8,7 @@ import com.unboundid.ldap.sdk.LDAPConnection;
 
 import java.util.List;
 
-
-public interface LdapService
-{
+public interface LdapService {
 
 	List<User> getUsers(LDAPConnection connection, int firstResult, int maxResults);
 
@@ -48,6 +46,6 @@ public interface LdapService
 
 	User update(LDAPConnection connection, User user) throws BusinessException;
 
-	boolean changePassword(LDAPConnection connection, LdapUserDetails currentUser, String password) throws BusinessException;
-
+	boolean changePassword(LDAPConnection connection, LdapUserDetails currentUser, String password)
+			throws BusinessException;
 }

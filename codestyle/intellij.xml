@@ -1,0 +1,7 @@
+<code_scheme name="Project">
+	<option name="HTML_DO_NOT_INDENT_CHILDREN_OF" value="thead,tbody,tfoot"/>
+	<JSCodeStyleSettings>
+		<option name="USE_DOUBLE_QUOTES" value="false"/>
+		<option name="FORCE_QUOTE_STYlE" value="true"/>
+	</JSCodeStyleSettings>
+</code_scheme>

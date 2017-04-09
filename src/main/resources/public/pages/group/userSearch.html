@@ -2,35 +2,35 @@
 
 {% block content %}
 {% if users is not empty %}
-	<h4 class="s2act-sectionSubHeadline">{{ message('searchResult.usersForGroup', (users | length), group.cn) }}</h4>
-	<div class="mdl-list s2act-groupList">
-		{% for user in users %}
-		<div class="mdl-list__item mdl-list__item--two-line s2act-groupList__item">
+<h4 class="s2act-sectionSubHeadline">{{ message('searchResult.usersForGroup', (users | length), group.cn) }}</h4>
+<div class="mdl-list s2act-groupList">
+	{% for user in users %}
+	<div class="mdl-list__item mdl-list__item--two-line s2act-groupList__item">
 			<span class="mdl-list__item-primary-content">
 				<i class="material-icons mdl-list__item-avatar">account_circle</i>
 				<span>{{ user.displayName }}</span>
 				<span class="uid">({{ user.uid }})</span>
 				<span class="mdl-list__item-sub-title">{{ user.o }}</span>
 			</span>
-			<form class="mdl-list__item-secondary-action s2act-action--add"
-				  action="/group/{{ group.cn }}/adduser/{{ user.uid }}{{ showAllGroups ? '?all=true' : '' }}" method="post">
-				<input type="hidden" name="{{request.getAttribute('_csrf').parameterName}}"
-					   value="{{request.getAttribute('_csrf').token}}"/>
-				<button class="mdl-button mdl-js-button mdl-button--raised mdl-button--fab mdl-button--mini-fab s2act-action s2act-action--add">
-					<i class="material-icons">group_add</i>
-				</button>
-			</form>
-		</div>
-		{% endfor %}
+		<form class="mdl-list__item-secondary-action s2act-action--add"
+			  action="/group/{{ group.cn }}/adduser/{{ user.uid }}{{ showAllGroups ? '?all=true' : '' }}" method="post">
+			<input type="hidden" name="{{request.getAttribute('_csrf').parameterName}}"
+				   value="{{request.getAttribute('_csrf').token}}"/>
+			<button class="mdl-button mdl-js-button mdl-button--raised mdl-button--fab mdl-button--mini-fab s2act-action s2act-action--add">
+				<i class="material-icons">group_add</i>
+			</button>
+		</form>
 	</div>
+	{% endfor %}
+</div>
 {% else %}
-	<div class="mdl-list s2act-groupList">
-		<div class="mdl-list__item s2act-groupList__item">
+<div class="mdl-list s2act-groupList">
+	<div class="mdl-list__item s2act-groupList__item">
 			<span class="mdl-list__item-primary-content">
 				<i class="material-icons mdl-list__item-avatar">info</i>
 				<span>No users found</span>
 			</span>
-		</div>
 	</div>
+</div>
 {% endif %}
 {% endblock %}

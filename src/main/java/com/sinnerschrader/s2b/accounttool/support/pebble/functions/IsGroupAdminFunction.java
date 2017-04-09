@@ -9,12 +9,10 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
-
 /**
  * Pebble Function to check on markup if the current user is a groupAdmin
  */
-public class IsGroupAdminFunction implements Function
-{
+public class IsGroupAdminFunction implements Function {
 
 	public static final String FUNCTION_NAME = "isGroupAdmin";
 
@@ -22,23 +20,20 @@ public class IsGroupAdminFunction implements Function
 
 	private AuthorizationService authorizationService;
 
-	public IsGroupAdminFunction(AuthorizationService authorizationService)
-	{
+	public IsGroupAdminFunction(AuthorizationService authorizationService) {
 		this.authorizationService = authorizationService;
 	}
 
 	@Override
-	public List<String> getArgumentNames()
-	{
+	public List<String> getArgumentNames() {
 		return Collections.singletonList(GROUP_PARAM_NAME);
 	}
 
 	@Override
-	public Object execute(Map<String, Object> args)
-	{
+	public Object execute(Map<String, Object> args) {
 		LdapUserDetails currentUser = RequestUtils.getCurrentUserDetails();
 		String groupCn = (String) args.get(GROUP_PARAM_NAME);
-		return authorizationService.isGroupAdmin(currentUser, groupCn) || authorizationService.isAdmin(currentUser);
+		return authorizationService.isGroupAdmin(currentUser, groupCn)
+				|| authorizationService.isAdmin(currentUser);
 	}
-
 }

@@ -1,13 +1,11 @@
 package com.sinnerschrader.s2b.accounttool.config.ldap;
 
+import org.springframework.beans.factory.InitializingBean;
+
 import java.util.LinkedHashMap;
 import java.util.Map;
 
-import org.springframework.beans.factory.InitializingBean;
-
-
-public class LdapQueries implements InitializingBean
-{
+public class LdapQueries implements InitializingBean {
 
 	private transient Map<String, String> queries;
 
@@ -27,14 +25,12 @@ public class LdapQueries implements InitializingBean
 
 	private String checkUniqAttribute = null;
 
-	String getQuery(String queryName)
-	{
+	String getQuery(String queryName) {
 		return queries.get(queryName);
 	}
 
 	@Override
-	public void afterPropertiesSet() throws Exception
-	{
+	public void afterPropertiesSet() throws Exception {
 		queries = new LinkedHashMap<>();
 		queries.put("searchUser", searchUser);
 		queries.put("findUserByUid", findUserByUid);
@@ -46,84 +42,67 @@ public class LdapQueries implements InitializingBean
 		queries.put("checkUniqAttribute", checkUniqAttribute);
 	}
 
-	public String getSearchUser()
-	{
+	public String getSearchUser() {
 		return searchUser;
 	}
 
-	public String getFindUserByUid()
-	{
+	public String getFindUserByUid() {
 		return findUserByUid;
 	}
 
-	public String getFindGroupByCn()
-	{
+	public String getFindGroupByCn() {
 		return findGroupByCn;
 	}
 
-	public String getFindGroupsByUser()
-	{
+	public String getFindGroupsByUser() {
 		return findGroupsByUser;
 	}
 
-	public String getListAllGroups()
-	{
+	public String getListAllGroups() {
 		return listAllGroups;
 	}
 
-	public String getFindUserByUidNumber()
-	{
+	public String getFindUserByUidNumber() {
 		return findUserByUidNumber;
 	}
 
-	public String getCheckUniqAttribute()
-	{
+	public String getCheckUniqAttribute() {
 		return checkUniqAttribute;
 	}
 
-	public void setSearchUser(String searchUser)
-	{
+	public void setSearchUser(String searchUser) {
 		this.searchUser = searchUser;
 	}
 
-	public void setFindUserByUid(String findUserByUid)
-	{
+	public void setFindUserByUid(String findUserByUid) {
 		this.findUserByUid = findUserByUid;
 	}
 
-	public void setFindGroupByCn(String findGroupByCn)
-	{
+	public void setFindGroupByCn(String findGroupByCn) {
 		this.findGroupByCn = findGroupByCn;
 	}
 
-	public void setFindGroupsByUser(String findGroupsByUser)
-	{
+	public void setFindGroupsByUser(String findGroupsByUser) {
 		this.findGroupsByUser = findGroupsByUser;
 	}
 
-	public void setListAllGroups(String listAllGroups)
-	{
+	public void setListAllGroups(String listAllGroups) {
 		this.listAllGroups = listAllGroups;
 	}
 
-	public void setFindUserByUidNumber(String findUserByUidNumber)
-	{
+	public void setFindUserByUidNumber(String findUserByUidNumber) {
 		this.findUserByUidNumber = findUserByUidNumber;
 	}
 
-	public void setCheckUniqAttribute(String checkUniqAttribute)
-	{
+	public void setCheckUniqAttribute(String checkUniqAttribute) {
 		this.checkUniqAttribute = checkUniqAttribute;
 	}
 
-	public String getListAllUsers()
-	{
+	public String getListAllUsers() {
 		return listAllUsers;
 	}
 
-	public void setListAllUsers(String listAllUsers)
-	{
+	public void setListAllUsers(String listAllUsers) {
 		this.listAllUsers = listAllUsers;
 	}
-
 }

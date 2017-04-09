@@ -1,5 +1,8 @@
 package com.sinnerschrader.s2b.accounttool.logic.entity;
 
+import org.apache.commons.lang3.StringUtils;
+import org.ocpsoft.prettytime.PrettyTime;
+
 import java.beans.Transient;
 import java.time.LocalDate;
 import java.util.Arrays;
@@ -7,34 +10,28 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
-import org.apache.commons.lang3.StringUtils;
-import org.ocpsoft.prettytime.PrettyTime;
-
-
 /**
  * User Model from LDAP
  */
-public final class User implements Comparable<User>
-{
+public final class User implements Comparable<User> {
 
-	public final static List<String> objectClasses = Collections.unmodifiableList(Arrays.asList(
-		"person",
-		"organizationalPerson",
-		"inetOrgPerson",
-		"posixAccount",
-		"sambaSamAccount",
-		"szzUser"
-	));
+	public static final List<String> objectClasses =
+			Collections.unmodifiableList(
+					Arrays.asList(
+							"person",
+							"organizationalPerson",
+							"inetOrgPerson",
+							"posixAccount",
+							"sambaSamAccount",
+							"szzUser"));
 
 	/**
-	 * Full DN of LDAP
-	 * Example: "dn: uid=firlas,ou=users,ou=e1c1,dc=exampe,dc=org"
+	 * Full DN of LDAP Example: "dn: uid=firlas,ou=users,ou=e1c1,dc=exampe,dc=org"
 	 */
 	private String dn;
 
 	/**
-	 * Username based on first- and lastname
-	 * Has to be 6 or 8 Characters long.
+	 * Username based on first- and lastname Has to be 6 or 8 Characters long.
 	 */
 	private String uid;
 
@@ -51,8 +48,8 @@ public final class User implements Comparable<User>
 	private String displayName;
 
 	/**
-	 * Full name firstname + lastname. All special chars have to be stripped.
-	 * Has to match regexp "[A-Za-z0-9 -]+"
+	 * Full name firstname + lastname. All special chars have to be stripped. Has to match regexp
+	 * "[A-Za-z0-9 -]+"
 	 */
 	private String gecos;
 
@@ -72,8 +69,7 @@ public final class User implements Comparable<User>
 	private String sn;
 
 	/**
-	 * Custom home directory, for personal fileshare.
-	 * Pattern: /export/home/{USERNAME}
+	 * Custom home directory, for personal fileshare. Pattern: /export/home/{USERNAME}
 	 */
 	private String homeDirectory;
 
@@ -94,12 +90,13 @@ public final class User implements Comparable<User>
 	private String sambaSID;
 
 	/**
-	 * Currently not really used, so it is a constant: 0000000000000000000000000000000000000000000000000000000000000000
+	 * Currently not really used, so it is a constant:
+	 * 0000000000000000000000000000000000000000000000000000000000000000
 	 */
 	private String sambaPasswordHistory;
 
 	/**
-	 * Currently not used, so it is a constant: [U          ]
+	 * Currently not used, so it is a constant: [U ]
 	 */
 	private String sambaAcctFlags;
 
@@ -124,8 +121,8 @@ public final class User implements Comparable<User>
 	private Long sambaPwdLastSet;
 
 	/**
-	 * Department or Team of this employee
-	 * Example: Technik, Client Services, HR, Team Java Robusta, etc.
+	 * Department or Team of this employee Example: Technik, Client Services, HR, Team Java Robusta,
+	 * etc.
 	 */
 	private String ou;
 
@@ -135,8 +132,8 @@ public final class User implements Comparable<User>
 	private String o;
 
 	/**
-	 * Type of employment; should be employeeType of inetOrgPerson.
-	 * Example: Mitarbeiter, Freelancer, Student, Praktikant
+	 * Type of employment; should be employeeType of inetOrgPerson. Example: Mitarbeiter, Freelancer,
+	 * Student, Praktikant
 	 */
 	private String description;
 
@@ -161,8 +158,7 @@ public final class User implements Comparable<User>
 	private String title;
 
 	/**
-	 * Location where the employee mainly work.
-	 * Example: Berlin, Hamburg, Frankfurt, Muenchen, Prag
+	 * Location where the employee mainly work. Example: Berlin, Hamburg, Frankfurt, Muenchen, Prag
 	 */
 	private String l;
 
@@ -186,13 +182,38 @@ public final class User implements Comparable<User>
 	 */
 	private transient String companyKey;
 
-	public User(String dn, String uid, Integer uidNumber, Integer gidNumber, String displayName, String gecos,
-		String cn, String givenName, String sn, String homeDirectory, String loginShell, LocalDate birthDate,
-		String sambaSID, String sambaPasswordHistory, String sambaAcctFlags, String mail, State szzStatus,
-		State szzMailStatus, Long sambaPwdLastSet, LocalDate employeeEntryDate, LocalDate employeeExitDate, String ou,
-		String description, String telephoneNumber, String mobile, String employeeNumber, String title, String l,
-		String szzPublicKey, String o, String companyKey)
-	{
+	public User(
+			String dn,
+			String uid,
+			Integer uidNumber,
+			Integer gidNumber,
+			String displayName,
+			String gecos,
+			String cn,
+			String givenName,
+			String sn,
+			String homeDirectory,
+			String loginShell,
+			LocalDate birthDate,
+			String sambaSID,
+			String sambaPasswordHistory,
+			String sambaAcctFlags,
+			String mail,
+			State szzStatus,
+			State szzMailStatus,
+			Long sambaPwdLastSet,
+			LocalDate employeeEntryDate,
+			LocalDate employeeExitDate,
+			String ou,
+			String description,
+			String telephoneNumber,
+			String mobile,
+			String employeeNumber,
+			String title,
+			String l,
+			String szzPublicKey,
+			String o,
+			String companyKey) {
 		this.dn = dn;
 		this.uid = uid;
 		this.uidNumber = uidNumber;
@@ -227,229 +248,185 @@ public final class User implements Comparable<User>
 	}
 
 	@Override
-	public boolean equals(Object o)
-	{
-		if (this == o)
-			return true;
-		if (!(o instanceof User))
-			return false;
+	public boolean equals(Object o) {
+		if (this == o) return true;
+		if (!(o instanceof User)) return false;
 
 		User user = (User) o;
 
-		if (uid != null ? !uid.equals(user.uid) : user.uid != null)
-			return false;
+		if (uid != null ? !uid.equals(user.uid) : user.uid != null) return false;
 		if (uidNumber != null ? !uidNumber.equals(user.uidNumber) : user.uidNumber != null)
 			return false;
 		return mail != null ? mail.equals(user.mail) : user.mail == null;
 	}
 
 	@Override
-	public int hashCode()
-	{
+	public int hashCode() {
 		int result = uid != null ? uid.hashCode() : 0;
 		result = 31 * result + (uidNumber != null ? uidNumber.hashCode() : 0);
 		result = 31 * result + (mail != null ? mail.hashCode() : 0);
 		return result;
 	}
 
-	public String getDn()
-	{
+	public String getDn() {
 		return dn;
 	}
 
 	@Override
-	public int compareTo(User o)
-	{
+	public int compareTo(User o) {
 		int res = StringUtils.compareIgnoreCase(getSn(), o.getSn());
-		if (res == 0)
-		{
+		if (res == 0) {
 			res = StringUtils.compareIgnoreCase(getGivenName(), o.getGivenName());
-			if (res == 0)
-			{
+			if (res == 0) {
 				res = StringUtils.compareIgnoreCase(getUid(), o.getUid());
 			}
 		}
 		return res;
 	}
 
-	public LocalDate getEmployeeEntryDate()
-	{
+	public LocalDate getEmployeeEntryDate() {
 		return employeeEntryDate;
 	}
 
-	public LocalDate getEmployeeExitDate()
-	{
+	public LocalDate getEmployeeExitDate() {
 		return employeeExitDate;
 	}
 
-	public LocalDate getBirthDate()
-	{
+	public LocalDate getBirthDate() {
 		return birthDate;
 	}
 
-	public String getCompanyKey()
-	{
+	public String getCompanyKey() {
 		return companyKey;
 	}
 
-	public String getUid()
-	{
+	public String getUid() {
 		return uid;
 	}
 
-	public Integer getUidNumber()
-	{
+	public Integer getUidNumber() {
 		return uidNumber;
 	}
 
-	public Integer getGidNumber()
-	{
+	public Integer getGidNumber() {
 		return gidNumber;
 	}
 
-	public String getDisplayName()
-	{
+	public String getDisplayName() {
 		return displayName;
 	}
 
-	public String getGecos()
-	{
+	public String getGecos() {
 		return gecos;
 	}
 
-	public String getCn()
-	{
+	public String getCn() {
 		return cn;
 	}
 
-	public String getGivenName()
-	{
+	public String getGivenName() {
 		return givenName;
 	}
 
-	public String getSn()
-	{
+	public String getSn() {
 		return sn;
 	}
 
-	public String getHomeDirectory()
-	{
+	public String getHomeDirectory() {
 		return homeDirectory;
 	}
 
-	public String getLoginShell()
-	{
+	public String getLoginShell() {
 		return loginShell;
 	}
 
-	public String getSambaSID()
-	{
+	public String getSambaSID() {
 		return sambaSID;
 	}
 
-	public String getSambaPasswordHistory()
-	{
+	public String getSambaPasswordHistory() {
 		return sambaPasswordHistory;
 	}
 
-	public String getSambaAcctFlags()
-	{
+	public String getSambaAcctFlags() {
 		return sambaAcctFlags;
 	}
 
-	public String getMail()
-	{
+	public String getMail() {
 		return mail;
 	}
 
-	public State getSzzStatus()
-	{
+	public State getSzzStatus() {
 		return szzStatus;
 	}
 
-	public State getSzzMailStatus()
-	{
+	public State getSzzMailStatus() {
 		return szzMailStatus;
 	}
 
-	public Long getSambaPwdLastSet()
-	{
+	public Long getSambaPwdLastSet() {
 		return sambaPwdLastSet;
 	}
 
 	@Transient
-	public Date getLastPasswordChange()
-	{
+	public Date getLastPasswordChange() {
 		return new Date(sambaPwdLastSet * 1000);
 	}
 
 	@Transient
-	public String getPrettyLastPasswordChange()
-	{
+	public String getPrettyLastPasswordChange() {
 		return new PrettyTime().format(getLastPasswordChange());
 	}
 
-	public String getO()
-	{
+	public String getO() {
 		return o;
 	}
 
-	public String getOu()
-	{
+	public String getOu() {
 		return ou;
 	}
 
-	public String getDescription()
-	{
+	public String getDescription() {
 		return description;
 	}
 
-	public String getTelephoneNumber()
-	{
+	public String getTelephoneNumber() {
 		return telephoneNumber;
 	}
 
-	public String getMobile()
-	{
+	public String getMobile() {
 		return mobile;
 	}
 
-	public String getEmployeeNumber()
-	{
+	public String getEmployeeNumber() {
 		return employeeNumber;
 	}
 
-	public String getTitle()
-	{
+	public String getTitle() {
 		return title;
 	}
 
-	public String getL()
-	{
+	public String getL() {
 		return l;
 	}
 
-	public String getSzzPublicKey()
-	{
+	public String getSzzPublicKey() {
 		return szzPublicKey;
 	}
 
-	public enum State
-	{
-		active, inactive, undefined;
+	public enum State {
+		active,
+		inactive,
+		undefined;
 
-		public static State fromString(String value)
-		{
-			if (active.name().equalsIgnoreCase(value))
-			{
+		public static State fromString(String value) {
+			if (active.name().equalsIgnoreCase(value)) {
 				return active;
 			}
-			if (inactive.name().equalsIgnoreCase(value))
-			{
+			if (inactive.name().equalsIgnoreCase(value)) {
 				return inactive;
 			}
 			return undefined;
 		}
 	}
-
 }

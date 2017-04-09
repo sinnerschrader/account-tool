@@ -8,48 +8,38 @@ import com.unboundid.ldap.sdk.BindResult;
 import com.unboundid.ldap.sdk.LDAPConnection;
 import com.unboundid.ldap.sdk.LDAPException;
 import com.unboundid.ldap.sdk.ResultCode;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.servlet.HandlerInterceptor;
 import org.springframework.web.servlet.ModelAndView;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
-public class LdapConnectionInterceptor implements HandlerInterceptor
-{
+public class LdapConnectionInterceptor implements HandlerInterceptor {
 
 	private static final Logger log = LoggerFactory.getLogger(LdapConnectionInterceptor.class);
 
 	private LdapConfiguration ldapConfiguration;
 
-	public LdapConnectionInterceptor(LdapConfiguration ldapConfiguration)
-	{
+	public LdapConnectionInterceptor(LdapConfiguration ldapConfiguration) {
 		this.ldapConfiguration = ldapConfiguration;
 	}
 
 	@Override
-	public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception
-	{
+	public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler)
+			throws Exception {
 		LdapUserDetails details = RequestUtils.getCurrentUserDetails();
-		if (details != null)
-		{
+		if (details != null) {
 			LDAPConnection connection = null;
-			try
-			{
+			try {
 				connection = ldapConfiguration.createConnection();
 				BindResult bindResult = connection.bind(details.getDn(), details.getPassword());
-				if (bindResult.getResultCode() == ResultCode.SUCCESS)
-				{
+				if (bindResult.getResultCode() == ResultCode.SUCCESS) {
 					RequestUtils.setLdapConnection(request, connection);
 				}
-			}
-			catch (LDAPException le)
-			{
-				if (connection != null)
-				{
+			} catch (LDAPException le) {
+				if (connection != null) {
 					connection.close();
 				}
 				request.getSession().invalidate();
@@ -60,27 +50,26 @@ public class LdapConnectionInterceptor implements HandlerInterceptor
 	}
 
 	@Override
-	public void postHandle(HttpServletRequest request, HttpServletResponse response,
-		Object handler, ModelAndView modelAndView) throws Exception
-	{
+	public void postHandle(
+			HttpServletRequest request,
+			HttpServletResponse response,
+			Object handler,
+			ModelAndView modelAndView)
+			throws Exception {
 		LDAPConnection connection = RequestUtils.getLdapConnection(request);
-		if (connection != null)
-		{
+		if (connection != null) {
 			connection.close();
 		}
 		request.removeAttribute(WebConstants.ATTR_CONNECTION);
 		LdapUserDetails currentUser = RequestUtils.getCurrentUserDetails();
-		if (currentUser != null && modelAndView != null)
-		{
+		if (currentUser != null && modelAndView != null) {
 			modelAndView.addObject("currentUser", currentUser);
 		}
 	}
 
 	@Override
-	public void afterCompletion(HttpServletRequest request, HttpServletResponse response, Object handler, Exception ex)
-		throws Exception
-	{
-
+	public void afterCompletion(
+			HttpServletRequest request, HttpServletResponse response, Object handler, Exception ex)
+			throws Exception {
 	}
-
 }

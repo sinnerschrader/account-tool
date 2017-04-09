@@ -6,12 +6,6 @@ import com.sinnerschrader.s2b.accounttool.logic.entity.Group;
 import com.sinnerschrader.s2b.accounttool.logic.entity.User;
 import com.sinnerschrader.s2b.accounttool.logic.exception.BusinessException;
 import com.unboundid.ldap.sdk.LDAPConnection;
-
-import java.time.LocalDate;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.stream.Collectors;
-
 import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.junit.Assert;
@@ -28,14 +22,17 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringRunner;
 
+import java.time.LocalDate;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest
 @ActiveProfiles({"test"})
-public class LdapServiceTests
-{
+public class LdapServiceTests {
 
-	private final static Logger log = LoggerFactory.getLogger(LdapServiceTests.class);
+	private static final Logger log = LoggerFactory.getLogger(LdapServiceTests.class);
 
 	@Autowired
 	private LdapConfiguration ldapConfiguration;
@@ -54,11 +51,9 @@ public class LdapServiceTests
 
 	private transient LdapUserDetails currentUser = null;
 
-	private LDAPConnection create(boolean bind) throws Exception
-	{
+	private LDAPConnection create(boolean bind) throws Exception {
 		LDAPConnection connection = ldapConfiguration.createConnection();
-		if (bind)
-		{
+		if (bind) {
 			String bindDN = ldapConfiguration.getUserBind(ldapUser, ldapUserCompany);
 			connection.bind(bindDN, ldapUserPassword);
 		}
@@ -66,8 +61,7 @@ public class LdapServiceTests
 	}
 
 	@Before
-	public void login() throws Exception
-	{
+	public void login() throws Exception {
 		LDAPConnection connection = create(false);
 
 		User user = ldapService.getUserByUid(connection, ldapUser);
@@ -77,19 +71,28 @@ public class LdapServiceTests
 		Assert.assertNotNull(groups);
 		Assert.assertFalse(groups.isEmpty());
 
-		List<GrantedAuthority> grantedAuthorities = groups.stream()
-			.map(group -> new SimpleGrantedAuthority(group.getCn()))
-			.collect(Collectors.toList());
+		List<GrantedAuthority> grantedAuthorities =
+				groups
+						.stream()
+						.map(group -> new SimpleGrantedAuthority(group.getCn()))
+						.collect(Collectors.toList());
 
-		this.currentUser = new LdapUserDetails(user.getDn(), user.getUid(), user.getDisplayName(),
-			ldapUserPassword, ldapUserCompany, grantedAuthorities, false, true);
+		this.currentUser =
+				new LdapUserDetails(
+						user.getDn(),
+						user.getUid(),
+						user.getDisplayName(),
+						ldapUserPassword,
+						ldapUserCompany,
+						grantedAuthorities,
+						false,
+						true);
 
 		connection.close();
 	}
 
 	@Test
-	public void testReadOperations() throws Exception
-	{
+	public void testReadOperations() throws Exception {
 		LDAPConnection connection = create(true);
 
 		final String uid = "dontexists";
@@ -114,8 +117,7 @@ public class LdapServiceTests
 	}
 
 	@Test
-	public void testGroupTypes() throws Exception
-	{
+	public void testGroupTypes() throws Exception {
 		LDAPConnection connection = create(true);
 
 		User userToAdd = ldapService.getUserByUid(connection, "musmax");
@@ -159,51 +161,48 @@ public class LdapServiceTests
 		connection.close();
 	}
 
-	private User createUser(String firstName, String lastName)
-	{
+	private User createUser(String firstName, String lastName) {
 		return createUser(firstName, lastName, null, null, null);
 	}
 
-	private User createUser(String firstName, String lastName, String uid, String email, String employeeNumber)
-	{
-		return new User(null,
-			uid,
-			null,
-			null,
-			null,
-			null,
-			firstName + " " + lastName,
-			firstName,
-			lastName,
-			null,
-			null,
-			LocalDate.of(1972, 7, 1),
-			null,
-			null,
-			null,
-			email,
-			User.State.active,
-			User.State.active,
-			null,
-			LocalDate.of(1990, 1, 1),
-			LocalDate.of(2100, 12, 31),
-			"Team Instinct",
-			"Imaginary Employee",
-			"",
-			"",
-			employeeNumber,
-			"Not a real Person",
-			"Hamburg",
-			null,
-			"Example - Company 2",
-			"e1c2"
-		);
-
+	private User createUser(
+			String firstName, String lastName, String uid, String email, String employeeNumber) {
+		return new User(
+				null,
+				uid,
+				null,
+				null,
+				null,
+				null,
+				firstName + " " + lastName,
+				firstName,
+				lastName,
+				null,
+				null,
+				LocalDate.of(1972, 7, 1),
+				null,
+				null,
+				null,
+				email,
+				User.State.active,
+				User.State.active,
+				null,
+				LocalDate.of(1990, 1, 1),
+				LocalDate.of(2100, 12, 31),
+				"Team Instinct",
+				"Imaginary Employee",
+				"",
+				"",
+				employeeNumber,
+				"Not a real Person",
+				"Hamburg",
+				null,
+				"Example - Company 2",
+				"e1c2");
 	}
 
 	@Test
-	public void testCreateUser() throws Exception
-	{
+	public void testCreateUser() throws Exception {
 		LDAPConnection connection = create(true);
 
 		User newUser = createUser("Guy", "Inçögnítò");
@@ -229,40 +228,31 @@ public class LdapServiceTests
 	}
 
 	@Test
-	public void testCreateUserUserNameExceeding() throws Exception
-	{
+	public void testCreateUserUserNameExceeding() throws Exception {
 		List<User> users = new LinkedList<>();
-		for (int i = 1; i <= 10; i++)
-		{
-			users.add(
-				createUser("Maximilian", "Mustermann", null, i + ".test@example.com", null));
+		for (int i = 1; i <= 10; i++) {
+			users.add(createUser("Maximilian", "Mustermann", null, i + ".test@example.com", null));
 		}
 		LDAPConnection connection = create(true);
 		int i = 0;
-		try
-		{
-			for (User user : users)
-			{
+		try {
+			for (User user : users) {
 				ldapService.insert(connection, user);
 				i++;
 			}
-		}
-		catch (BusinessException be)
-		{
+		} catch (BusinessException be) {
 			Assert.assertEquals(be.getCode(), "user.create.usernames.exceeded");
 		}
 		log.debug("Username autosuggest exeeded after {} tries", i);
 		connection.close();
 	}
 
-	private String rnd()
-	{
+	private String rnd() {
 		return RandomStringUtils.randomAlphabetic(16);
 	}
 
 	@Test
-	public void testCreateUserUniqueAttributes() throws Exception
-	{
+	public void testCreateUserUniqueAttributes() throws Exception {
 		LDAPConnection connection = create(true);
 
 		final String emailCom = ".test@example.com";
@@ -272,34 +262,26 @@ public class LdapServiceTests
 		User newUser = createUser(firstName, lastName);
 		User pUser = ldapService.insert(connection, newUser);
 
-		try
-		{
-			ldapService.insert(connection, createUser(rnd(), rnd(), pUser.getUid(), rnd() + emailCom, rnd()));
+		try {
+			ldapService.insert(
+					connection, createUser(rnd(), rnd(), pUser.getUid(), rnd() + emailCom, rnd()));
 			Assert.fail();
-		}
-		catch (BusinessException be)
-		{
+		} catch (BusinessException be) {
 			Assert.assertEquals(be.getCode(), "user.create.username.alreadyUsed");
 		}
 
-		try
-		{
+		try {
 			ldapService.insert(connection, createUser(rnd(), rnd(), rnd(), pUser.getMail(), rnd()));
 			Assert.fail();
-		}
-		catch (BusinessException be)
-		{
+		} catch (BusinessException be) {
 			Assert.assertEquals(be.getCode(), "user.mail.alreadyUsed");
 		}
 
-		try
-		{
-			ldapService.insert(connection,
-				createUser(rnd(), rnd(), rnd(), rnd() + emailCom, pUser.getEmployeeNumber()));
+		try {
+			ldapService.insert(
+					connection, createUser(rnd(), rnd(), rnd(), rnd() + emailCom, pUser.getEmployeeNumber()));
 			Assert.fail();
-		}
-		catch (BusinessException be)
-		{
+		} catch (BusinessException be) {
 			Assert.assertEquals(be.getCode(), "user.employeeNumber.alreadyUsed");
 		}
 
@@ -307,8 +289,7 @@ public class LdapServiceTests
 	}
 
 	@Test
-	public void testREsetPasswordAndSetNewPassword() throws Exception
-	{
+	public void testREsetPasswordAndSetNewPassword() throws Exception {
 		LDAPConnection connection = create(true);
 
 		final User newUser = createUser(rnd(), rnd());
@@ -329,5 +310,4 @@ public class LdapServiceTests
 
 		connection.close();
 	}
-
 }

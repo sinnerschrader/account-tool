@@ -3,32 +3,22 @@ package com.sinnerschrader.s2b.accounttool.support.pebble;
 import com.mitchellbosecke.pebble.extension.AbstractExtension;
 import com.mitchellbosecke.pebble.extension.Function;
 import com.sinnerschrader.s2b.accounttool.logic.component.authorization.AuthorizationService;
-import com.sinnerschrader.s2b.accounttool.support.pebble.functions.IsAdminFunction;
-import com.sinnerschrader.s2b.accounttool.support.pebble.functions.IsGroupAdminFunction;
-import com.sinnerschrader.s2b.accounttool.support.pebble.functions.IsLoggedInFunction;
-import com.sinnerschrader.s2b.accounttool.support.pebble.functions.IsMemberOfFunction;
-import com.sinnerschrader.s2b.accounttool.support.pebble.functions.IsSelectedFunction;
-import com.sinnerschrader.s2b.accounttool.support.pebble.functions.IsUserAdminFunction;
+import com.sinnerschrader.s2b.accounttool.support.pebble.functions.*;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.HashMap;
 import java.util.Map;
 
-import org.springframework.beans.factory.annotation.Autowired;
-
-
 /**
  * Custom Extension for Pebble support which are required for the Tool
  */
-public class AccountToolExtension extends AbstractExtension
-{
+public class AccountToolExtension extends AbstractExtension {
 
 	@Autowired
 	private AuthorizationService authorizationService;
 
-	public Map<String, Function> getFunctions()
-	{
-		if (authorizationService == null)
-		{
+	public Map<String, Function> getFunctions() {
+		if (authorizationService == null) {
 			throw new IllegalStateException("The AuthorizationService is not allowed to be null");
 		}
 
@@ -36,7 +26,8 @@ public class AccountToolExtension extends AbstractExtension
 
 		// Authozization functions
 		functions.put(IsLoggedInFunction.FUNCTION_NAME, new IsLoggedInFunction());
-		functions.put(IsGroupAdminFunction.FUNCTION_NAME, new IsGroupAdminFunction(authorizationService));
+		functions.put(
+				IsGroupAdminFunction.FUNCTION_NAME, new IsGroupAdminFunction(authorizationService));
 		functions.put(IsAdminFunction.FUNCTION_NAME, new IsAdminFunction(authorizationService));
 		functions.put(IsUserAdminFunction.FUNCTION_NAME, new IsUserAdminFunction(authorizationService));
 		functions.put(IsMemberOfFunction.FUNCTION_NAME, new IsMemberOfFunction(authorizationService));
@@ -46,5 +37,4 @@ public class AccountToolExtension extends AbstractExtension
 
 		return functions;
 	}
-
 }

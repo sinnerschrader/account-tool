@@ -4,12 +4,10 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
-
 /**
  * GroupOfNames represents the
  */
-public class GroupOfNames implements Group
-{
+public class GroupOfNames implements Group {
 
 	private final List<String> objectClasses;
 
@@ -25,71 +23,64 @@ public class GroupOfNames implements Group
 
 	private transient GroupClassification groupClassification;
 
-	public GroupOfNames(String dn, String cn, String description, boolean uniqueNames,
-		GroupClassification groupClassification, String... memberDNs)
-	{
-		final GroupType groupType = uniqueNames
-			? GroupType.GroupOfUniqueNames
-			: GroupType.GroupOfNames;
+	public GroupOfNames(
+			String dn,
+			String cn,
+			String description,
+			boolean uniqueNames,
+			GroupClassification groupClassification,
+			String... memberDNs) {
+		final GroupType groupType = uniqueNames ? GroupType.GroupOfUniqueNames : GroupType.GroupOfNames;
 
-		this.objectClasses = Collections.unmodifiableList(Arrays.asList("top", groupType.getObjectClass()));
+		this.objectClasses =
+				Collections.unmodifiableList(Arrays.asList("top", groupType.getObjectClass()));
 		this.dn = dn;
 		this.cn = cn;
 		this.description = description;
 		this.uniqueNames = uniqueNames;
 		this.groupClassification = groupClassification;
-		this.memberDNs = (memberDNs != null) ?
-			Collections.unmodifiableList(Arrays.asList(memberDNs)) :
-			Collections.emptyList();
+		this.memberDNs =
+				(memberDNs != null)
+						? Collections.unmodifiableList(Arrays.asList(memberDNs))
+						: Collections.emptyList();
 	}
 
 	@Override
-	public GroupClassification getGroupClassification()
-	{
+	public GroupClassification getGroupClassification() {
 		return groupClassification;
 	}
 
 	@Override
-	public List<String> getObjectClasses()
-	{
+	public List<String> getObjectClasses() {
 		return objectClasses;
 	}
 
 	@Override
-	public String getDescription()
-	{
+	public String getDescription() {
 		return description;
 	}
 
 	@Override
-	public List<String> getMemberIds()
-	{
+	public List<String> getMemberIds() {
 		return memberDNs;
 	}
 
 	@Override
-	public GroupType getGroupType()
-	{
-		return uniqueNames
-			? GroupType.GroupOfUniqueNames
-			: GroupType.GroupOfNames;
+	public GroupType getGroupType() {
+		return uniqueNames ? GroupType.GroupOfUniqueNames : GroupType.GroupOfNames;
 	}
 
 	@Override
-	public String getDn()
-	{
+	public String getDn() {
 		return dn;
 	}
 
 	@Override
-	public String getCn()
-	{
+	public String getCn() {
 		return cn;
 	}
 
-	public boolean isUniqueNames()
-	{
+	public boolean isUniqueNames() {
 		return uniqueNames;
 	}
-
 }
