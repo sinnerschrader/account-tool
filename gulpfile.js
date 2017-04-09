@@ -15,10 +15,10 @@ gulp.task('lint:js', () => {
 	var eslint = require('gulp-eslint');
 	var noop = require('gulp-noop');
 	return gulp.src([
-			config.source + 'extensions/js/**/*.js',
-			config.source + 'extensions/js/**/*.json',
-			'!node_modules/**'
-		])
+		config.source + 'extensions/js/**/*.js',
+		config.source + 'extensions/js/**/*.json',
+		'!node_modules/**'
+	])
 		.pipe(eslint())
 		.pipe(eslint.format())
 		.pipe(config.failAfterError ? eslint.failAfterError() : noop());

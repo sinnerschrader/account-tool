@@ -1,33 +1,33 @@
 <!doctype html>
 <html lang="en">
-<head>
-	<meta charset="UTF-8">
-	<meta http-equiv="X-UA-Compatible" content="IE=edge">
-	<meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0">
-	<meta name="mobile-web-app-capable" content="yes">
-	<title>SinnerSchrader - OAuth</title>
+	<head>
+		<meta charset="UTF-8">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0">
+		<meta name="mobile-web-app-capable" content="yes">
+		<title>SinnerSchrader - OAuth</title>
 
-	<!-- Mobile Tweaks -->
-	<link rel="apple-touch-icon" sizes="180x180" href="/static/favicons/apple-touch-icon.png">
-	<link rel="icon" type="image/png" href="/static/favicons/favicon-32x32.png" sizes="32x32">
-	<link rel="icon" type="image/png" href="/static/favicons/favicon-16x16.png" sizes="16x16">
-	<link rel="manifest" href="/static/favicons/manifest.json">
-	<link rel="mask-icon" href="/static/favicons/safari-pinned-tab.svg" color="#4502da">
-	<meta name="theme-color" content="#4502da">
-	<link rel="shortcut icon" href="/static/favicons/favicon.ico" type="image/x-icon"/>
+		<!-- Mobile Tweaks -->
+		<link rel="apple-touch-icon" sizes="180x180" href="/static/favicons/apple-touch-icon.png">
+		<link rel="icon" type="image/png" href="/static/favicons/favicon-32x32.png" sizes="32x32">
+		<link rel="icon" type="image/png" href="/static/favicons/favicon-16x16.png" sizes="16x16">
+		<link rel="manifest" href="/static/favicons/manifest.json">
+		<link rel="mask-icon" href="/static/favicons/safari-pinned-tab.svg" color="#4502da">
+		<meta name="theme-color" content="#4502da">
+		<link rel="shortcut icon" href="/static/favicons/favicon.ico" type="image/x-icon"/>
 
-	<!-- Page styles -->
-	<link rel="stylesheet"
-		  href="https://fonts.googleapis.com/css?family=Roboto:regular,bold,italic,thin,light,bolditalic,black,medium&amp;lang=en"/>
-	<link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons"/>
-	<link rel="stylesheet" href="/extensions/account-tool.min.css"/>
-</head>
-<body>
-<div class="mdl-layout mdl-js-layout mdl-layout--fixed-header">
-	<div class="s2act-header mdl-layout__header mdl-layout__header--waterfall">
-		<div class="mdl-layout__header-row mdl-layout__header-row--center">
-			<!-- Desktop -->
-			<span class="mdl-cell--hide-tablet mdl-cell--hide-phone mdl-layout-title s2act-title">
+		<!-- Page styles -->
+		<link rel="stylesheet"
+			  href="https://fonts.googleapis.com/css?family=Roboto:regular,bold,italic,thin,light,bolditalic,black,medium&amp;lang=en"/>
+		<link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons"/>
+		<link rel="stylesheet" href="/extensions/account-tool.min.css"/>
+	</head>
+	<body>
+		<div class="mdl-layout mdl-js-layout mdl-layout--fixed-header">
+			<div class="s2act-header mdl-layout__header mdl-layout__header--waterfall">
+				<div class="mdl-layout__header-row mdl-layout__header-row--center">
+					<!-- Desktop -->
+					<span class="mdl-cell--hide-tablet mdl-cell--hide-phone mdl-layout-title s2act-title">
 						<a href="/login" class="s2act-logo-image">
 							<svg xmlns="http://www.w3.org/2000/svg" width="454" height="96" viewBox="0 0 454 95.9"><path
 									d="M33.6 75.7c-8.8 0-13.3-4.7-13.6-14.2 0-0.5 0.2-0.8 0.6-0.9l6.7-1.1c0.6-0.1 0.9 0.2 0.9 0.7 0.2 5.8 1.9 8 5.6 8 3.4 0 5.1-1.8 5.1-7.7 0-5.8-1.1-7.7-5.4-9.4l-3.3-1.3c-7.5-3-9.7-6.9-9.7-15.3C20.6 25.1 24.8 20 33.7 20c8.9 0 12.9 4.8 13.3 13.3 0 0.5-0.2 0.7-0.7 0.9l-6.4 1c-0.5 0.1-0.9-0.2-0.9-0.6 -0.2-4.5-1.6-6.9-5.1-6.9 -3.4 0-5 2.1-5 6.5 0 5 1 6.5 5.3 8.2l3.3 1.3c7.1 2.8 9.9 6.6 9.9 15.9C47.5 70.2 43.9 75.7 33.6 75.7z"/><path
@@ -47,9 +47,9 @@
 						</a>
 					</span>
 
-			<!-- Mobile -->
-			<div class="s2act-header-spacer mdl-layout-spacer"></div>
-			<span class="mdl-layout-title s2act-title s2act-mobile-title">
+					<!-- Mobile -->
+					<div class="s2act-header-spacer mdl-layout-spacer"></div>
+					<span class="mdl-layout-title s2act-title s2act-mobile-title">
 						<a href="/login" class="s2act-logo-image">
 							<svg xmlns="http://www.w3.org/2000/svg" width="454" height="96" viewBox="0 0 454 95.9"><path
 									d="M33.6 75.7c-8.8 0-13.3-4.7-13.6-14.2 0-0.5 0.2-0.8 0.6-0.9l6.7-1.1c0.6-0.1 0.9 0.2 0.9 0.7 0.2 5.8 1.9 8 5.6 8 3.4 0 5.1-1.8 5.1-7.7 0-5.8-1.1-7.7-5.4-9.4l-3.3-1.3c-7.5-3-9.7-6.9-9.7-15.3C20.6 25.1 24.8 20 33.7 20c8.9 0 12.9 4.8 13.3 13.3 0 0.5-0.2 0.7-0.7 0.9l-6.4 1c-0.5 0.1-0.9-0.2-0.9-0.6 -0.2-4.5-1.6-6.9-5.1-6.9 -3.4 0-5 2.1-5 6.5 0 5 1 6.5 5.3 8.2l3.3 1.3c7.1 2.8 9.9 6.6 9.9 15.9C47.5 70.2 43.9 75.7 33.6 75.7z"/><path
@@ -68,77 +68,82 @@
 									d="M426.1 75c-0.5 0-0.7-0.2-0.9-0.6l-6.6-21.6h-1.4 -2.7c-0.3 0-0.5 0.2-0.5 0.5v20.9c0 0.5-0.3 0.8-0.8 0.8h-6.9c-0.5 0-0.8-0.3-0.8-0.8V21.5c0-0.5 0.3-0.8 0.8-0.8h10.9c9.7 0 15.5 4.2 15.5 16.1 0 7.1-2.4 11.6-6.5 13.9l7.7 23.5c0.2 0.4 0 0.8-0.4 0.8H426.1zM424.2 36.9c0-6.4-2.1-8.4-6.9-8.4h-2.8c-0.3 0-0.5 0.2-0.5 0.5v15.8c0 0.3 0.2 0.5 0.5 0.5h2.8C422.1 45.2 424.2 43.3 424.2 36.9z"/></svg>
 						</a>
 					</span>
-			<div class="s2act-header-spacer mdl-layout-spacer"></div>
-		</div>
-	</div>
-	<div class="s2act-content s2act-loginContent mdl-layout__content">
-		<div class="s2act-content__inner">
-
-			<div class="mdl-grid">
-				<div class="mdl-cell mdl-cell--12-col">
-					<div class="s2act-card mdl-card s2act-card--login">
-
-						<form class="oauth" method="GET" action="{{.ProxyPrefix}}/start">
-							<input type="hidden" name="rd" value="{{.Redirect}}">
-							{{ if .SignInMessage }}
-							<p>{{.SignInMessage}}</p>
-							{{ end}}
-							<button type="submit"
-									class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect">Sign in
-								with a {{.ProviderName}} Account
-							</button>
-							<br/>
-						</form>
-
-						{{ if .CustomLogin }}
-						<form method="POST" action="{{.ProxyPrefix}}/sign_in">
-							<input type="hidden" name="rd" value="{{.Redirect}}">
-							<label for="username">Username:</label><input type="text" name="username" id="username"
-																		  size="10"><br/>
-							<label for="password">Password:</label><input type="password" name="password" id="password"
-																		  size="10"><br/>
-							<button type="submit"
-									class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect">Sign In
-							</button>
-						</form>
-						{{ end }}
-
-					</div>
+					<div class="s2act-header-spacer mdl-layout-spacer"></div>
 				</div>
 			</div>
+			<div class="s2act-content s2act-loginContent mdl-layout__content">
+				<div class="s2act-content__inner">
 
+					<div class="mdl-grid">
+						<div class="mdl-cell mdl-cell--12-col">
+							<div class="s2act-card mdl-card s2act-card--login">
+
+								<form class="oauth" method="GET" action="{{.ProxyPrefix}}/start">
+									<input type="hidden" name="rd" value="{{.Redirect}}">
+									{{ if .SignInMessage }}
+									<p>{{.SignInMessage}}</p>
+									{{ end}}
+									<button type="submit"
+											class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect">
+										Sign in
+										with a {{.ProviderName}} Account
+									</button>
+									<br/>
+								</form>
+
+								{{ if .CustomLogin }}
+								<form method="POST" action="{{.ProxyPrefix}}/sign_in">
+									<input type="hidden" name="rd" value="{{.Redirect}}">
+									<label for="username">Username:</label><input type="text" name="username"
+																				  id="username"
+																				  size="10"><br/>
+									<label for="password">Password:</label><input type="password" name="password"
+																				  id="password"
+																				  size="10"><br/>
+									<button type="submit"
+											class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect">
+										Sign In
+									</button>
+								</form>
+								{{ end }}
+
+							</div>
+						</div>
+					</div>
+
+				</div>
+				<footer class="mdl-mini-footer s2act-footer">
+					<div class="mdl-mini-footer__left-section">
+						<ul class="mdl-mini-footer__link-list">
+							<li>
+								<a href="https://www.sinnerschrader.com" target="_blank">
+									<i class="material-icons">open_in_new</i>
+									<span>www.sinnerschrader.com</span>
+								</a>
+							</li>
+						</ul>
+					</div>
+					<div class="mdl-mini-footer__right-section">
+						<ul class="mdl-mini-footer__link-list">
+							<li>
+								<span>Secured with <a href="https://github.com/bitly/oauth2_proxy#oauth2_proxy"
+													  target="_blank">OAuth2 Proxy</a> version {{.Version}}</span>
+							</li>
+						</ul>
+					</div>
+				</footer>
+			</div>
 		</div>
-		<footer class="mdl-mini-footer s2act-footer">
-			<div class="mdl-mini-footer__left-section">
-				<ul class="mdl-mini-footer__link-list">
-					<li>
-						<a href="https://www.sinnerschrader.com" target="_blank">
-							<i class="material-icons">open_in_new</i>
-							<span>www.sinnerschrader.com</span>
-						</a>
-					</li>
-				</ul>
-			</div>
-			<div class="mdl-mini-footer__right-section">
-				<ul class="mdl-mini-footer__link-list">
-					<li>
-						<span>Secured with <a href="https://github.com/bitly/oauth2_proxy#oauth2_proxy" target="_blank">OAuth2 Proxy</a> version {{.Version}}</span>
-					</li>
-				</ul>
-			</div>
-		</footer>
-	</div>
-</div>
-<script>
-	if (window.location.hash) {
-		(function () {
-			var inputs = document.getElementsByName('rd');
-			for (var i = 0; i < inputs.length; i++) {
-				inputs[i].value += window.location.hash;
+		<script>
+			if (window.location.hash) {
+				(function () {
+					var inputs = document.getElementsByName('rd');
+					for (var i = 0; i < inputs.length; i++) {
+						inputs[i].value += window.location.hash;
+					}
+				})();
 			}
-		})();
-	}
-</script>
-<script async src="/extensions/account-tool.min.js"></script>
-</body>
+		</script>
+		<script async src="/extensions/account-tool.min.js"></script>
+	</body>
 </html>
