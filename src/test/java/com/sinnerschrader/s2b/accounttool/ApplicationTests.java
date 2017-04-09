@@ -23,15 +23,14 @@ public class ApplicationTests {
 
     @Test
     public void contextLoads() {
-        Assert.isTrue(applicationContext.getEnvironment().acceptsProfiles("test"));
-        Assert.notNull(applicationContext.getBean(AuthorizationService.class));
-        Assert.notNull(applicationContext.getBean(LDAPServer.class));
-        Assert.notNull(applicationContext.getBean(LdapService.class));
+        Assert.isTrue(applicationContext.getEnvironment().acceptsProfiles("test"), "\"test\" profile was not loaded");
+        Assert.notNull(applicationContext.getBean(AuthorizationService.class), "Missing AuthorizationService");
+        Assert.notNull(applicationContext.getBean(LDAPServer.class), "Missing embedded LDAPServer");
+        Assert.notNull(applicationContext.getBean(LdapService.class), "Missing LdapService");
 
-        Assert.notNull(applicationContext.getBean("ldapServer"));
-        Assert.notNull(applicationContext.getBean("ldapConfiguration"));
-        Assert.notNull(applicationContext.getBean("groupMapping"));
-        Assert.notNull(applicationContext.getBean("userMapping"));
+        Assert.notNull(applicationContext.getBean("ldapServer"), "Missing Bean by name ldapServer");
+        Assert.notNull(applicationContext.getBean("ldapConfiguration"), "Missing Bean by name ldapConfiguration");
+        Assert.notNull(applicationContext.getBean("groupMapping"), "Missing Bean by name groupMapping");
+        Assert.notNull(applicationContext.getBean("userMapping"), "Missing Bean by name userMapping");
     }
-
 }
