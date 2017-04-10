@@ -18,7 +18,8 @@ import org.apache.commons.lang3.StringUtils;
 public class UserForm implements Serializable
 {
 
-	private static final String BIRTHDAY_PATTERN = "dd.MM";
+	private static final String BIRTHDAY_PATTERN = "dd.MM.";
+	private static final String DATE_DUMMY_YEAR_PATTERN = "1972";
 
 	private static final String DATE_PATTERN = "dd.MM.yyyy";
 
@@ -148,7 +149,7 @@ public class UserForm implements Serializable
 		// the year is not stored, but is a leap year for reasons
 		if (StringUtils.isNotBlank(birthDate))
 		{
-			return LocalDate.parse(birthDate + ".1972", DateTimeFormatter.ofPattern(DATE_PATTERN));
+			return LocalDate.parse(birthDate + DATE_DUMMY_YEAR_PATTERN, DateTimeFormatter.ofPattern(DATE_PATTERN));
 		}
 		return null;
 	}
