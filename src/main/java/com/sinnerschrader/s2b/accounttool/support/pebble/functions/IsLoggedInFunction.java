@@ -11,21 +11,18 @@ import java.util.Map;
 /**
  * Simple Function to check if a user is logged in or not.
  */
-public class IsLoggedInFunction implements Function
-{
+public class IsLoggedInFunction implements Function {
 
-	public static final String FUNCTION_NAME = "isLoggedIn";
+    public static final String FUNCTION_NAME = "isLoggedIn";
 
-	@Override
-	public List<String> getArgumentNames()
-	{
-		return Collections.emptyList();
-	}
+    @Override
+    public List<String> getArgumentNames() {
+        return Collections.emptyList();
+    }
 
-	@Override
-	public Object execute(Map<String, Object> args)
-	{
-		return RequestUtils.getCurrentUserDetails() != null;
-	}
+    @Override
+    public Object execute(Map<String, Object> args) {
+        return RequestUtils.getCurrentUserDetails() != null;
+    }
 
 }

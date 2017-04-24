@@ -1,28 +1,28 @@
 {% macro navigation(position="sidebar") %}
 <nav class="s2act-navigation mdl-navigation">
-	<a class="mdl-navigation__link mdl-typography--text-uppercase" href="/profile">
-		<i class="material-icons">home</i>
-		<span>Profile</span>
-	</a>
-	<a class="mdl-navigation__link mdl-typography--text-uppercase" href="/group">
-		<i class="material-icons">group</i>
-		<span>Group</span>
-	</a>
-	{% if isUserAdmin() %}
-	<a class="mdl-navigation__link mdl-typography--text-uppercase" href="/user">
-		<i class="material-icons">person_add</i>
-		<span>User</span>
-	</a>
-	<a class="mdl-navigation__link mdl-typography--text-uppercase" href="/user/maintenance">
-		<i class="material-icons">supervisor_account</i>
-		<span>User Maintenance</span>
-	</a>
-	{% endif %}
-	<hr>
-	<a class="mdl-navigation__link mdl-typography--text-uppercase" href="/logout">
-		<i class="material-icons">lock</i>
-		<span>Logout</span>
-	</a>
+    <a class="mdl-navigation__link mdl-typography--text-uppercase" href="/profile">
+        <i class="material-icons">home</i>
+        <span>Profile</span>
+    </a>
+    <a class="mdl-navigation__link mdl-typography--text-uppercase" href="/group">
+        <i class="material-icons">group</i>
+        <span>Group</span>
+    </a>
+    {% if isUserAdmin() %}
+    <a class="mdl-navigation__link mdl-typography--text-uppercase" href="/user">
+        <i class="material-icons">person_add</i>
+        <span>User</span>
+    </a>
+    <a class="mdl-navigation__link mdl-typography--text-uppercase" href="/user/maintenance">
+        <i class="material-icons">supervisor_account</i>
+        <span>User Maintenance</span>
+    </a>
+    {% endif %}
+    <hr>
+    <a class="mdl-navigation__link mdl-typography--text-uppercase" href="/logout">
+        <i class="material-icons">lock</i>
+        <span>Logout</span>
+    </a>
 </nav>
 {% endmacro %}
 
@@ -32,21 +32,21 @@
 
 {% macro switch(label, fieldName, checked=false, checkedValue, uncheckedValue) %}
 <label for="{{fieldName}}" class="js_switch mdl-switch mdl-js-switch mdl-js-ripple-effect"
-	   data-checkedValue="{{checkedValue}}" data-uncheckValue="{{uncheckedValue}}">
-	<input type="hidden" id="{{fieldName}}Hidden" name="{{fieldName}}"
-		   value="{{ checked ? checkedValue : uncheckedValue}}">
-	<input type="checkbox" id="{{fieldName}}" name="{{fieldName}}_checkBox" {{ checked ? 'checked' : ''}}
-	class="mdl-switch__input">
-	<span class="mdl-switch__label">{{label}}</span>
+       data-checkedValue="{{checkedValue}}" data-uncheckValue="{{uncheckedValue}}">
+    <input type="hidden" id="{{fieldName}}Hidden" name="{{fieldName}}"
+           value="{{ checked ? checkedValue : uncheckedValue}}">
+    <input type="checkbox" id="{{fieldName}}" name="{{fieldName}}_checkBox" {{ checked ? 'checked' : ''}}
+    class="mdl-switch__input">
+    <span class="mdl-switch__label">{{label}}</span>
 </label>
 {% endmacro %}
 
 {% macro showGlobalMessages(globalMessages) %}
 {% if globalMessages is not empty %}
 <ul class="s2act-messages">
-	{% for message in globalMessages %}
-	<li class="s2act-message s2act-message--{{message.type.name | lower}}">{{ message.text }}</li>
-	{% endfor %}
+    {% for message in globalMessages %}
+    <li class="s2act-message s2act-message--{{message.type.name | lower}}">{{ message.text }}</li>
+    {% endfor %}
 </ul>
 {% endif %}
 {% endmacro %}

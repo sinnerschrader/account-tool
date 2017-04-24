@@ -3,9 +3,8 @@ package com.sinnerschrader.s2b.accounttool.presentation.messaging;
 /**
  * Type of a Message
  */
-public enum GlobalMessageType
-{
+public enum GlobalMessageType {
 
-	INFO, WARNING, ERROR;
+    INFO, WARNING, ERROR;
 
 }

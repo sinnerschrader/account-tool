@@ -1,28 +1,28 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <suppressions xmlns="https://jeremylong.github.io/DependencyCheck/dependency-suppression.1.1.xsd">
-	<suppress>
-		<notes><![CDATA[file name: javax.mail-1.5.6.jar]]></notes>
-		<gav regex="true">^com\.sun\.mail:javax\.mail:.*$</gav>
-		<cpe>cpe:/a:sun:javamail</cpe>
-	</suppress>
-	<suppress>
-		<notes><![CDATA[file name: tomcat-embed-core-8.5.11.jar]]></notes>
-		<gav regex="true">^org\.apache\.tomcat\.embed:tomcat-embed.*:.*$</gav>
-		<cve>CVE-2016-6325</cve>
-	</suppress>
-	<suppress>
-		<notes><![CDATA[file name: tomcat-embed-core-8.5.11.jar]]></notes>
-		<gav regex="true">^org\.apache\.tomcat\.embed:tomcat-embed.*:.*$</gav>
-		<cve>CVE-2016-5425</cve>
-	</suppress>
-	<suppress>
-		<notes><![CDATA[file name: tomcat-embed-core-8.5.11.jar]]></notes>
-		<gav regex="true">^org\.apache\.tomcat\.embed:tomcat-embed.*:.*$</gav>
-		<cve>CVE-2017-6056</cve>
-	</suppress>
-	<suppress>
-		<notes><![CDATA[file name: spring-boot-1.4.4.RELEASE.jar]]></notes>
-		<gav regex="true">^org\.springframework\.boot:spring-boot.*:.*$</gav>
-		<cve>CVE-2016-9878</cve>
-	</suppress>
+    <suppress>
+        <notes><![CDATA[file name: javax.mail-1.5.6.jar]]></notes>
+        <gav regex="true">^com\.sun\.mail:javax\.mail:.*$</gav>
+        <cpe>cpe:/a:sun:javamail</cpe>
+    </suppress>
+    <suppress>
+        <notes><![CDATA[file name: tomcat-embed-core-8.5.11.jar]]></notes>
+        <gav regex="true">^org\.apache\.tomcat\.embed:tomcat-embed.*:.*$</gav>
+        <cve>CVE-2016-6325</cve>
+    </suppress>
+    <suppress>
+        <notes><![CDATA[file name: tomcat-embed-core-8.5.11.jar]]></notes>
+        <gav regex="true">^org\.apache\.tomcat\.embed:tomcat-embed.*:.*$</gav>
+        <cve>CVE-2016-5425</cve>
+    </suppress>
+    <suppress>
+        <notes><![CDATA[file name: tomcat-embed-core-8.5.11.jar]]></notes>
+        <gav regex="true">^org\.apache\.tomcat\.embed:tomcat-embed.*:.*$</gav>
+        <cve>CVE-2017-6056</cve>
+    </suppress>
+    <suppress>
+        <notes><![CDATA[file name: spring-boot-1.4.4.RELEASE.jar]]></notes>
+        <gav regex="true">^org\.springframework\.boot:spring-boot.*:.*$</gav>
+        <cve>CVE-2016-9878</cve>
+    </suppress>
 </suppressions>
