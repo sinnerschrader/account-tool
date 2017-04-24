@@ -3,58 +3,59 @@
 
 {% block content %}
 <div class="mdl-grid">
-	<div class="mdl-cell mdl-cell--12-col">
-		<div class="s2act-card mdl-card s2act-card--login">
-			{% if error is not empty or msg is not empty %}
-			<ul class="s2act-messages">
-				{% if error is not empty %}
-				<li class="s2act-message s2act-message--error">{{message(error)}}</li>
-				{% elseif msg is not empty %}
-				<li class="s2act-message s2act-message--info">{{message(msg)}}</li>
-				{% endif %}
-			</ul>
-			{% endif %}
-			<form action="/login" method="post" name="login" id="login" autocomplete="off">
-				<input type="hidden" name="{{request.getAttribute('_csrf').parameterName}}"
-					   value="{{request.getAttribute('_csrf').token}}"/>
-				<div class="mdl-grid">
-					<div class="mdl-cell mdl-cell--12-col">
-						<div class="s2act-textfield mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
-							<input class="mdl-textfield__input" type="text" name="uid" id="uid" autocomplete="off">
-							<label class="mdl-textfield__label" for="uid">Username</label>
-						</div>
-					</div>
-					<div class="mdl-cell mdl-cell--12-col">
-						<div class="s2act-textfield mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
-							<input class="mdl-textfield__input" type="password" name="password" id="password"
-								   autocomplete="off">
-							<label class="mdl-textfield__label" for="password">Password</label>
-						</div>
-					</div>
-					{% if companies | length > 1 %}
-					<div class="mdl-cell mdl-cell--12-col">
-						<div class="s2act-selectfield mdl-selectfield mdl-js-selectfield mdl-selectfield--floating-label">
-							<select id="company" name="company" class="mdl-selectfield__select">
-								{% for company in companies %}
-								<option value="{{company.key}}" {{ selectedCompany equals company.key ?
-								"selected" : "" }}>{{company.value}}</option>
-								{% endfor %}
-							</select>
-							<div class="mdl-selectfield__icon"><i class="material-icons">arrow_drop_down</i></div>
-							<label class="mdl-selectfield__label" for="company">Company</label>
-						</div>
-					</div>
-					{% else %}
-					{% set companyKey = companies.keySet | first %}
-					<input type="hidden" name="company" value="{{companyKey}}">
-					{% endif %}
-					<div class="mdl-cell mdl-cell--12-col s2act-buttonRow">
-						<input type="submit" value="Login"
-							   class="s2act-button--right mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect"/>
-					</div>
-				</div>
-			</form>
-		</div>
-	</div>
+    <div class="mdl-cell mdl-cell--12-col">
+        <div class="s2act-card mdl-card s2act-card--login">
+            {% if error is not empty or msg is not empty %}
+            <ul class="s2act-messages">
+                {% if error is not empty %}
+                <li class="s2act-message s2act-message--error">{{message(error)}}</li>
+                {% elseif msg is not empty %}
+                <li class="s2act-message s2act-message--info">{{message(msg)}}</li>
+                {% endif %}
+            </ul>
+            {% endif %}
+            <form action="/login" method="post" name="login" id="login" autocomplete="off">
+                <input type="hidden" name="{{request.getAttribute('_csrf').parameterName}}"
+                       value="{{request.getAttribute('_csrf').token}}"/>
+                <div class="mdl-grid">
+                    <div class="mdl-cell mdl-cell--12-col">
+                        <div class="s2act-textfield mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+                            <input class="mdl-textfield__input" type="text" name="uid" id="uid" autocomplete="off">
+                            <label class="mdl-textfield__label" for="uid">Username</label>
+                        </div>
+                    </div>
+                    <div class="mdl-cell mdl-cell--12-col">
+                        <div class="s2act-textfield mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+                            <input class="mdl-textfield__input" type="password" name="password" id="password"
+                                   autocomplete="off">
+                            <label class="mdl-textfield__label" for="password">Password</label>
+                        </div>
+                    </div>
+                    {% if companies | length > 1 %}
+                    <div class="mdl-cell mdl-cell--12-col">
+                        <div
+                            class="s2act-selectfield mdl-selectfield mdl-js-selectfield mdl-selectfield--floating-label">
+                            <select id="company" name="company" class="mdl-selectfield__select">
+                                {% for company in companies %}
+                                <option value="{{company.key}}" {{ selectedCompany equals company.key ?
+                                "selected" : "" }}>{{company.value}}</option>
+                                {% endfor %}
+                            </select>
+                            <div class="mdl-selectfield__icon"><i class="material-icons">arrow_drop_down</i></div>
+                            <label class="mdl-selectfield__label" for="company">Company</label>
+                        </div>
+                    </div>
+                    {% else %}
+                    {% set companyKey = companies.keySet | first %}
+                    <input type="hidden" name="company" value="{{companyKey}}">
+                    {% endif %}
+                    <div class="mdl-cell mdl-cell--12-col s2act-buttonRow">
+                        <input type="submit" value="Login"
+                               class="s2act-button--right mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect"/>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
 </div>
 {% endblock %}

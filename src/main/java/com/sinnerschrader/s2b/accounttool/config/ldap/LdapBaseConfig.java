@@ -1,132 +1,111 @@
 package com.sinnerschrader.s2b.accounttool.config.ldap;
 
-import java.beans.Transient;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
 
+import java.beans.Transient;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
 
-public class LdapBaseConfig implements InitializingBean
-{
 
-	private static final Logger log = LoggerFactory.getLogger(LdapBaseConfig.class);
+public class LdapBaseConfig implements InitializingBean {
 
-	private String host;
+    private static final Logger log = LoggerFactory.getLogger(LdapBaseConfig.class);
 
-	private int port;
+    private String host;
 
-	private boolean ssl;
+    private int port;
 
-	private String dc;
+    private boolean ssl;
 
-	private String baseDN;
+    private String dc;
 
-	private String groupDN;
+    private String baseDN;
 
-	private List<String> userDN;
+    private String groupDN;
 
-	private transient Map<String, String> userDnMap;
+    private List<String> userDN;
 
-	public String getHost()
-	{
-		return host;
-	}
+    private transient Map<String, String> userDnMap;
 
-	public int getPort()
-	{
-		return port;
-	}
+    public String getHost() {
+        return host;
+    }
 
-	public boolean isSsl()
-	{
-		return ssl;
-	}
+    public void setHost(String host) {
+        this.host = host;
+    }
 
-	public String getDc()
-	{
-		return dc;
-	}
+    public int getPort() {
+        return port;
+    }
 
-	public String getBaseDN()
-	{
-		return baseDN;
-	}
+    public void setPort(int port) {
+        this.port = port;
+    }
 
-	public String getGroupDN()
-	{
-		return groupDN;
-	}
+    public boolean isSsl() {
+        return ssl;
+    }
 
-	public List<String> getUserDN()
-	{
-		return userDN;
-	}
+    public void setSsl(boolean ssl) {
+        this.ssl = ssl;
+    }
 
-	@Transient
-	public String getUserDnByCompany(String companyKey)
-	{
-		return userDnMap.get(companyKey);
-	}
+    public String getDc() {
+        return dc;
+    }
 
-	@Override
-	public void afterPropertiesSet() throws Exception
-	{
-		final String rawDataSeparator = ":";
-		final int keyPadding = 5;
-		userDnMap = new LinkedHashMap<>();
-		for (String rawCompany : userDN)
-		{
-			String[] keyAndValue = StringUtils.split(rawCompany, rawDataSeparator);
-			if (keyAndValue.length == 2)
-			{
-				userDnMap.put(keyAndValue[0], keyAndValue[1]);
-				log.debug("Loaded UserDN: [{}] : {}", StringUtils.leftPad(keyAndValue[0], keyPadding), keyAndValue[1]);
-			}
-			else
-			{
-				throw new IllegalStateException("Could not parse company configuration");
-			}
-		}
-	}
+    public void setDc(String dc) {
+        this.dc = dc;
+    }
 
-	public void setHost(String host)
-	{
-		this.host = host;
-	}
+    public String getBaseDN() {
+        return baseDN;
+    }
 
-	public void setPort(int port)
-	{
-		this.port = port;
-	}
+    public void setBaseDN(String baseDN) {
+        this.baseDN = baseDN;
+    }
 
-	public void setSsl(boolean ssl)
-	{
-		this.ssl = ssl;
-	}
+    public String getGroupDN() {
+        return groupDN;
+    }
 
-	public void setDc(String dc)
-	{
-		this.dc = dc;
-	}
+    public void setGroupDN(String groupDN) {
+        this.groupDN = groupDN;
+    }
 
-	public void setBaseDN(String baseDN)
-	{
-		this.baseDN = baseDN;
-	}
+    public List<String> getUserDN() {
+        return userDN;
+    }
 
-	public void setGroupDN(String groupDN)
-	{
-		this.groupDN = groupDN;
-	}
+    public void setUserDN(List<String> userDN) {
+        this.userDN = userDN;
+    }
 
-	public void setUserDN(List<String> userDN)
-	{
-		this.userDN = userDN;
-	}
+    @Transient
+    public String getUserDnByCompany(String companyKey) {
+        return userDnMap.get(companyKey);
+    }
+
+    @Override
+    public void afterPropertiesSet() throws Exception {
+        final String rawDataSeparator = ":";
+        final int keyPadding = 5;
+        userDnMap = new LinkedHashMap<>();
+        for (String rawCompany : userDN) {
+            String[] keyAndValue = StringUtils.split(rawCompany, rawDataSeparator);
+            if (keyAndValue.length == 2) {
+                userDnMap.put(keyAndValue[0], keyAndValue[1]);
+                log.debug("Loaded UserDN: [{}] : {}", StringUtils.leftPad(keyAndValue[0], keyPadding), keyAndValue[1]);
+            } else {
+                throw new IllegalStateException("Could not parse company configuration");
+            }
+        }
+    }
 
 }

@@ -13,30 +13,26 @@ import java.util.Map;
 /**
  * Pebble Function to check if the current user is admin
  */
-public class IsUserAdminFunction implements Function
-{
+public class IsUserAdminFunction implements Function {
 
-	public static final String FUNCTION_NAME = "isUserAdmin";
+    public static final String FUNCTION_NAME = "isUserAdmin";
 
-	private AuthorizationService authorizationService;
+    private AuthorizationService authorizationService;
 
-	public IsUserAdminFunction(AuthorizationService authorizationService)
-	{
-		this.authorizationService = authorizationService;
-	}
+    public IsUserAdminFunction(AuthorizationService authorizationService) {
+        this.authorizationService = authorizationService;
+    }
 
-	@Override
-	public List<String> getArgumentNames()
-	{
-		return Collections.emptyList();
-	}
+    @Override
+    public List<String> getArgumentNames() {
+        return Collections.emptyList();
+    }
 
-	@Override
-	public Object execute(Map<String, Object> args)
-	{
-		LdapUserDetails currentUser = RequestUtils.getCurrentUserDetails();
-		return authorizationService.isUserAdministration(currentUser) ||
-			authorizationService.isAdmin(currentUser);
-	}
+    @Override
+    public Object execute(Map<String, Object> args) {
+        LdapUserDetails currentUser = RequestUtils.getCurrentUserDetails();
+        return authorizationService.isUserAdministration(currentUser) ||
+            authorizationService.isAdmin(currentUser);
+    }
 
 }
