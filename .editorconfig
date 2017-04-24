@@ -1,30 +1,15 @@
-# EditorConfig helps developers define and maintain consistent
-# coding styles between different editors and IDEs
-# editorconfig.org
-
-root = true
-
 [*]
-end_of_line = lf
-insert_final_newline = true
-trim_trailing_whitespace = true
-indent_style = tab
-charset = utf-8
+charset=utf-8
+end_of_line=lf
+insert_final_newline=false
+indent_style=space
+indent_size=4
 
 [*.json]
-indent_style = space
-indent_size = 2
+indent_style=space
+indent_size=2
 
-[*.{yaml,yml}]
-indent_style = space
-indent_size = 2
+[{*.yml,*.yaml}]
+indent_style=space
+indent_size=2
 
-[*.{ldif}]
-indent_style = space
-indent_size = 2
-
-[*.scss]
-indent_style = tab
-
-[*.html]
-indent_style = tab
