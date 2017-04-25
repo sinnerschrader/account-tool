@@ -1,0 +1,10 @@
+Hello {{ user.givenName }} {{ user.sn }},
+
+Your account is expiring on {{ user.employeeExitDate }}.
+
+
+Best regards,
+Your AccountTool
+
+
+[ReqID:{{messageID}}]

@@ -2934,7 +2934,7 @@ gecos: Ella Clayton
 szzStatus: active
 szzMailStatus: active
 gidNumber: 100
-description: Mitarbeiter
+description: Freelancer
 loginShell: /bin/false
 szzBirthDay: 1
 szzBirthMonth: 3
@@ -12132,7 +12132,7 @@ gecos: Jewel Donovan
 szzStatus: active
 szzMailStatus: active
 gidNumber: 100
-description: Mitarbeiter
+description: Freelancer
 loginShell: /bin/false
 szzBirthDay: 19
 szzBirthMonth: 5

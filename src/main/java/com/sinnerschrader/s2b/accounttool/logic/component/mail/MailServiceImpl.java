@@ -22,6 +22,8 @@ import java.io.StringWriter;
 import java.util.*;
 import java.util.stream.Collectors;
 
+import static java.util.Collections.singletonList;
+
 
 @Service("mailService")
 public class MailServiceImpl implements MailService {
@@ -70,8 +72,20 @@ public class MailServiceImpl implements MailService {
         params.put("profile", currentUser);
         params.put("action", action);
         params.put("publicDomain", publicDomain);
-        return sendMail(Collections.singletonList(currentUser),
+        return sendMail(singletonList(currentUser),
             TEMPLATE_ACCOUNTCHANGE_SUBJECT_URL, TEMPLATE_ACCOUNTCHANGE_BODY_URL, params);
+    }
+
+    @Override
+    public void sendMailForAccountExpiration(List<User> users) {
+        for (User user : users) {
+            final Map<String, Object> params = new LinkedHashMap<>();
+            params.put("user", user);
+            params.put("publicDomain", publicDomain);
+
+            sendMail(singletonList(user),
+                "mail/accountExpiration.subject.txt", "mail/accountExpiration.body.txt", params);
+        }
     }
 
     public boolean sendMailForPasswordReset(LdapUserDetails currentUser, User user, String newPassword) {
@@ -81,7 +95,7 @@ public class MailServiceImpl implements MailService {
         params.put("password", newPassword);
         params.put("publicDomain", publicDomain);
 
-        return sendMail(Collections.singletonList(user),
+        return sendMail(singletonList(user),
             TEMPLATE_PASSWORDRESET_SUBJECT_URL, TEMPLATE_PASSWORDRESET_BODY_URL, params);
     }
 
