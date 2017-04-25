@@ -4,6 +4,7 @@ import com.sinnerschrader.s2b.accounttool.config.authentication.LdapUserDetails;
 import com.sinnerschrader.s2b.accounttool.logic.entity.Group;
 import com.sinnerschrader.s2b.accounttool.logic.entity.User;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
@@ -15,7 +16,7 @@ public interface MailService {
 
     boolean sendMailForAccountChange(User currentUser, String event);
 
-    void sendMailForAccountExpiration(List<User> users);
+    void sendMailForAccountExpiration(Collection<User> users);
 
     boolean sendMailForPasswordReset(LdapUserDetails currentUser, User user, String newPassword);
 
