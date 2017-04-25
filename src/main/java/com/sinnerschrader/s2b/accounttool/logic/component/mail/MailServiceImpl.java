@@ -77,9 +77,9 @@ public class MailServiceImpl implements MailService {
     }
 
     @Override
-    public void sendMailForAccountExpiration(List<User> users) {
+    public void sendMailForAccountExpiration(Collection<User> users) {
         for (User user : users) {
-            final Map<String, Object> params = new LinkedHashMap<>();
+            final Map<String, Object> params = new HashMap<>();
             params.put("user", user);
             params.put("publicDomain", publicDomain);
 

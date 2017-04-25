@@ -21,6 +21,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.Collections;
+import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
@@ -145,7 +146,8 @@ public class LdapBusinessServiceImpl implements LdapBusinessService, Initializin
 
     @Scheduled(cron = "${ldap-management.jobs.notifyAboutExpiration.cronExpr}")
     public void notifyAboutExpiration() {
-        List<User> expiringAccounts = getLeavingUsers().stream().filter(user -> LocalDate.now().plusWeeks(2).isAfter(user.getEmployeeExitDate())).collect(Collectors.toList());
+        LocalDate threshold = LocalDate.now().plusWeeks(2);
+        List<User> expiringAccounts = getLeavingUsers().stream().filter(user -> threshold.isAfter(user.getEmployeeExitDate())).collect(Collectors.toList());
         mailService.sendMailForAccountExpiration(expiringAccounts);
     }
 
