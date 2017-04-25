@@ -1,6 +1,9 @@
 package com.sinnerschrader.s2b.accounttool.logic.entity;
 
+import com.sinnerschrader.s2b.accounttool.logic.ReflectionDiffBuilder;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.builder.DiffResult;
+import org.apache.commons.lang3.builder.Diffable;
 import org.ocpsoft.prettytime.PrettyTime;
 
 import java.beans.Transient;
@@ -10,11 +13,13 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
+import static org.apache.commons.lang3.builder.ToStringStyle.SHORT_PREFIX_STYLE;
+
 
 /**
  * User Model from LDAP
  */
-public final class User implements Comparable<User> {
+public final class User implements Comparable<User>, Diffable<User> {
 
     public final static List<String> objectClasses = Collections.unmodifiableList(Arrays.asList(
         "person",
@@ -394,6 +399,18 @@ public final class User implements Comparable<User> {
         return szzPublicKey;
     }
 
+    @Override
+    public DiffResult diff(User rhs) {
+        String saved_uid = this.uid;
+        try {
+            // force diff since equals() is broken
+            this.uid = "_";
+            return new ReflectionDiffBuilder(this, rhs, SHORT_PREFIX_STYLE).build();
+        } finally {
+            this.uid = saved_uid;
+        }
+    }
+
     public enum State {
         active, inactive, undefined;
 
@@ -407,5 +424,6 @@ public final class User implements Comparable<User> {
             return undefined;
         }
     }
+
 
 }
