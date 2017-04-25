@@ -29,6 +29,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
+import java.lang.reflect.Field;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -156,10 +157,12 @@ public class UserController {
         }
         try {
             if (userForm.isChangeUser()) {
-                User user = ldapService.update(connection, userForm.createUserEntityFromForm(ldapConfiguration));
+                User currentUser = ldapService.getUserByUid(connection, userId);
+                User changedUser = ldapService.update(connection, userForm.createUserEntityFromForm(ldapConfiguration));
+
                 globalMessageFactory.store(request,
-                    globalMessageFactory.createInfo("user.edit.success", user.getUid()));
-                log.info("{} updated the account of user {}", details.getUid(), user.getUid());
+                    globalMessageFactory.createInfo("user.edit.success", changedUser.getUid()));
+                log.info("{} updated the account of user {}: {}", details.getUid(), currentUser.getUid(), currentUser.diff(changedUser));
             }
             if (userForm.isResetpassword() || userForm.isActivateUser() || userForm.isDeactivateUser()) {
                 boolean hidePassword = false;
