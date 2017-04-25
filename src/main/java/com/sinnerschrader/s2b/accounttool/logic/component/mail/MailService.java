@@ -15,6 +15,8 @@ public interface MailService {
 
     boolean sendMailForAccountChange(User currentUser, String event);
 
+    void sendMailForAccountExpiration(List<User> users);
+
     boolean sendMailForPasswordReset(LdapUserDetails currentUser, User user, String newPassword);
 
     boolean sendNotificationOnUnmaintainedAccounts(String[] receipients, Map<String, List<User>> unmaintainedUsers);

@@ -24,6 +24,7 @@ import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
 
 
 /**
@@ -140,6 +141,12 @@ public class LdapBusinessServiceImpl implements LdapBusinessService, Initializin
             final String[] to = managementConfiguration.getNotifyReceipients().toArray(new String[0]);
             mailService.sendNotificationOnUnmaintainedAccounts(to, userCache.asMap());
         }
+    }
+
+    @Scheduled(cron = "${ldap-management.jobs.notifyAboutExpiration.cronExpr}")
+    public void notifyAboutExpiration() {
+        List<User> expiringAccounts = getLeavingUsers().stream().filter(user -> LocalDate.now().plusWeeks(2).isAfter(user.getEmployeeExitDate())).collect(Collectors.toList());
+        mailService.sendMailForAccountExpiration(expiringAccounts);
     }
 
     @Override

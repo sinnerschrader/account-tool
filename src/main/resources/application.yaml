@@ -121,6 +121,9 @@ ldap-management:
     notifyAboutUnmaintained:
       active: "true"
       cronExpr: "0 0 10 ? * MON"
+    notifyAboutExpiration:
+      active: "true"
+      cronExpr: "0 0 10 ? * *"
 
 # =============================================================
 # = Domain for E-Mail generation and Validation

@@ -41,6 +41,8 @@ ldap-management:
       cronExpr: "0 */5 * ? * MON-FRI"
     notifyAboutUnmaintained:
       cronExpr: "59 */5 * ? * MON-FRI"
+    notifyAboutExpiration:
+      cronExpr: "0 */5 * ? * *"
 
 # =============================================================
 # = Appserver Configuration
