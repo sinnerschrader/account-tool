@@ -460,8 +460,8 @@ public final class User implements Comparable<User>, Diffable<User> {
     }
 
     @Override
-    public DiffResult diff(User rhs) {
-        return new ReflectionDiffBuilder(this, rhs, SHORT_PREFIX_STYLE).build();
+    public DiffResult diff(User user) {
+        return new ReflectionDiffBuilder(this, user, SHORT_PREFIX_STYLE).build();
     }
 
     public enum State {
