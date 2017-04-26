@@ -230,26 +230,86 @@ public final class User implements Comparable<User>, Diffable<User> {
     }
 
     @Override
-    public boolean equals(Object o) {
-        if (this == o)
-            return true;
-        if (!(o instanceof User))
-            return false;
+    public boolean equals(Object o1) {
+        if (this == o1) return true;
+        if (o1 == null || getClass() != o1.getClass()) return false;
 
-        User user = (User) o;
+        User user = (User) o1;
 
-        if (uid != null ? !uid.equals(user.uid) : user.uid != null)
+        if (dn != null ? !dn.equals(user.dn) : user.dn != null) return false;
+        if (uid != null ? !uid.equals(user.uid) : user.uid != null) return false;
+        if (uidNumber != null ? !uidNumber.equals(user.uidNumber) : user.uidNumber != null) return false;
+        if (gidNumber != null ? !gidNumber.equals(user.gidNumber) : user.gidNumber != null) return false;
+        if (displayName != null ? !displayName.equals(user.displayName) : user.displayName != null) return false;
+        if (gecos != null ? !gecos.equals(user.gecos) : user.gecos != null) return false;
+        if (cn != null ? !cn.equals(user.cn) : user.cn != null) return false;
+        if (givenName != null ? !givenName.equals(user.givenName) : user.givenName != null) return false;
+        if (sn != null ? !sn.equals(user.sn) : user.sn != null) return false;
+        if (homeDirectory != null ? !homeDirectory.equals(user.homeDirectory) : user.homeDirectory != null)
             return false;
-        if (uidNumber != null ? !uidNumber.equals(user.uidNumber) : user.uidNumber != null)
+        if (loginShell != null ? !loginShell.equals(user.loginShell) : user.loginShell != null) return false;
+        if (birthDate != null ? !birthDate.equals(user.birthDate) : user.birthDate != null) return false;
+        if (sambaSID != null ? !sambaSID.equals(user.sambaSID) : user.sambaSID != null) return false;
+        if (sambaPasswordHistory != null ? !sambaPasswordHistory.equals(user.sambaPasswordHistory) : user.sambaPasswordHistory != null)
             return false;
-        return mail != null ? mail.equals(user.mail) : user.mail == null;
+        if (sambaAcctFlags != null ? !sambaAcctFlags.equals(user.sambaAcctFlags) : user.sambaAcctFlags != null)
+            return false;
+        if (mail != null ? !mail.equals(user.mail) : user.mail != null) return false;
+        if (szzStatus != user.szzStatus) return false;
+        if (szzMailStatus != user.szzMailStatus) return false;
+        if (sambaPwdLastSet != null ? !sambaPwdLastSet.equals(user.sambaPwdLastSet) : user.sambaPwdLastSet != null)
+            return false;
+        if (ou != null ? !ou.equals(user.ou) : user.ou != null) return false;
+        if (o != null ? !o.equals(user.o) : user.o != null) return false;
+        if (description != null ? !description.equals(user.description) : user.description != null) return false;
+        if (telephoneNumber != null ? !telephoneNumber.equals(user.telephoneNumber) : user.telephoneNumber != null)
+            return false;
+        if (mobile != null ? !mobile.equals(user.mobile) : user.mobile != null) return false;
+        if (employeeNumber != null ? !employeeNumber.equals(user.employeeNumber) : user.employeeNumber != null)
+            return false;
+        if (title != null ? !title.equals(user.title) : user.title != null) return false;
+        if (l != null ? !l.equals(user.l) : user.l != null) return false;
+        if (employeeEntryDate != null ? !employeeEntryDate.equals(user.employeeEntryDate) : user.employeeEntryDate != null)
+            return false;
+        if (employeeExitDate != null ? !employeeExitDate.equals(user.employeeExitDate) : user.employeeExitDate != null)
+            return false;
+        if (szzPublicKey != null ? !szzPublicKey.equals(user.szzPublicKey) : user.szzPublicKey != null) return false;
+        return companyKey != null ? companyKey.equals(user.companyKey) : user.companyKey == null;
     }
 
     @Override
     public int hashCode() {
-        int result = uid != null ? uid.hashCode() : 0;
+        int result = dn != null ? dn.hashCode() : 0;
+        result = 31 * result + (uid != null ? uid.hashCode() : 0);
         result = 31 * result + (uidNumber != null ? uidNumber.hashCode() : 0);
+        result = 31 * result + (gidNumber != null ? gidNumber.hashCode() : 0);
+        result = 31 * result + (displayName != null ? displayName.hashCode() : 0);
+        result = 31 * result + (gecos != null ? gecos.hashCode() : 0);
+        result = 31 * result + (cn != null ? cn.hashCode() : 0);
+        result = 31 * result + (givenName != null ? givenName.hashCode() : 0);
+        result = 31 * result + (sn != null ? sn.hashCode() : 0);
+        result = 31 * result + (homeDirectory != null ? homeDirectory.hashCode() : 0);
+        result = 31 * result + (loginShell != null ? loginShell.hashCode() : 0);
+        result = 31 * result + (birthDate != null ? birthDate.hashCode() : 0);
+        result = 31 * result + (sambaSID != null ? sambaSID.hashCode() : 0);
+        result = 31 * result + (sambaPasswordHistory != null ? sambaPasswordHistory.hashCode() : 0);
+        result = 31 * result + (sambaAcctFlags != null ? sambaAcctFlags.hashCode() : 0);
         result = 31 * result + (mail != null ? mail.hashCode() : 0);
+        result = 31 * result + (szzStatus != null ? szzStatus.hashCode() : 0);
+        result = 31 * result + (szzMailStatus != null ? szzMailStatus.hashCode() : 0);
+        result = 31 * result + (sambaPwdLastSet != null ? sambaPwdLastSet.hashCode() : 0);
+        result = 31 * result + (ou != null ? ou.hashCode() : 0);
+        result = 31 * result + (o != null ? o.hashCode() : 0);
+        result = 31 * result + (description != null ? description.hashCode() : 0);
+        result = 31 * result + (telephoneNumber != null ? telephoneNumber.hashCode() : 0);
+        result = 31 * result + (mobile != null ? mobile.hashCode() : 0);
+        result = 31 * result + (employeeNumber != null ? employeeNumber.hashCode() : 0);
+        result = 31 * result + (title != null ? title.hashCode() : 0);
+        result = 31 * result + (l != null ? l.hashCode() : 0);
+        result = 31 * result + (employeeEntryDate != null ? employeeEntryDate.hashCode() : 0);
+        result = 31 * result + (employeeExitDate != null ? employeeExitDate.hashCode() : 0);
+        result = 31 * result + (szzPublicKey != null ? szzPublicKey.hashCode() : 0);
+        result = 31 * result + (companyKey != null ? companyKey.hashCode() : 0);
         return result;
     }
 
@@ -401,14 +461,7 @@ public final class User implements Comparable<User>, Diffable<User> {
 
     @Override
     public DiffResult diff(User rhs) {
-        String saved_uid = this.uid;
-        try {
-            // force diff since equals() is broken
-            this.uid = "_";
-            return new ReflectionDiffBuilder(this, rhs, SHORT_PREFIX_STYLE).build();
-        } finally {
-            this.uid = saved_uid;
-        }
+        return new ReflectionDiffBuilder(this, rhs, SHORT_PREFIX_STYLE).build();
     }
 
     public enum State {
