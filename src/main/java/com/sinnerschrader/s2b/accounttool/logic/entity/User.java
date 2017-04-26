@@ -1,6 +1,7 @@
 package com.sinnerschrader.s2b.accounttool.logic.entity;
 
 import com.sinnerschrader.s2b.accounttool.logic.ReflectionDiffBuilder;
+import lombok.Value;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.builder.DiffResult;
 import org.apache.commons.lang3.builder.Diffable;
@@ -13,13 +14,16 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
+import static org.apache.commons.lang3.ObjectUtils.defaultIfNull;
+import static org.apache.commons.lang3.StringUtils.defaultString;
 import static org.apache.commons.lang3.builder.ToStringStyle.SHORT_PREFIX_STYLE;
 
 
 /**
  * User Model from LDAP
  */
-public final class User implements Comparable<User>, Diffable<User> {
+@Value
+public class User implements Comparable<User>, Diffable<User> {
 
     public final static List<String> objectClasses = Collections.unmodifiableList(Arrays.asList(
         "person",
@@ -34,156 +38,156 @@ public final class User implements Comparable<User>, Diffable<User> {
      * Full DN of LDAP
      * Example: "dn: uid=firlas,ou=users,ou=e1c1,dc=exampe,dc=org"
      */
-    private String dn;
+    String dn;
 
     /**
      * Username based on first- and lastname
      * Has to be 6 or 8 Characters long.
      */
-    private String uid;
+    String uid;
 
     /**
      * Unique User ID for PosixAccounts.
      */
-    private Integer uidNumber;
+    Integer uidNumber;
 
     /**
      * Numeric Group ID, current always set to 100
      */
-    private Integer gidNumber;
+    Integer gidNumber;
 
-    private String displayName;
+    String displayName;
 
     /**
      * Full name firstname + lastname. All special chars have to be stripped.
      * Has to match regexp "[A-Za-z0-9 -]+"
      */
-    private String gecos;
+    String gecos;
 
     /**
      * Full name firstname + lastname
      */
-    private String cn;
+    String cn;
 
     /**
      * GivenName / Firstname
      */
-    private String givenName;
+    String givenName;
 
     /**
      * Surname / Lastname
      */
-    private String sn;
+    String sn;
 
     /**
      * Custom home directory, for personal fileshare.
      * Pattern: /export/home/{USERNAME}
      */
-    private String homeDirectory;
+    String homeDirectory;
 
     /**
      * PosixAccount part, but always set with "/bin/false"
      */
-    private String loginShell;
+    String loginShell;
 
     /**
      * Date of Birth (always in year 1972)
      */
-    private LocalDate birthDate;
+    LocalDate birthDate;
 
     /**
      * Seperated into constant part an calculated part based on uidNumber.
      * S-1-5-21-1517199603-1739104038-1321870143-2552
      */
-    private String sambaSID;
+    String sambaSID;
 
     /**
      * Currently not really used, so it is a constant: 0000000000000000000000000000000000000000000000000000000000000000
      */
-    private String sambaPasswordHistory;
+    String sambaPasswordHistory;
 
     /**
      * Currently not used, so it is a constant: [U          ]
      */
-    private String sambaAcctFlags;
+    String sambaAcctFlags;
 
     /**
      * The E-Mail Address: firstname.lastname@example.com
      */
-    private String mail;
+    String mail;
 
     /**
      * General Status of this account.
      */
-    private State szzStatus = State.undefined; // active
+    State szzStatus;
 
     /**
      * Status if the e-mail is synced and useable.
      */
-    private State szzMailStatus = State.undefined;
+    State szzMailStatus;
 
     /**
      * Samba Timestamp ( System.currentTimeMillis() / 1000 )
      */
-    private Long sambaPwdLastSet;
+    Long sambaPwdLastSet;
 
     /**
      * Department or Team of this employee
      * Example: Technik, Client Services, HR, Team Java Robusta, etc.
      */
-    private String ou;
+    String ou;
 
     /**
      * The Organization where the Employee belongs to.
      */
-    private String o;
+    String o;
 
     /**
      * Type of employment; should be employeeType of inetOrgPerson.
      * Example: Mitarbeiter, Freelancer, Student, Praktikant
      */
-    private String description;
+    String description;
 
     /**
      * The office number
      */
-    private String telephoneNumber;
+    String telephoneNumber;
 
     /**
      * The business mobile number
      */
-    private String mobile;
+    String mobile;
 
     /**
      * Unique Employee Number. Generated from UUID
      */
-    private String employeeNumber; // 6cb2d8bc-e4b6-460c-bd6f-0743b520da1a
+    String employeeNumber; // 6cb2d8bc-e4b6-460c-bd6f-0743b520da1a
 
     /**
      * Your title from the contract.
      */
-    private String title;
+    String title;
 
     /**
      * Location where the employee mainly work.
      * Example: Berlin, Hamburg, Frankfurt, Muenchen, Prag
      */
-    private String l;
+    String l;
 
     /**
      * Day of entry
      */
-    private LocalDate employeeEntryDate;
+    LocalDate employeeEntryDate;
 
     /**
      * Day of exit (1-31)
      */
-    private LocalDate employeeExitDate;
+    LocalDate employeeExitDate;
 
     /**
      * The Public SSH Key of the User.
      */
-    private String szzPublicKey;
+    String szzPublicKey;
 
     /**
      * The Company where the User belongs to. (see: companies on yaml configuration)
@@ -212,13 +216,13 @@ public final class User implements Comparable<User>, Diffable<User> {
         this.sambaPasswordHistory = sambaPasswordHistory;
         this.sambaAcctFlags = sambaAcctFlags;
         this.mail = mail;
-        this.szzStatus = szzStatus != null ? szzStatus : State.undefined;
-        this.szzMailStatus = szzMailStatus != null ? szzMailStatus : State.undefined;
+        this.szzStatus = defaultIfNull(szzStatus, State.undefined);
+        this.szzMailStatus = defaultIfNull(szzMailStatus, State.undefined);
         this.sambaPwdLastSet = sambaPwdLastSet;
         this.ou = ou;
         this.description = description;
-        this.telephoneNumber = StringUtils.defaultString(telephoneNumber, "");
-        this.mobile = StringUtils.defaultString(mobile, "");
+        this.telephoneNumber = defaultString(telephoneNumber, "");
+        this.mobile = defaultString(mobile, "");
         this.employeeNumber = employeeNumber;
         this.title = title;
         this.l = l;
@@ -227,94 +231,6 @@ public final class User implements Comparable<User>, Diffable<User> {
         this.employeeExitDate = employeeExitDate;
         this.szzPublicKey = szzPublicKey;
         this.companyKey = companyKey;
-    }
-
-    @Override
-    public boolean equals(Object o1) {
-        if (this == o1) return true;
-        if (o1 == null || getClass() != o1.getClass()) return false;
-
-        User user = (User) o1;
-
-        if (dn != null ? !dn.equals(user.dn) : user.dn != null) return false;
-        if (uid != null ? !uid.equals(user.uid) : user.uid != null) return false;
-        if (uidNumber != null ? !uidNumber.equals(user.uidNumber) : user.uidNumber != null) return false;
-        if (gidNumber != null ? !gidNumber.equals(user.gidNumber) : user.gidNumber != null) return false;
-        if (displayName != null ? !displayName.equals(user.displayName) : user.displayName != null) return false;
-        if (gecos != null ? !gecos.equals(user.gecos) : user.gecos != null) return false;
-        if (cn != null ? !cn.equals(user.cn) : user.cn != null) return false;
-        if (givenName != null ? !givenName.equals(user.givenName) : user.givenName != null) return false;
-        if (sn != null ? !sn.equals(user.sn) : user.sn != null) return false;
-        if (homeDirectory != null ? !homeDirectory.equals(user.homeDirectory) : user.homeDirectory != null)
-            return false;
-        if (loginShell != null ? !loginShell.equals(user.loginShell) : user.loginShell != null) return false;
-        if (birthDate != null ? !birthDate.equals(user.birthDate) : user.birthDate != null) return false;
-        if (sambaSID != null ? !sambaSID.equals(user.sambaSID) : user.sambaSID != null) return false;
-        if (sambaPasswordHistory != null ? !sambaPasswordHistory.equals(user.sambaPasswordHistory) : user.sambaPasswordHistory != null)
-            return false;
-        if (sambaAcctFlags != null ? !sambaAcctFlags.equals(user.sambaAcctFlags) : user.sambaAcctFlags != null)
-            return false;
-        if (mail != null ? !mail.equals(user.mail) : user.mail != null) return false;
-        if (szzStatus != user.szzStatus) return false;
-        if (szzMailStatus != user.szzMailStatus) return false;
-        if (sambaPwdLastSet != null ? !sambaPwdLastSet.equals(user.sambaPwdLastSet) : user.sambaPwdLastSet != null)
-            return false;
-        if (ou != null ? !ou.equals(user.ou) : user.ou != null) return false;
-        if (o != null ? !o.equals(user.o) : user.o != null) return false;
-        if (description != null ? !description.equals(user.description) : user.description != null) return false;
-        if (telephoneNumber != null ? !telephoneNumber.equals(user.telephoneNumber) : user.telephoneNumber != null)
-            return false;
-        if (mobile != null ? !mobile.equals(user.mobile) : user.mobile != null) return false;
-        if (employeeNumber != null ? !employeeNumber.equals(user.employeeNumber) : user.employeeNumber != null)
-            return false;
-        if (title != null ? !title.equals(user.title) : user.title != null) return false;
-        if (l != null ? !l.equals(user.l) : user.l != null) return false;
-        if (employeeEntryDate != null ? !employeeEntryDate.equals(user.employeeEntryDate) : user.employeeEntryDate != null)
-            return false;
-        if (employeeExitDate != null ? !employeeExitDate.equals(user.employeeExitDate) : user.employeeExitDate != null)
-            return false;
-        if (szzPublicKey != null ? !szzPublicKey.equals(user.szzPublicKey) : user.szzPublicKey != null) return false;
-        return companyKey != null ? companyKey.equals(user.companyKey) : user.companyKey == null;
-    }
-
-    @Override
-    public int hashCode() {
-        int result = dn != null ? dn.hashCode() : 0;
-        result = 31 * result + (uid != null ? uid.hashCode() : 0);
-        result = 31 * result + (uidNumber != null ? uidNumber.hashCode() : 0);
-        result = 31 * result + (gidNumber != null ? gidNumber.hashCode() : 0);
-        result = 31 * result + (displayName != null ? displayName.hashCode() : 0);
-        result = 31 * result + (gecos != null ? gecos.hashCode() : 0);
-        result = 31 * result + (cn != null ? cn.hashCode() : 0);
-        result = 31 * result + (givenName != null ? givenName.hashCode() : 0);
-        result = 31 * result + (sn != null ? sn.hashCode() : 0);
-        result = 31 * result + (homeDirectory != null ? homeDirectory.hashCode() : 0);
-        result = 31 * result + (loginShell != null ? loginShell.hashCode() : 0);
-        result = 31 * result + (birthDate != null ? birthDate.hashCode() : 0);
-        result = 31 * result + (sambaSID != null ? sambaSID.hashCode() : 0);
-        result = 31 * result + (sambaPasswordHistory != null ? sambaPasswordHistory.hashCode() : 0);
-        result = 31 * result + (sambaAcctFlags != null ? sambaAcctFlags.hashCode() : 0);
-        result = 31 * result + (mail != null ? mail.hashCode() : 0);
-        result = 31 * result + (szzStatus != null ? szzStatus.hashCode() : 0);
-        result = 31 * result + (szzMailStatus != null ? szzMailStatus.hashCode() : 0);
-        result = 31 * result + (sambaPwdLastSet != null ? sambaPwdLastSet.hashCode() : 0);
-        result = 31 * result + (ou != null ? ou.hashCode() : 0);
-        result = 31 * result + (o != null ? o.hashCode() : 0);
-        result = 31 * result + (description != null ? description.hashCode() : 0);
-        result = 31 * result + (telephoneNumber != null ? telephoneNumber.hashCode() : 0);
-        result = 31 * result + (mobile != null ? mobile.hashCode() : 0);
-        result = 31 * result + (employeeNumber != null ? employeeNumber.hashCode() : 0);
-        result = 31 * result + (title != null ? title.hashCode() : 0);
-        result = 31 * result + (l != null ? l.hashCode() : 0);
-        result = 31 * result + (employeeEntryDate != null ? employeeEntryDate.hashCode() : 0);
-        result = 31 * result + (employeeExitDate != null ? employeeExitDate.hashCode() : 0);
-        result = 31 * result + (szzPublicKey != null ? szzPublicKey.hashCode() : 0);
-        result = 31 * result + (companyKey != null ? companyKey.hashCode() : 0);
-        return result;
-    }
-
-    public String getDn() {
-        return dn;
     }
 
     @Override
@@ -329,90 +245,6 @@ public final class User implements Comparable<User>, Diffable<User> {
         return res;
     }
 
-    public LocalDate getEmployeeEntryDate() {
-        return employeeEntryDate;
-    }
-
-    public LocalDate getEmployeeExitDate() {
-        return employeeExitDate;
-    }
-
-    public LocalDate getBirthDate() {
-        return birthDate;
-    }
-
-    public String getCompanyKey() {
-        return companyKey;
-    }
-
-    public String getUid() {
-        return uid;
-    }
-
-    public Integer getUidNumber() {
-        return uidNumber;
-    }
-
-    public Integer getGidNumber() {
-        return gidNumber;
-    }
-
-    public String getDisplayName() {
-        return displayName;
-    }
-
-    public String getGecos() {
-        return gecos;
-    }
-
-    public String getCn() {
-        return cn;
-    }
-
-    public String getGivenName() {
-        return givenName;
-    }
-
-    public String getSn() {
-        return sn;
-    }
-
-    public String getHomeDirectory() {
-        return homeDirectory;
-    }
-
-    public String getLoginShell() {
-        return loginShell;
-    }
-
-    public String getSambaSID() {
-        return sambaSID;
-    }
-
-    public String getSambaPasswordHistory() {
-        return sambaPasswordHistory;
-    }
-
-    public String getSambaAcctFlags() {
-        return sambaAcctFlags;
-    }
-
-    public String getMail() {
-        return mail;
-    }
-
-    public State getSzzStatus() {
-        return szzStatus;
-    }
-
-    public State getSzzMailStatus() {
-        return szzMailStatus;
-    }
-
-    public Long getSambaPwdLastSet() {
-        return sambaPwdLastSet;
-    }
-
     @Transient
     public Date getLastPasswordChange() {
         return new Date(sambaPwdLastSet * 1000);
@@ -421,42 +253,6 @@ public final class User implements Comparable<User>, Diffable<User> {
     @Transient
     public String getPrettyLastPasswordChange() {
         return new PrettyTime().format(getLastPasswordChange());
-    }
-
-    public String getO() {
-        return o;
-    }
-
-    public String getOu() {
-        return ou;
-    }
-
-    public String getDescription() {
-        return description;
-    }
-
-    public String getTelephoneNumber() {
-        return telephoneNumber;
-    }
-
-    public String getMobile() {
-        return mobile;
-    }
-
-    public String getEmployeeNumber() {
-        return employeeNumber;
-    }
-
-    public String getTitle() {
-        return title;
-    }
-
-    public String getL() {
-        return l;
-    }
-
-    public String getSzzPublicKey() {
-        return szzPublicKey;
     }
 
     @Override
