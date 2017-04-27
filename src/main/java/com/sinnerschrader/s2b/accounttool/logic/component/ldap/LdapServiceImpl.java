@@ -23,6 +23,9 @@ import java.time.LocalDate;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
 
+import static com.unboundid.ldap.sdk.SearchRequest.ALL_OPERATIONAL_ATTRIBUTES;
+import static com.unboundid.ldap.sdk.SearchRequest.ALL_USER_ATTRIBUTES;
+
 
 public class LdapServiceImpl implements LdapService {
 
@@ -88,7 +91,7 @@ public class LdapServiceImpl implements LdapService {
     public List<User> getUsers(LDAPConnection connection, int firstResult, int maxResults) {
         try {
             SearchRequest request = new SearchRequest(ldapConfiguration.getBaseDN(), SearchScope.SUB,
-                ldapConfiguration.getLdapQueryByName("listAllUsers"));
+                ldapConfiguration.getLdapQueryByName("listAllUsers"), ALL_USER_ATTRIBUTES, ALL_OPERATIONAL_ATTRIBUTES);
             SearchResult searchResult = connection.search(request);
             int count = searchResult.getEntryCount();
             int fr = Math.min(Math.max(0, firstResult), count);
@@ -147,7 +150,7 @@ public class LdapServiceImpl implements LdapService {
     public User getUserByUid(LDAPConnection connection, String uid) {
         try {
             SearchResult searchResult = connection.search(ldapConfiguration.getBaseDN(), SearchScope.SUB,
-                ldapConfiguration.getLdapQueryByName("findUserByUid", uid));
+                ldapConfiguration.getLdapQueryByName("findUserByUid", uid), ALL_USER_ATTRIBUTES, ALL_OPERATIONAL_ATTRIBUTES);
             if (searchResult.getEntryCount() > 1) {
                 final String msg = "Found multiple entries for uid \"" + uid + "\"";
                 log.warn(msg);
@@ -196,7 +199,7 @@ public class LdapServiceImpl implements LdapService {
         List<User> result = new LinkedList<>();
         try {
             SearchResult searchResult = connection.search(ldapConfiguration.getBaseDN(),
-                SearchScope.SUB, ldapConfiguration.getLdapQueryByName("searchUser", "*" + searchTerm + "*"));
+                SearchScope.SUB, ldapConfiguration.getLdapQueryByName("searchUser", "*" + searchTerm + "*"),  ALL_USER_ATTRIBUTES, ALL_OPERATIONAL_ATTRIBUTES);
             result.addAll(userMapping.map(searchResult.getSearchEntries()));
             Collections.sort(result);
         } catch (Exception e) {

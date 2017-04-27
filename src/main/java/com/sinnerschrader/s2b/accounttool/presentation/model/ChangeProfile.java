@@ -80,7 +80,9 @@ public class ChangeProfile implements Serializable {
             persistentUser.getL(),
             StringUtils.trimToNull(publicKey),
             persistentUser.getO(),
-            persistentUser.getCompanyKey()
+            persistentUser.getCompanyKey(),
+            persistentUser.getModifiersName(),
+            persistentUser.getModifytimestamp()
         );
     }
 
