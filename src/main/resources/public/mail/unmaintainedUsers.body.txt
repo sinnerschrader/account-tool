@@ -5,7 +5,7 @@ you receive this mail, because you are on the receipient list or group for accou
 Overview:
 * {{leavingUsers | length}} will leave in the next Weeks
 * {{unmaintainedMailUsers | length}} inactive Accounts have active Mail accounts
-* {{unmaintainedUsers | length}} Accounts are active but already leaved
+* {{unmaintainedUsers | length}} Accounts are active but have already left the company
 
 You will find a detailed view here: https://{{publicDomain}}/user/maintenance
 
