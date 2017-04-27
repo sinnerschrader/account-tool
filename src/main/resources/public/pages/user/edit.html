@@ -181,6 +181,22 @@
                     type="submit" name="resetPassword" value="Reset Password"/>
             </div>
         </div>
+        <div class="mdl-cell mdl-cell--12-col mdl-cell--8-col-tablet mdl-cell--4-col-phone">
+            <h2 class="s2act-sectionHeadline">
+                <span>Groups</span>
+            </h2>
+            <div class="s2act-groupContainer">
+                {% for group in groups %}
+                <a href="/group/{{ group.cn }}" class="mdl-chip mdl-chip--contact s2act-groupChip">
+				<span
+                    class="mdl-chip__contact mdl-color-text--white s2act-groupChip__contact {{group.adminGroup or group.technicalGroup ? 's2act-groupChip__contact--admin' : ''}}">
+					<i class="material-icons">{{group.adminGroup ? 'settings' : 'group'}}</i>
+				</span>
+                    <span class="mdl-chip__text s2act-groupChip__text">{{group.cn}}</span>
+                </a>
+                {% endfor %}
+            </div>
+        </div>
     </div>
 </form>
 {% endblock %}
