@@ -65,3 +65,6 @@ logging:
   level:
     com.sinnerschrader: "DEBUG"
     com.unboundid.ldap: "DEBUG"
+
+management:
+  address: "0.0.0.0"
