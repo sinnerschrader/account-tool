@@ -187,7 +187,9 @@ public class LdapServiceTests {
             "Hamburg",
             null,
             "Example - Company 2",
-            "e1c2"
+            "e1c2",
+            "",
+            ""
         );
 
     }

@@ -78,6 +78,18 @@
                 <label class="mdl-textfield__label" for="mobileNumber">Mobile</label>
                 <span class="mdl-textfield__error">Please define a valid mobile number</span>
             </div>
+            <div
+                class="s2act-textfield s2act-textfield__halfWidth mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+                <input class="mdl-textfield__input" type="text" name="passwordChange" id="passwordChange"
+                       value="{{ user.prettyLastPasswordChange }}" disabled="disabled">
+                <label class="mdl-textfield__label" for="passwordChange">Last password change</label>
+            </div>
+            <div
+                class="s2act-textfield s2act-textfield__halfWidth mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+                <input class="mdl-textfield__input" type="text" name="modified" id="modified"
+                       value="{{ user.prettyModifytimestamp }} by {{ user.prettyModifiersName }}" disabled="disabled">
+                <label class="mdl-textfield__label" for="modified">Last modified</label>
+            </div>
         </div>
         <div class="mdl-cell mdl-cell--6-col mdl-cell--4-col-tablet mdl-cell--4-col-phone">
             <div class="s2act-textfield mdl-textfield mdl-js-textfield mdl-textfield--floating-label">

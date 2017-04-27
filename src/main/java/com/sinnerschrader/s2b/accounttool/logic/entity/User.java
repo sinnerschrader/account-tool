@@ -9,6 +9,8 @@ import org.ocpsoft.prettytime.PrettyTime;
 
 import java.beans.Transient;
 import java.time.LocalDate;
+import java.time.OffsetDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
@@ -189,6 +191,10 @@ public class User implements Comparable<User>, Diffable<User> {
      */
     String szzPublicKey;
 
+    String modifiersName;
+
+    String modifytimestamp;
+
     /**
      * The Company where the User belongs to. (see: companies on yaml configuration)
      */
@@ -199,7 +205,7 @@ public class User implements Comparable<User>, Diffable<User> {
                 String sambaSID, String sambaPasswordHistory, String sambaAcctFlags, String mail, State szzStatus,
                 State szzMailStatus, Long sambaPwdLastSet, LocalDate employeeEntryDate, LocalDate employeeExitDate, String ou,
                 String description, String telephoneNumber, String mobile, String employeeNumber, String title, String l,
-                String szzPublicKey, String o, String companyKey) {
+                String szzPublicKey, String o, String companyKey, String modifiersName, String modifytimestamp) {
         this.dn = dn;
         this.uid = uid;
         this.uidNumber = uidNumber;
@@ -231,6 +237,8 @@ public class User implements Comparable<User>, Diffable<User> {
         this.employeeExitDate = employeeExitDate;
         this.szzPublicKey = szzPublicKey;
         this.companyKey = companyKey;
+        this.modifiersName = modifiersName;
+        this.modifytimestamp = modifytimestamp;
     }
 
     @Override
@@ -251,8 +259,27 @@ public class User implements Comparable<User>, Diffable<User> {
     }
 
     @Transient
+    public String getPrettyModifytimestamp(){
+        try {
+            DateTimeFormatter f = DateTimeFormatter.ofPattern("uuuuMMddHHmmss[,SSS][.SSS]X");
+            OffsetDateTime odt = OffsetDateTime.parse(modifytimestamp, f);
+            return new PrettyTime().format(new Date(odt.toInstant().toEpochMilli()));
+        } catch (Exception e){
+            return modifytimestamp;
+        }
+    }
+
+    @Transient
     public String getPrettyLastPasswordChange() {
         return new PrettyTime().format(getLastPasswordChange());
+    }
+
+    @Transient
+    public String getPrettyModifiersName() {
+        if(! defaultString(modifiersName, "").startsWith("uid=")){
+            return modifiersName;
+        }
+        return modifiersName.split(",")[0].split("=")[1];
     }
 
     @Override

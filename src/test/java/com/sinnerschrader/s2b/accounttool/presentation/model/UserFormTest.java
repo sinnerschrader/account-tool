@@ -61,7 +61,9 @@ public class UserFormTest {
             "Hamburg",
             "",
             "Example Company",
-            "e1c1"
+            "e1c1",
+            "",
+            ""
         );
         UserForm userForm = new UserForm(user);
         Assert.assertTrue(userForm.getEntryAsDate().equals(user.getEmployeeEntryDate()));

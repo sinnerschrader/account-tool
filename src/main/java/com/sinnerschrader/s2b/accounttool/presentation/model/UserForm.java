@@ -181,7 +181,9 @@ public class UserForm implements Serializable {
             location,
             null,
             ldapConfiguration.getCompaniesAsMap().get(company),
-            company
+            company,
+            "",
+            ""
         );
 
     }
