@@ -129,6 +129,7 @@ public class UserController {
         mav.addObject("types", ldapService.getEmployeeType(connection));
         mav.addObject("departments", ldapService.getDepartments(connection));
         mav.addObject("locations", ldapService.getLocations(connection));
+        mav.addObject("groups", ldapService.getGroupsByUser(connection, user.getUid(), user.getDn()));
         mav.setViewName("pages/user/edit.html");
         return mav;
     }
