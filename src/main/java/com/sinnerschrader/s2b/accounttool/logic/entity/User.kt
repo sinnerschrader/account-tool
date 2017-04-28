@@ -1,7 +1,7 @@
 package com.sinnerschrader.s2b.accounttool.logic.entity
 
 import com.sinnerschrader.s2b.accounttool.logic.ReflectionDiffBuilder
-import org.apache.commons.lang3.StringUtils.compareIgnoreCase
+import org.apache.commons.lang3.builder.CompareToBuilder
 import org.apache.commons.lang3.builder.DiffResult
 import org.apache.commons.lang3.builder.Diffable
 import org.apache.commons.lang3.builder.ToStringStyle.SHORT_PREFIX_STYLE
@@ -214,16 +214,9 @@ data class User(
     fun getPrettyModifiersName() = Regex("^uid=([^,]+)").find(modifiersName)?.groupValues?.get(1) ?: modifiersName
 
 
-    override fun compareTo(other: User): Int {
-        var res = compareIgnoreCase(sn, other.sn)
-        if (res == 0) {
-            res = compareIgnoreCase(givenName, other.givenName)
-            if (res == 0) {
-                res = compareIgnoreCase(uid, other.uid)
-            }
-        }
-        return res
-    }
+    override fun compareTo(other: User) =
+        CompareToBuilder().append(sn, other.sn).append(givenName, other.givenName).append(uid, other.uid).build()
+
 
     override fun diff(other: User?): DiffResult = ReflectionDiffBuilder(this, other, SHORT_PREFIX_STYLE).build()
 
