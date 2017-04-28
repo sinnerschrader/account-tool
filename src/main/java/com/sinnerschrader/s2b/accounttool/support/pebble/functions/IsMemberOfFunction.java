@@ -55,7 +55,7 @@ public class IsMemberOfFunction implements Function {
                 }
             }
         }
-        return group != null && (group.hasMember(userDetails.getUid()) || group.hasMember(userDetails.getDn()));
+        return group != null && group.hasMember(userDetails.getUid(), userDetails.getDn());
     }
 
 }

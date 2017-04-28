@@ -5,12 +5,18 @@ import com.sinnerschrader.s2b.accounttool.logic.entity.Group;
 import com.sinnerschrader.s2b.accounttool.logic.entity.GroupOfNames;
 import com.sinnerschrader.s2b.accounttool.logic.entity.PosixGroup;
 import com.unboundid.ldap.sdk.SearchResultEntry;
+import org.apache.commons.lang3.ArrayUtils;
+import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
+
+import static java.util.Arrays.asList;
+import static org.apache.commons.lang3.ArrayUtils.EMPTY_STRING_ARRAY;
+import static org.apache.commons.lang3.ObjectUtils.defaultIfNull;
 
 
 /**
@@ -25,7 +31,7 @@ public class GroupMapping implements ModelMaping<Group> {
     public Group map(SearchResultEntry entry) {
         if (entry == null)
             return null;
-        final List<String> objectClasses = Arrays.asList(entry.getObjectClassValues());
+        final List<String> objectClasses = asList(entry.getObjectClassValues());
         final String cn = entry.getAttributeValue("cn");
         if (isPosixGroup(objectClasses)) {
             return new PosixGroup(
@@ -34,7 +40,7 @@ public class GroupMapping implements ModelMaping<Group> {
                 entry.getAttributeValueAsInteger("gid"),
                 entry.getAttributeValue("description"),
                 getGroupClassification(cn),
-                entry.getAttributeValues("memberUid")
+                asList(defaultIfNull(entry.getAttributeValues("memberUid"), EMPTY_STRING_ARRAY))
             );
         }
         final boolean unique = isGroupOfUniqueNames(objectClasses);
@@ -49,7 +55,7 @@ public class GroupMapping implements ModelMaping<Group> {
                 entry.getAttributeValue("description"),
                 unique,
                 getGroupClassification(cn),
-                entry.getAttributeValues(memberAttribute)
+                asList(defaultIfNull(entry.getAttributeValues(memberAttribute), EMPTY_STRING_ARRAY))
             );
         }
         throw new IllegalArgumentException("Provided result entry is not supported. Please call isCompatible before.");
@@ -99,7 +105,7 @@ public class GroupMapping implements ModelMaping<Group> {
         if (entry == null) {
             return false;
         }
-        final List<String> objectClasses = Arrays.asList(entry.getObjectClassValues());
+        final List<String> objectClasses = asList(entry.getObjectClassValues());
         return isPosixGroup(objectClasses) ||
             isGroupOfNames(objectClasses) ||
             isGroupOfUniqueNames(objectClasses);

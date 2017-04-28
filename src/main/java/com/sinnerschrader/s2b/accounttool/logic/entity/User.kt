@@ -6,11 +6,12 @@ import org.apache.commons.lang3.builder.DiffResult
 import org.apache.commons.lang3.builder.Diffable
 import org.apache.commons.lang3.builder.ToStringStyle.SHORT_PREFIX_STYLE
 import org.ocpsoft.prettytime.PrettyTime
-import java.beans.Transient
 import java.time.LocalDate
 import java.time.OffsetDateTime
 import java.time.format.DateTimeFormatter
 import java.util.*
+import java.util.Arrays.asList
+import java.util.Collections.unmodifiableList
 
 
 data class User(
@@ -182,7 +183,7 @@ data class User(
 ) : Comparable<User>, Diffable<User> {
 
     companion object {
-        val objectClasses = Collections.unmodifiableList(Arrays.asList(
+        val objectClasses = unmodifiableList(asList(
             "person",
             "organizationalPerson",
             "inetOrgPerson",
@@ -192,10 +193,8 @@ data class User(
         ))
     }
 
-    @Transient
     fun getLastPasswordChange() = Date(sambaPwdLastSet * 1000)
 
-    @Transient
     fun getPrettyModifytimestamp(): String {
         try {
             val f = DateTimeFormatter.ofPattern("uuuuMMddHHmmss[,SSS][.SSS]X")
@@ -207,12 +206,9 @@ data class User(
 
     }
 
-    @Transient
     fun getPrettyLastPasswordChange() = PrettyTime().format(getLastPasswordChange())
 
-    @Transient
     fun getPrettyModifiersName() = Regex("^uid=([^,]+)").find(modifiersName)?.groupValues?.get(1) ?: modifiersName
-
 
     override fun compareTo(other: User) =
         CompareToBuilder().append(sn, other.sn).append(givenName, other.givenName).append(uid, other.uid).build()
