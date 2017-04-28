@@ -85,11 +85,11 @@ public class UserFormValidator implements Validator {
             }
         }
 
-        if (User.State.fromString(form.getStatus()) == User.State.undefined) {
+        if (User.State.Companion.fromString(form.getStatus()) == User.State.undefined) {
             errors.rejectValue("status", "invalid.status", new Object[]{},
                 "Status has an invalid value");
         }
-        if (User.State.fromString(form.getMailStatus()) == User.State.undefined) {
+        if (User.State.Companion.fromString(form.getMailStatus()) == User.State.undefined) {
             errors.rejectValue("mailStatus", "invalid.status", new Object[]{},
                 "E-Mail Status has an invalid value");
         }

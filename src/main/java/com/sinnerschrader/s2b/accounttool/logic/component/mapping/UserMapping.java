@@ -3,6 +3,7 @@ package com.sinnerschrader.s2b.accounttool.logic.component.mapping;
 import com.sinnerschrader.s2b.accounttool.config.ldap.LdapConfiguration;
 import com.sinnerschrader.s2b.accounttool.logic.entity.User;
 import com.unboundid.ldap.sdk.SearchResultEntry;
+import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.tomcat.jni.Local;
 import org.slf4j.Logger;
@@ -16,6 +17,8 @@ import java.time.OffsetDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Arrays;
 import java.util.Map;
+
+import static org.apache.commons.lang3.ObjectUtils.defaultIfNull;
 
 
 /**
@@ -64,15 +67,15 @@ public class UserMapping implements ModelMaping<User> {
             entry.getAttributeValue("sambaPasswordHistory"),
             entry.getAttributeValue("sambaAcctFlags"),
             entry.getAttributeValue("mail"),
-            User.State.fromString(entry.getAttributeValue("szzStatus")),
-            User.State.fromString(entry.getAttributeValue("szzMailStatus")),
+            User.State.Companion.fromString(entry.getAttributeValue("szzStatus")),
+            User.State.Companion.fromString(entry.getAttributeValue("szzMailStatus")),
             entry.getAttributeValueAsLong("sambaPwdLastSet"),
             entryDate,
             exitDate,
             entry.getAttributeValue("ou"),
             entry.getAttributeValue("description"),
-            entry.getAttributeValue("telephoneNumber"),
-            entry.getAttributeValue("mobile"),
+            defaultIfNull(entry.getAttributeValue("telephoneNumber"),""),
+            defaultIfNull(entry.getAttributeValue("mobile"),""),
             entry.getAttributeValue("employeeNumber"),
             entry.getAttributeValue("title"),
             entry.getAttributeValue("l"),
@@ -144,7 +147,7 @@ public class UserMapping implements ModelMaping<User> {
     @Override
     public boolean isCompatible(SearchResultEntry entry) {
         return (entry != null) && CollectionUtils
-            .containsAny(Arrays.asList(entry.getObjectClassValues()), User.objectClasses);
+            .containsAny(Arrays.asList(entry.getObjectClassValues()), User.Companion.getObjectClasses());
     }
 
 }

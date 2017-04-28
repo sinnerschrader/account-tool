@@ -175,7 +175,7 @@ public class LdapServiceTests {
             email,
             User.State.active,
             User.State.active,
-            null,
+            Long.MAX_VALUE,
             LocalDate.of(1990, 1, 1),
             LocalDate.of(2100, 12, 31),
             "Team Instinct",
