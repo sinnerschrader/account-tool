@@ -422,7 +422,7 @@
                         <artifactId>dependency-check-maven</artifactId>
                         <configuration>
                             <cveValidForHours>14</cveValidForHours>
-                            <failBuildOnCVSS>4</failBuildOnCVSS>
+                            <failBuildOnCVSS>11</failBuildOnCVSS>
                             <showSummary>true</showSummary>
                             <suppressionFile>${project.basedir}/.dependency-suppressions.xml</suppressionFile>
                         </configuration>
