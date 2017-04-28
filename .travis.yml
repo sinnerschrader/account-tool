@@ -29,7 +29,7 @@ before_script:
 
 script:
   - ./mvnw --batch-mode clean
-  - ./mvnw --batch-mode -P security org.owasp:dependency-check-maven:check -DfailOnError=false
+  - ./mvnw --batch-mode -P security -DfailOnError=false org.owasp:dependency-check-maven:check
   - ./mvnw --batch-mode package
 
 before_deploy:
