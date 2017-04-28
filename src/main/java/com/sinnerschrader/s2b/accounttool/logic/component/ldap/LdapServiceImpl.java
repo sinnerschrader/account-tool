@@ -476,7 +476,7 @@ public class LdapServiceImpl implements LdapService {
             List<Attribute> attributes = new ArrayList<>();
 
             // Default Values and LDAP specific entries
-            attributes.add(new Attribute("objectClass", User.objectClasses));
+            attributes.add(new Attribute("objectClass", User.Companion.getObjectClasses()));
             attributes.add(new Attribute("employeeNumber", employeeNumber));
             attributes.add(new Attribute("uidNumber", uidNumber.toString()));
             attributes.add(new Attribute("gidNumber", gidNumber.toString()));

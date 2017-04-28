@@ -9,7 +9,7 @@ services:
     build: .
     depends_on:
       - maildev
-    command: 'mvn install spring-boot:run -Drun.jvmArguments="-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=5005"'
+    command: 'mvn spring-boot:run -Drun.jvmArguments="-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=5005"'
     environment:
       MAILDEV_PROFILE: maildev
     volumes:

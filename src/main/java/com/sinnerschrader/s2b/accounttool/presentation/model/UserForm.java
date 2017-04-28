@@ -4,11 +4,14 @@ import com.sinnerschrader.s2b.accounttool.config.authentication.LdapUserDetails;
 import com.sinnerschrader.s2b.accounttool.config.ldap.LdapConfiguration;
 import com.sinnerschrader.s2b.accounttool.logic.DateTimeHelper;
 import com.sinnerschrader.s2b.accounttool.logic.entity.User;
+import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
 
 import java.io.Serializable;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+
+import static org.apache.commons.lang3.ObjectUtils.defaultIfNull;
 
 
 /**
@@ -167,15 +170,15 @@ public class UserForm implements Serializable {
             null,
             null,
             email,
-            User.State.fromString(status),
-            User.State.fromString(mailStatus),
-            null,
+            User.State.Companion.fromString(status),
+            User.State.Companion.fromString(mailStatus),
+            Long.MAX_VALUE,
             entry,
             exit,
             team,
             type,
-            telephoneNumber,
-            mobileNumber,
+            defaultIfNull(telephoneNumber,""),
+            defaultIfNull(mobileNumber,""),
             employeeNumber,
             title,
             location,
