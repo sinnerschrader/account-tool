@@ -1,25 +1,16 @@
 package com.sinnerschrader.s2b.accounttool.logic.entity
 
 import com.sinnerschrader.s2b.accounttool.logic.ReflectionDiffBuilder
-import lombok.Value
-import org.apache.commons.lang3.StringUtils
+import org.apache.commons.lang3.StringUtils.compareIgnoreCase
 import org.apache.commons.lang3.builder.DiffResult
 import org.apache.commons.lang3.builder.Diffable
+import org.apache.commons.lang3.builder.ToStringStyle.SHORT_PREFIX_STYLE
 import org.ocpsoft.prettytime.PrettyTime
-
 import java.beans.Transient
 import java.time.LocalDate
 import java.time.OffsetDateTime
 import java.time.format.DateTimeFormatter
-import java.util.Arrays
-import java.util.Collections
-import java.util.Date
-
-import org.apache.commons.lang3.ObjectUtils.defaultIfNull
-import org.apache.commons.lang3.StringUtils.compareIgnoreCase
-import org.apache.commons.lang3.StringUtils.defaultString
-import org.apache.commons.lang3.builder.CompareToBuilder
-import org.apache.commons.lang3.builder.ToStringStyle.SHORT_PREFIX_STYLE
+import java.util.*
 
 
 data class User(
