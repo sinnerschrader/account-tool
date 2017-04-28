@@ -266,7 +266,7 @@ public class LdapServiceImpl implements LdapService {
         Group ldapGroup = getGroupByCN(connection, group.getCn());
         if (ldapGroup == null)
             return null;
-        if (ldapGroup.hasMember(user))
+        if (ldapGroup.hasMember(user.getUid(), user.getDn()))
             return ldapGroup;
         try {
             final Group.GroupType groupType = ldapGroup.getGroupType();
@@ -289,7 +289,7 @@ public class LdapServiceImpl implements LdapService {
         Group ldapGroup = getGroupByCN(connection, group.getCn());
         if (ldapGroup == null)
             return null;
-        if (!ldapGroup.hasMember(user))
+        if (!ldapGroup.hasMember(user.getUid(), user.getDn()))
             return ldapGroup;
         try {
             final Group.GroupType groupType = ldapGroup.getGroupType();

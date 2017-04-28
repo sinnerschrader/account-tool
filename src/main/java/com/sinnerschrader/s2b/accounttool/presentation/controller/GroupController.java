@@ -115,7 +115,7 @@ public class GroupController {
         if (StringUtils.isNotBlank(searchTerm)) {
             List<User> ldapUsers = ldapService.findUserBySearchTerm(connection, searchTerm);
             for (User user : ldapUsers) {
-                if (!group.hasMember(user)) {
+                if (!group.hasMember(user.getUid(),user.getDn())) {
                     users.add(user);
                 }
             }
@@ -142,7 +142,7 @@ public class GroupController {
         User user = ldapService.getUserByUid(connection, uid);
         Group group = ldapService.getGroupByCN(connection, groupCN);
         group = ldapService.addUserToGroup(connection, user, group);
-        if (group.hasMember(user)) {
+        if (group.hasMember(user.getUid(),user.getDn())) {
             log.info("User {} added user {} into group {}", details.getUid(), uid, groupCN);
             logService.event(eventKey, "success", details.getUid(), uid, groupCN);
             globalMessageFactory.store(request, globalMessageFactory.createInfo(
@@ -169,7 +169,7 @@ public class GroupController {
         User user = ldapService.getUserByUid(connection, uid);
         Group group = ldapService.getGroupByCN(connection, groupCN);
         group = ldapService.removeUserFromGroup(connection, user, group);
-        if (!group.hasMember(user)) {
+        if (!group.hasMember(user.getUid(),user.getDn())) {
             log.info("{} removed user {} from group {}", details.getUid(), uid, groupCN);
             logService.event(eventKey, "success", details.getUid(), uid, groupCN);
             globalMessageFactory.store(request, globalMessageFactory.createInfo(
@@ -197,7 +197,7 @@ public class GroupController {
             return "redirect:/group" + (listAllGroups ? "?all=true" : "");
         }
 
-        if (group.hasMember(details.getUid()) || group.hasMember(details.getDn())) {
+        if (group.hasMember(details.getUid(), details.getDn())) {
             log.info("Current user {} is already a member of group {}", details.getUsername(), groupCN);
             globalMessageFactory.store(request, globalMessageFactory.createError("requestAccess.alreadyMember"));
         } else {

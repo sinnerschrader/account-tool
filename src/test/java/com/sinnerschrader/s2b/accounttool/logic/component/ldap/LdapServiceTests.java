@@ -27,6 +27,9 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+
 
 @RunWith(SpringRunner.class)
 @SpringBootTest
@@ -70,7 +73,7 @@ public class LdapServiceTests {
 
         List<Group> groups = ldapService.getGroupsByUser(connection, user.getUid(), user.getDn());
         Assert.assertNotNull(groups);
-        Assert.assertFalse(groups.isEmpty());
+        assertFalse(groups.isEmpty());
 
         List<GrantedAuthority> grantedAuthorities = groups.stream()
             .map(group -> new SimpleGrantedAuthority(group.getCn()))
@@ -92,16 +95,16 @@ public class LdapServiceTests {
         Assert.assertNull(ldapService.getUserByUid(connection, uid));
         List<Group> userGroups = ldapService.getGroupsByUser(connection, uid, userDN);
         Assert.assertNotNull(userGroups);
-        Assert.assertTrue(userGroups.isEmpty());
+        assertTrue(userGroups.isEmpty());
 
         List<Group> allGroups = ldapService.getGroups(connection);
         Group group = ldapService.getGroupByCN(connection, "company-vpn");
         Group dontExist = ldapService.getGroupByCN(connection, "thisgroupwillneverexist-hopefully");
 
         Assert.assertNotNull(allGroups);
-        Assert.assertFalse(allGroups.isEmpty());
+        assertFalse(allGroups.isEmpty());
         Assert.assertNotNull(group);
-        Assert.assertTrue(allGroups.contains(group));
+        assertTrue(allGroups.contains(group));
         Assert.assertNull(dontExist);
 
         connection.close();
@@ -116,38 +119,29 @@ public class LdapServiceTests {
         Group groupOfNames = ldapService.getGroupByCN(connection, "groupOfNames");
         Group groupOfUNames = ldapService.getGroupByCN(connection, "groupOfUniqueNames");
 
-        Assert.assertTrue(posixGroup.getGroupType() == Group.GroupType.Posix);
-        Assert.assertTrue(groupOfNames.getGroupType() == Group.GroupType.GroupOfNames);
-        Assert.assertTrue(groupOfUNames.getGroupType() == Group.GroupType.GroupOfUniqueNames);
+        assertTrue(posixGroup.getGroupType() == Group.GroupType.Posix);
+        assertTrue(groupOfNames.getGroupType() == Group.GroupType.GroupOfNames);
+        assertTrue(groupOfUNames.getGroupType() == Group.GroupType.GroupOfUniqueNames);
 
-        Assert.assertFalse(posixGroup.hasMember(userToAdd));
-        Assert.assertFalse(groupOfNames.hasMember(userToAdd));
-        Assert.assertFalse(groupOfUNames.hasMember(userToAdd));
+        assertFalse(posixGroup.hasMember(userToAdd.getUid(), userToAdd.getDn()));
+        assertFalse(groupOfNames.hasMember(userToAdd.getUid(), userToAdd.getDn()));
+        assertFalse(groupOfUNames.hasMember(userToAdd.getUid(), userToAdd.getDn()));
 
         posixGroup = ldapService.addUserToGroup(connection, userToAdd, posixGroup);
         groupOfNames = ldapService.addUserToGroup(connection, userToAdd, groupOfNames);
         groupOfUNames = ldapService.addUserToGroup(connection, userToAdd, groupOfUNames);
 
-        Assert.assertTrue(posixGroup.hasMember(userToAdd));
-        Assert.assertTrue(groupOfNames.hasMember(userToAdd));
-        Assert.assertTrue(groupOfUNames.hasMember(userToAdd));
-
-        Assert.assertTrue(posixGroup.hasMember(userToAdd.getUid()));
-        Assert.assertFalse(posixGroup.hasMember(userToAdd.getDn()));
-
-        Assert.assertTrue(groupOfNames.hasMember(userToAdd.getDn()));
-        Assert.assertFalse(groupOfNames.hasMember(userToAdd.getUid()));
-
-        Assert.assertTrue(groupOfUNames.hasMember(userToAdd.getDn()));
-        Assert.assertFalse(groupOfUNames.hasMember(userToAdd.getUid()));
+        assertTrue(posixGroup.hasMember(userToAdd.getUid(), userToAdd.getDn()));
+        assertTrue(groupOfNames.hasMember(userToAdd.getUid(), userToAdd.getDn()));
+        assertTrue(groupOfUNames.hasMember(userToAdd.getUid(), userToAdd.getDn()));
 
         posixGroup = ldapService.removeUserFromGroup(connection, userToAdd, posixGroup);
         groupOfNames = ldapService.removeUserFromGroup(connection, userToAdd, groupOfNames);
         groupOfUNames = ldapService.removeUserFromGroup(connection, userToAdd, groupOfUNames);
 
-        Assert.assertFalse(posixGroup.hasMember(userToAdd));
-        Assert.assertFalse(groupOfNames.hasMember(userToAdd));
-        Assert.assertFalse(groupOfUNames.hasMember(userToAdd));
+        assertFalse(posixGroup.hasMember(userToAdd.getUid(), userToAdd.getDn()));
+        assertFalse(groupOfNames.hasMember(userToAdd.getUid(), userToAdd.getDn()));
+        assertFalse(groupOfUNames.hasMember(userToAdd.getUid(), userToAdd.getDn()));
 
         connection.close();
     }
@@ -201,21 +195,21 @@ public class LdapServiceTests {
         User newUser = createUser("Guy", "Inçögnítò");
         User pUser = ldapService.insert(connection, newUser);
 
-        Assert.assertFalse(StringUtils.containsAny(pUser.getGecos(), 'ç', 'ö', 'í', 'ò'));
+        assertFalse(StringUtils.containsAny(pUser.getGecos(), 'ç', 'ö', 'í', 'ò'));
 
         Assert.assertEquals(pUser.getUid(), "guyinc");
         Assert.assertEquals(pUser.getGecos(), "Guy Incoegnito");
         Assert.assertEquals(pUser.getMail(), "guy.incoegnito@example.com");
         Assert.assertNotNull(pUser.getUidNumber());
         Assert.assertNotNull(pUser.getLoginShell());
-        Assert.assertFalse(pUser.getLoginShell().isEmpty());
+        assertFalse(pUser.getLoginShell().isEmpty());
         Assert.assertNotNull(pUser.getHomeDirectory());
-        Assert.assertFalse(pUser.getHomeDirectory().isEmpty());
+        assertFalse(pUser.getHomeDirectory().isEmpty());
 
         Assert.assertNotNull(pUser.getTelephoneNumber());
         Assert.assertNotNull(pUser.getMobile());
-        Assert.assertTrue(pUser.getTelephoneNumber().isEmpty());
-        Assert.assertTrue(pUser.getMobile().isEmpty());
+        assertTrue(pUser.getTelephoneNumber().isEmpty());
+        assertTrue(pUser.getMobile().isEmpty());
 
         connection.close();
     }
@@ -289,7 +283,7 @@ public class LdapServiceTests {
         final User pUser = ldapService.insert(connection, newUser);
         final String initialPassword = ldapService.resetPassword(connection, pUser);
 
-        Assert.assertTrue(StringUtils.isNotBlank(initialPassword));
+        assertTrue(StringUtils.isNotBlank(initialPassword));
 
         final String currentPassword = currentUser.getPassword();
         final String newPassword = rnd();
@@ -299,7 +293,7 @@ public class LdapServiceTests {
 
         success = ldapService.changePassword(connection, currentUser, newPassword);
 
-        Assert.assertTrue(success);
+        assertTrue(success);
 
         connection.close();
     }
