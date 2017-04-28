@@ -153,7 +153,7 @@ public class LdapServiceTests {
     }
 
     private User createUser(String firstName, String lastName) {
-        return createUser(firstName, lastName, null, null, null);
+        return createUser(firstName, lastName, "", "", "");
     }
 
     private User createUser(String firstName, String lastName, String uid, String email, String employeeNumber) {
@@ -225,7 +225,7 @@ public class LdapServiceTests {
         List<User> users = new LinkedList<>();
         for (int i = 1; i <= 10; i++) {
             users.add(
-                createUser("Maximilian", "Mustermann", null, i + ".test@example.com", null));
+                createUser("Maximilian", "Mustermann", "", i + ".test@example.com", ""));
         }
         LDAPConnection connection = create(true);
         int i = 0;
