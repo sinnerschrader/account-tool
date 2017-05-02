@@ -188,10 +188,10 @@
             <div class="s2act-groupContainer">
                 {% for group in groups %}
                 <a href="/group/{{ group.cn }}" class="mdl-chip mdl-chip--contact s2act-groupChip">
-				<span
-                    class="mdl-chip__contact mdl-color-text--white s2act-groupChip__contact {{group.adminGroup or group.technicalGroup ? 's2act-groupChip__contact--admin' : ''}}">
-					<i class="material-icons">{{group.adminGroup ? 'settings' : 'group'}}</i>
-				</span>
+				    <span
+                        class="mdl-chip__contact mdl-color-text--white s2act-groupChip__contact {{group.adminGroup or group.technicalGroup ? 's2act-groupChip__contact--admin' : ''}}">
+					    <i class="material-icons">{{group.adminGroup ? 'settings' : 'group'}}</i>
+				    </span>
                     <span class="mdl-chip__text s2act-groupChip__text">{{group.cn}}</span>
                 </a>
                 {% endfor %}
