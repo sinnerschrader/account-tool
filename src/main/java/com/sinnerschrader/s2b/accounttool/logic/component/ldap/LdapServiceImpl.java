@@ -4,6 +4,7 @@ import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
 import com.sinnerschrader.s2b.accounttool.config.authentication.LdapUserDetails;
 import com.sinnerschrader.s2b.accounttool.config.ldap.LdapConfiguration;
+import com.sinnerschrader.s2b.accounttool.config.ldap.LdapGroupPrefixes;
 import com.sinnerschrader.s2b.accounttool.logic.component.encryption.Encrypter;
 import com.sinnerschrader.s2b.accounttool.logic.component.mapping.ModelMaping;
 import com.sinnerschrader.s2b.accounttool.logic.entity.Group;
@@ -902,6 +903,25 @@ public class LdapServiceImpl implements LdapService {
             throw new BusinessException("Could not check attribute",
                 "general.ldap.failed", new Object[]{le.getDiagnosticMessage()});
         }
+    }
+
+    @Override
+    public Group getAdminGroup(LDAPConnection connection,  Group group){
+        Group adminGroup = group;
+        if (!group.isAdminGroup()) {
+            LdapGroupPrefixes gp = ldapConfiguration.getGroupPrefixes();
+            String adminGroupCN = StringUtils.replace(group.getCn(), gp.getTeam(), gp.getAdmin());
+            adminGroup = getGroupByCN(connection, adminGroupCN);
+            if (adminGroup == null || !adminGroup.isAdminGroup()) {
+                adminGroup = getGroupByCN(connection, "ldap-admins");
+            }
+        }
+        return adminGroup;
+    }
+
+    @Override
+    public List<User> getGroupAdmins(LDAPConnection connection, Group group) {
+        return getUsersByGroup(connection, getAdminGroup(connection, group));
     }
 
 }

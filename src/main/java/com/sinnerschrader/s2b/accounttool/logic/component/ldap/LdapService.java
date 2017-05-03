@@ -49,4 +49,7 @@ public interface LdapService {
 
     boolean changePassword(LDAPConnection connection, LdapUserDetails currentUser, String password) throws BusinessException;
 
+    Group getAdminGroup(LDAPConnection connection, Group group);
+
+    List<User> getGroupAdmins(LDAPConnection connection, Group group);
 }

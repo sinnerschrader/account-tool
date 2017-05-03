@@ -1,0 +1,10 @@
+Hello admin of {{ group.cn }},
+
+user {{ user.uid }} was {{ 'ADD' equals change ? "added" : "removed" }} by {{ currentUser.uid }}
+
+
+Best regards,
+Your AccountTool
+
+
+[ReqID:{{messageID}}]

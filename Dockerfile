@@ -5,4 +5,4 @@ RUN apk add --no-cache git nodejs
 ADD . /app
 WORKDIR /app
 
-CMD mvn install spring-boot:run
+CMD mvn clean install spring-boot:run
