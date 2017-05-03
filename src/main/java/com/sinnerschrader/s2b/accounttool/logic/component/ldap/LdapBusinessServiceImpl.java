@@ -27,6 +27,8 @@ import java.util.List;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
+import static java.util.Collections.sort;
+
 
 /**
  *
@@ -116,6 +118,11 @@ public class LdapBusinessServiceImpl implements LdapBusinessService, Initializin
             log.debug("Found {} user who are exited but have active accounts", exitedActiveUsers.size());
             log.debug("Found {} user who are leaving in the next {} weeks", futureExitingUser.size(), nextWeeks);
             log.debug("Found {} active mail addresses on inactive accounts", activeMailAccounts.size());
+
+            sort(exitedActiveUsers);
+            sort(futureExitingUser);
+            sort(activeMailAccounts);
+
             userCache.put(EXITED_ACTIVE_USERS, exitedActiveUsers);
             userCache.put(NEAR_FUTURE_EXITING, futureExitingUser);
             userCache.put(ACTIVE_MAIL_ON_INACTIVE_USER, activeMailAccounts);
