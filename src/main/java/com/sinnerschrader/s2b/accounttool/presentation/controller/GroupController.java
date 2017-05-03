@@ -4,6 +4,7 @@ import com.sinnerschrader.s2b.accounttool.config.WebConstants;
 import com.sinnerschrader.s2b.accounttool.config.authentication.LdapUserDetails;
 import com.sinnerschrader.s2b.accounttool.config.ldap.LdapConfiguration;
 import com.sinnerschrader.s2b.accounttool.config.ldap.LdapGroupPrefixes;
+import com.sinnerschrader.s2b.accounttool.config.ldap.LdapManagementConfiguration;
 import com.sinnerschrader.s2b.accounttool.logic.LogService;
 import com.sinnerschrader.s2b.accounttool.logic.component.authorization.AuthorizationService;
 import com.sinnerschrader.s2b.accounttool.logic.component.ldap.LdapService;
@@ -24,6 +25,9 @@ import org.springframework.web.servlet.ModelAndView;
 import javax.servlet.http.HttpServletRequest;
 import java.util.LinkedList;
 import java.util.List;
+
+import static com.sinnerschrader.s2b.accounttool.logic.component.mail.MailService.Change.ADD;
+import static com.sinnerschrader.s2b.accounttool.logic.component.mail.MailService.Change.REMOVE;
 
 
 /**
@@ -48,6 +52,9 @@ public class GroupController {
 
     @Autowired
     private LdapConfiguration ldapConfiguration;
+
+    @Autowired
+    private LdapManagementConfiguration ldapManagementConfiguration;
 
     @Autowired
     private GlobalMessageFactory globalMessageFactory;
@@ -147,6 +154,12 @@ public class GroupController {
             logService.event(eventKey, "success", details.getUid(), uid, groupCN);
             globalMessageFactory.store(request, globalMessageFactory.createInfo(
                 "addUser.success", user.getUid(), group.getCn()));
+
+
+            if(ldapManagementConfiguration.getTrackedGroups().contains(groupCN)) {
+                List<User> recipients = ldapService.getGroupAdmins(connection, group);
+                mailService.sendMailForGroupChanged(recipients, details, group, user, ADD);
+            }
         } else {
             log.warn("Adding user {} into group {} failed", uid, groupCN);
             logService.event(eventKey, "success", details.getUid(), uid, groupCN);
@@ -174,6 +187,11 @@ public class GroupController {
             logService.event(eventKey, "success", details.getUid(), uid, groupCN);
             globalMessageFactory.store(request, globalMessageFactory.createInfo(
                 "removeUser.success", user.getUid(), group.getCn()));
+
+            if(ldapManagementConfiguration.getTrackedGroups().contains(groupCN)) {
+                List<User> recipients = ldapService.getGroupAdmins(connection, group);
+                mailService.sendMailForGroupChanged(recipients, details, group, user, REMOVE);
+            }
         } else {
             log.warn("{} removed user {} from group {}; but it failed", details.getUid(), uid, groupCN);
             logService.event(eventKey, "success", details.getUid(), uid, groupCN);
@@ -191,7 +209,7 @@ public class GroupController {
         @RequestParam(name = "all", defaultValue = "false", required = false) boolean listAllGroups) {
         LdapUserDetails details = RequestUtils.getCurrentUserDetails();
         Group group = ldapService.getGroupByCN(connection, groupCN);
-        Group adminGroup = group;
+        Group adminGroup = ldapService.getAdminGroup(connection, group);
 
         if (group == null) {
             return "redirect:/group" + (listAllGroups ? "?all=true" : "");
@@ -201,15 +219,8 @@ public class GroupController {
             log.info("Current user {} is already a member of group {}", details.getUsername(), groupCN);
             globalMessageFactory.store(request, globalMessageFactory.createError("requestAccess.alreadyMember"));
         } else {
-            if (!adminGroup.isAdminGroup()) {
-                LdapGroupPrefixes gp = ldapConfiguration.getGroupPrefixes();
-                String adminGroupCN = StringUtils.replace(groupCN, gp.getTeam(), gp.getAdmin());
-                adminGroup = ldapService.getGroupByCN(connection, adminGroupCN);
-                if (adminGroup == null || !adminGroup.isAdminGroup()) {
-                    adminGroup = ldapService.getGroupByCN(connection, "ldap-admins");
-                }
-            }
             List<User> adminUser = ldapService.getUsersByGroup(connection, adminGroup);
+
             boolean success = mailService.sendMailForRequestAccessToGroup(details, adminUser, adminGroup, group);
             if (success) {
                 log.info("{} requested access to group {}. A mail was sent to {} admins of group {}", details.getUid(),

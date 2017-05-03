@@ -43,6 +43,9 @@ ldap-management:
       cronExpr: "59 */5 * ? * MON-FRI"
     notifyAboutExpiration:
       cronExpr: "0 */5 * ? * *"
+  trackedGroups:
+    - 'devs-bic'
+    - 'team-biz'
 
 # =============================================================
 # = Appserver Configuration

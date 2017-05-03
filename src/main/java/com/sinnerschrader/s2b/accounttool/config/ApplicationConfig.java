@@ -123,14 +123,6 @@ public class ApplicationConfig extends WebMvcConfigurerAdapter {
         return ldapService;
     }
 
-    @Bean(name = "ldapManagementConfiguration")
-    public LdapManagementConfiguration ldapManagementConfiguration() {
-        if (ldapManagementConfiguration == null) {
-            ldapManagementConfiguration = new LdapManagementConfiguration();
-        }
-        return ldapManagementConfiguration;
-    }
-
     @Bean(name = "ldapBusinessService")
     public LdapBusinessService ldapBusinessService() {
         if (ldapBusinessService == null) {
