@@ -907,16 +907,18 @@ public class LdapServiceImpl implements LdapService {
 
     @Override
     public Group getAdminGroup(LDAPConnection connection, Group group) {
-        Group adminGroup = group;
-        if (!group.isAdminGroup()) {
-            LdapGroupPrefixes gp = ldapConfiguration.getGroupPrefixes();
-            String adminGroupCN = StringUtils.replace(group.getCn(), gp.getTeam(), gp.getAdmin());
-            adminGroup = getGroupByCN(connection, adminGroupCN);
-            if (adminGroup == null || !adminGroup.isAdminGroup()) {
-                adminGroup = getGroupByCN(connection, "ldap-admins");
-            }
+        if (group.isAdminGroup()) {
+            return group;
         }
-        return adminGroup;
+
+        LdapGroupPrefixes gp = ldapConfiguration.getGroupPrefixes();
+        String adminGroupCN = StringUtils.replace(group.getCn(), gp.getTeam(), gp.getAdmin());
+
+        Group result = getGroupByCN(connection, adminGroupCN);
+        if (result != null && result.isAdminGroup()) {
+            return result;
+        }
+        return getGroupByCN(connection, ldapConfiguration.getPermissions().getLdapAdminGroup());
     }
 
     @Override

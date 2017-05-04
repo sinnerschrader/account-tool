@@ -38,16 +38,14 @@ public class AuthorizationTests {
     @Before
     public void initialize() {
         List<GrantedAuthority> adminAuthorities = new ArrayList<>();
-        for (String group : ldapConfiguration.getAdministrationGroups()) {
-            adminAuthorities.add(new SimpleGrantedAuthority(group));
-        }
+        adminAuthorities.add(new SimpleGrantedAuthority(ldapConfiguration.getPermissions().getLdapAdminGroup()));
+
         admin = new LdapUserDetails("uid=tesadm,ou=users,ou=e1c1,dc=example,dc=org",
             "tesadm", "Test Admin", "testuser", "e1c1", adminAuthorities, false, true);
 
         List<GrantedAuthority> userAdminAuthorities = new ArrayList<>();
-        for (String group : ldapConfiguration.getUserAdministrationGroups()) {
-            userAdminAuthorities.add(new SimpleGrantedAuthority(group));
-        }
+        userAdminAuthorities.add(new SimpleGrantedAuthority(ldapConfiguration.getPermissions().getUserAdminGroup()));
+
         userAdmin = new LdapUserDetails("uid=tesuse,ou=users,ou=e1c1,dc=example,dc=org",
             "tesuse", "Tes Useradmin", "testuser", "e1c1", userAdminAuthorities, false, true);
 

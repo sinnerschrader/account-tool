@@ -52,8 +52,8 @@ spring:
 #      # The list is dynamic, but has to match ldap.companies. The keys have to match.
 #      # Refs can be used within Config to another config over $ { NAME } Usage
 #  permissions:
-#    admins: "Comma separated (no spaces between separation) list for LDAP Admins; default: ldap-admins"
-#    userAdmins: "Comma separated (no spaces between separation) list for User Management; default: ldap-user-management"
+#    ldapAdminGroup: "Group for LDAP Admins; default: ldap-admins"
+#    userAdminGroup: "Group for User Management; default: ldap-user-management"
 #    defaultGroups: "Comma separated (no spaces between separation) list for new Users; default: company-users"
 #  companies:
 #    - "agc1:AG Group - Company 1"
