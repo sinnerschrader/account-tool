@@ -4,7 +4,6 @@ import com.sinnerschrader.s2b.accounttool.config.authentication.LdapUserDetails;
 import com.sinnerschrader.s2b.accounttool.config.ldap.LdapConfiguration;
 import com.sinnerschrader.s2b.accounttool.logic.DateTimeHelper;
 import com.sinnerschrader.s2b.accounttool.logic.entity.User;
-import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
 
 import java.io.Serializable;
@@ -177,8 +176,8 @@ public class UserForm implements Serializable {
             exit,
             team,
             type,
-            defaultIfNull(telephoneNumber,""),
-            defaultIfNull(mobileNumber,""),
+            defaultIfNull(telephoneNumber, ""),
+            defaultIfNull(mobileNumber, ""),
             employeeNumber,
             title,
             location,
