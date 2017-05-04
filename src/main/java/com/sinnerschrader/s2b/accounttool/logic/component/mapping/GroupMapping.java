@@ -60,7 +60,7 @@ public class GroupMapping implements ModelMaping<Group> {
 
     private boolean isAdminGroup(String cn) {
         return StringUtils.containsAny(cn, "admins", "administrators") ||
-            ldapConfiguration.getAdministrationGroups().contains(cn) ||
+            ldapConfiguration.getPermissions().getLdapAdminGroup().equals(cn) ||
             StringUtils.startsWith(cn, ldapConfiguration.getGroupPrefixes().getAdmin());
     }
 

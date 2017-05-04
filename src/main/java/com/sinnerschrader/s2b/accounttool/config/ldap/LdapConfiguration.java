@@ -43,7 +43,6 @@ public class LdapConfiguration implements InitializingBean {
     public void afterPropertiesSet() throws Exception {
         config.afterPropertiesSet();
         queries.afterPropertiesSet();
-        permissions.afterPropertiesSet();
 
         final String rawDataSeparator = ":";
         final int keyPadding = 5;
@@ -150,16 +149,6 @@ public class LdapConfiguration implements InitializingBean {
             return replacePlaceholders(userDN, uid);
         }
         throw new IllegalArgumentException("The provided company key '" + companyKey + "'is not allowed or known");
-    }
-
-    @Transient
-    public List<String> getAdministrationGroups() {
-        return permissions.getAdmins();
-    }
-
-    @Transient
-    public List<String> getUserAdministrationGroups() {
-        return permissions.getUserAdmins();
     }
 
     @Transient

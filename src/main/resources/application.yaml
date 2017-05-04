@@ -97,8 +97,8 @@ ldap:
     team: "team"
     technical: "devs"
   permissions:
-    admins: "ldap-admins"
-    userAdmins: "ldap-user-management"
+    ldapAdminGroup: "ldap-admins"
+    userAdminGroup: "ldap-user-management"
     defaultGroups: "company-users"
   companies:
     - "e1c1:Example - Company 1"

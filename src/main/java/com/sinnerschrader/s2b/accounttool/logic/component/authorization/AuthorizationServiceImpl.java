@@ -25,18 +25,12 @@ public class AuthorizationServiceImpl implements AuthorizationService {
 
     @Override
     public boolean isAdmin(LdapUserDetails user) {
-        for (String adminGroup : ldapConfiguration.getAdministrationGroups())
-            if (isMemberOf(user.getAuthorities(), adminGroup))
-                return true;
-        return false;
+        return isMemberOf(user.getAuthorities(), ldapConfiguration.getPermissions().getLdapAdminGroup());
     }
 
     @Override
     public boolean isUserAdministration(LdapUserDetails user) {
-        for (String userAdminGroup : ldapConfiguration.getUserAdministrationGroups())
-            if (isMemberOf(user.getAuthorities(), userAdminGroup))
-                return true;
-        return false;
+        return isMemberOf(user.getAuthorities(), ldapConfiguration.getPermissions().getUserAdminGroup());
     }
 
     @Override
