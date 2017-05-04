@@ -3,7 +3,6 @@ package com.sinnerschrader.s2b.accounttool.presentation.controller;
 import com.sinnerschrader.s2b.accounttool.config.WebConstants;
 import com.sinnerschrader.s2b.accounttool.config.authentication.LdapUserDetails;
 import com.sinnerschrader.s2b.accounttool.config.ldap.LdapConfiguration;
-import com.sinnerschrader.s2b.accounttool.config.ldap.LdapGroupPrefixes;
 import com.sinnerschrader.s2b.accounttool.config.ldap.LdapManagementConfiguration;
 import com.sinnerschrader.s2b.accounttool.logic.LogService;
 import com.sinnerschrader.s2b.accounttool.logic.component.authorization.AuthorizationService;
@@ -122,7 +121,7 @@ public class GroupController {
         if (StringUtils.isNotBlank(searchTerm)) {
             List<User> ldapUsers = ldapService.findUserBySearchTerm(connection, searchTerm);
             for (User user : ldapUsers) {
-                if (!group.hasMember(user.getUid(),user.getDn())) {
+                if (!group.hasMember(user.getUid(), user.getDn())) {
                     users.add(user);
                 }
             }
@@ -149,14 +148,14 @@ public class GroupController {
         User user = ldapService.getUserByUid(connection, uid);
         Group group = ldapService.getGroupByCN(connection, groupCN);
         group = ldapService.addUserToGroup(connection, user, group);
-        if (group.hasMember(user.getUid(),user.getDn())) {
+        if (group.hasMember(user.getUid(), user.getDn())) {
             log.info("User {} added user {} into group {}", details.getUid(), uid, groupCN);
             logService.event(eventKey, "success", details.getUid(), uid, groupCN);
             globalMessageFactory.store(request, globalMessageFactory.createInfo(
                 "addUser.success", user.getUid(), group.getCn()));
 
 
-            if(ldapManagementConfiguration.getTrackedGroups().contains(groupCN)) {
+            if (ldapManagementConfiguration.getTrackedGroups().contains(groupCN)) {
                 List<User> recipients = ldapService.getGroupAdmins(connection, group);
                 mailService.sendMailForGroupChanged(recipients, details, group, user, ADD);
             }
@@ -182,13 +181,13 @@ public class GroupController {
         User user = ldapService.getUserByUid(connection, uid);
         Group group = ldapService.getGroupByCN(connection, groupCN);
         group = ldapService.removeUserFromGroup(connection, user, group);
-        if (!group.hasMember(user.getUid(),user.getDn())) {
+        if (!group.hasMember(user.getUid(), user.getDn())) {
             log.info("{} removed user {} from group {}", details.getUid(), uid, groupCN);
             logService.event(eventKey, "success", details.getUid(), uid, groupCN);
             globalMessageFactory.store(request, globalMessageFactory.createInfo(
                 "removeUser.success", user.getUid(), group.getCn()));
 
-            if(ldapManagementConfiguration.getTrackedGroups().contains(groupCN)) {
+            if (ldapManagementConfiguration.getTrackedGroups().contains(groupCN)) {
                 List<User> recipients = ldapService.getGroupAdmins(connection, group);
                 mailService.sendMailForGroupChanged(recipients, details, group, user, REMOVE);
             }

@@ -5,12 +5,9 @@ import com.sinnerschrader.s2b.accounttool.logic.entity.Group;
 import com.sinnerschrader.s2b.accounttool.logic.entity.GroupOfNames;
 import com.sinnerschrader.s2b.accounttool.logic.entity.PosixGroup;
 import com.unboundid.ldap.sdk.SearchResultEntry;
-import org.apache.commons.lang3.ArrayUtils;
-import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 

@@ -3,9 +3,7 @@ package com.sinnerschrader.s2b.accounttool.logic.component.mapping;
 import com.sinnerschrader.s2b.accounttool.config.ldap.LdapConfiguration;
 import com.sinnerschrader.s2b.accounttool.logic.entity.User;
 import com.unboundid.ldap.sdk.SearchResultEntry;
-import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.tomcat.jni.Local;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,8 +11,6 @@ import org.springframework.util.CollectionUtils;
 
 import java.time.DateTimeException;
 import java.time.LocalDate;
-import java.time.OffsetDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.Arrays;
 import java.util.Map;
 
@@ -74,8 +70,8 @@ public class UserMapping implements ModelMaping<User> {
             exitDate,
             entry.getAttributeValue("ou"),
             entry.getAttributeValue("description"),
-            defaultIfNull(entry.getAttributeValue("telephoneNumber"),""),
-            defaultIfNull(entry.getAttributeValue("mobile"),""),
+            defaultIfNull(entry.getAttributeValue("telephoneNumber"), ""),
+            defaultIfNull(entry.getAttributeValue("mobile"), ""),
             entry.getAttributeValue("employeeNumber"),
             entry.getAttributeValue("title"),
             entry.getAttributeValue("l"),

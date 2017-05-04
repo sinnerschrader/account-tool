@@ -31,45 +31,27 @@ import static java.util.Collections.singletonList;
 @Service
 public class MailService {
 
-    public enum Change {ADD, REMOVE}
-
-
     private static final Logger log = LoggerFactory.getLogger(MailService.class);
-
     private static final String TEMPLATE_PASSWORDRESET_SUBJECT_URL = "mail/passwordReset.subject.txt";
-
     private static final String TEMPLATE_PASSWORDRESET_BODY_URL = "mail/passwordReset.body.txt";
-
     private static final String TEMPLATE_REQUESTACCESS_SUBJECT_URL = "mail/requestAccessToGroup.subject.txt";
-
     private static final String TEMPLATE_REQUESTACCESS_BODY_URL = "mail/requestAccessToGroup.body.txt";
-
     private static final String TEMPLATE_NOTIFY_UNMAINTAINED_USERS_SUBJECT_URL = "mail/unmaintainedUsers.subject.txt";
-
     private static final String TEMPLATE_NOTIFY_UNMAINTAINED_USERS_BODY_URL = "mail/unmaintainedUsers.body.txt";
-
     private static final String TEMPLATE_ACCOUNTCHANGE_SUBJECT_URL = "mail/accountChange.subject.txt";
-
     private static final String TEMPLATE_ACCOUNTCHANGE_BODY_URL = "mail/accountChange.body.txt";
-
     @Autowired
     private PebbleEngine pebbleEngine;
-
     @Autowired
     private JavaMailSender javaMailSender;
-
     @Autowired
     private Environment environment;
-
     @Value("${domain.public}")
     private String publicDomain;
-
     @Value("${spring.mail.from}")
     private String from;
-
     @Value("${spring.mail.reply}")
     private String reply;
-
     @Value("${spring.mail.logOnly}")
     private boolean logOnly;
 
@@ -197,5 +179,7 @@ public class MailService {
             return false;
         }
     }
+
+    public enum Change {ADD, REMOVE}
 
 }

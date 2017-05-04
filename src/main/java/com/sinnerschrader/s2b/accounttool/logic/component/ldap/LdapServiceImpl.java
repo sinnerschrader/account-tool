@@ -200,7 +200,7 @@ public class LdapServiceImpl implements LdapService {
         List<User> result = new LinkedList<>();
         try {
             SearchResult searchResult = connection.search(ldapConfiguration.getBaseDN(),
-                SearchScope.SUB, ldapConfiguration.getLdapQueryByName("searchUser", "*" + searchTerm + "*"),  ALL_USER_ATTRIBUTES, ALL_OPERATIONAL_ATTRIBUTES);
+                SearchScope.SUB, ldapConfiguration.getLdapQueryByName("searchUser", "*" + searchTerm + "*"), ALL_USER_ATTRIBUTES, ALL_OPERATIONAL_ATTRIBUTES);
             result.addAll(userMapping.map(searchResult.getSearchEntries()));
             Collections.sort(result);
         } catch (Exception e) {
@@ -906,7 +906,7 @@ public class LdapServiceImpl implements LdapService {
     }
 
     @Override
-    public Group getAdminGroup(LDAPConnection connection,  Group group){
+    public Group getAdminGroup(LDAPConnection connection, Group group) {
         Group adminGroup = group;
         if (!group.isAdminGroup()) {
             LdapGroupPrefixes gp = ldapConfiguration.getGroupPrefixes();
