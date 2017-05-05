@@ -5,7 +5,7 @@ import com.google.common.cache.CacheBuilder;
 import com.sinnerschrader.s2b.accounttool.config.authentication.LdapUserDetails;
 import com.sinnerschrader.s2b.accounttool.config.ldap.LdapConfiguration;
 import com.sinnerschrader.s2b.accounttool.config.ldap.LdapGroupPrefixes;
-import com.sinnerschrader.s2b.accounttool.logic.component.encryption.Encrypter;
+import com.sinnerschrader.s2b.accounttool.logic.component.encryption.Encrypt;
 import com.sinnerschrader.s2b.accounttool.logic.component.mapping.ModelMaping;
 import com.sinnerschrader.s2b.accounttool.logic.entity.Group;
 import com.sinnerschrader.s2b.accounttool.logic.entity.User;
@@ -17,6 +17,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
 import java.text.Normalizer;
@@ -27,7 +28,7 @@ import java.util.concurrent.TimeUnit;
 import static com.unboundid.ldap.sdk.SearchRequest.ALL_OPERATIONAL_ATTRIBUTES;
 import static com.unboundid.ldap.sdk.SearchRequest.ALL_USER_ATTRIBUTES;
 
-
+@Service
 public class LdapService {
 
     private final static Logger log = LoggerFactory.getLogger(LdapService.class);
@@ -57,12 +58,6 @@ public class LdapService {
 
     @Value("${user.appendCompanyOnDisplayName}")
     private boolean appendCompanyOnDisplayName = false;
-
-    @Resource(name = "passwordEncrypter")
-    private Encrypter passwordEncrypter;
-
-    @Resource(name = "sambaEncrypter")
-    private Encrypter sambaEncrypter;
 
     @Resource(name = "userMapping")
     private ModelMaping<User> userMapping;
@@ -323,8 +318,8 @@ public class LdapService {
         }
 
         List<Modification> changes = new ArrayList<>();
-        changes.add(new Modification(ModificationType.REPLACE, "userPassword", passwordEncrypter.encrypt(newPassword)));
-        changes.add(new Modification(ModificationType.REPLACE, "sambaNTPassword", sambaEncrypter.encrypt(newPassword)));
+        changes.add(new Modification(ModificationType.REPLACE, "userPassword", Encrypt.salt(newPassword)));
+        changes.add(new Modification(ModificationType.REPLACE, "sambaNTPassword", Encrypt.samba(newPassword)));
         changes.add(new Modification(ModificationType.REPLACE, "sambaPwdLastSet", timestamp));
         try {
             LDAPResult result = connection.modify(ldapUser.getDn(), changes);
@@ -469,8 +464,8 @@ public class LdapService {
             attributes.add(new Attribute("sambaAcctFlags", sambaFlags));
             attributes.add(new Attribute("sambaPasswordHistory", sambaPWHistory));
             attributes.add(new Attribute("sambaPwdLastSet", sambaTimestamp.toString()));
-            attributes.add(new Attribute("sambaNTPassword", sambaEncrypter.encrypt(password)));
-            attributes.add(new Attribute("userPassword", passwordEncrypter.encrypt(password)));
+            attributes.add(new Attribute("sambaNTPassword", Encrypt.samba(password)));
+            attributes.add(new Attribute("userPassword", Encrypt.salt(password)));
             //attributes.add(new Attribute("szzPublicKey", ""));
 
             // Person informations

@@ -6,9 +6,9 @@ import com.sinnerschrader.s2b.accounttool.config.embedded.LDAPServer;
 import com.sinnerschrader.s2b.accounttool.config.ldap.LdapConfiguration;
 import com.sinnerschrader.s2b.accounttool.config.ldap.LdapManagementConfiguration;
 import com.sinnerschrader.s2b.accounttool.logic.component.ldap.LdapBusinessService;
-import com.sinnerschrader.s2b.accounttool.logic.component.ldap.LdapBusinessServiceImpl;
+import com.sinnerschrader.s2b.accounttool.logic.component.ldap.LdapBusinessService;
 import com.sinnerschrader.s2b.accounttool.logic.component.ldap.LdapService;
-import com.sinnerschrader.s2b.accounttool.logic.component.ldap.LdapServiceImpl;
+import com.sinnerschrader.s2b.accounttool.logic.component.ldap.LdapService;
 import com.sinnerschrader.s2b.accounttool.logic.component.mapping.GroupMapping;
 import com.sinnerschrader.s2b.accounttool.logic.component.mapping.ModelMaping;
 import com.sinnerschrader.s2b.accounttool.logic.component.mapping.UserMapping;
@@ -110,23 +110,6 @@ public class ApplicationConfig extends WebMvcConfigurerAdapter {
         }
         return ldapConfiguration;
     }
-
-    @Bean(name = "ldapService")
-    public LdapService ldapService() {
-        if (ldapService == null) {
-            ldapService = new LdapServiceImpl();
-        }
-        return ldapService;
-    }
-
-    @Bean(name = "ldapBusinessService")
-    public LdapBusinessService ldapBusinessService() {
-        if (ldapBusinessService == null) {
-            ldapBusinessService = new LdapBusinessServiceImpl();
-        }
-        return ldapBusinessService;
-    }
-
     @Bean(name = "userMapping")
     public ModelMaping<User> userMapping() {
         return new UserMapping();
