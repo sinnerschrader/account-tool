@@ -15,6 +15,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
+import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 
 import java.security.GeneralSecurityException;
@@ -30,9 +31,7 @@ import java.util.stream.Collectors;
 import static java.util.Collections.sort;
 
 
-/**
- *
- */
+@Service
 public class LdapBusinessService implements InitializingBean {
 
     private final static Logger log = LoggerFactory.getLogger(LdapBusinessService.class);
