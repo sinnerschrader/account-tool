@@ -35,14 +35,9 @@ public class PasswordAnalyzeService implements InitializingBean {
     @Autowired
     private ResourceLoader resourceLoader;
 
-    private Zxcvbn zxcvbn;
+    private Zxcvbn zxcvbn = new Zxcvbn();
 
-    private List<String> dictionary;
-
-    public PasswordAnalyzeService() {
-        zxcvbn = new Zxcvbn();
-        dictionary = new LinkedList<>();
-    }
+    private List<String> dictionary = new LinkedList<>();
 
     @Override
     public void afterPropertiesSet() throws Exception {

@@ -29,6 +29,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 import static java.util.Collections.sort;
+import static org.apache.commons.lang3.ObjectUtils.defaultIfNull;
 
 
 @Service
@@ -76,21 +77,20 @@ public class LdapBusinessService implements InitializingBean {
         List<User> exitedActiveUsers = new LinkedList<>();
         List<User> futureExitingUser = new LinkedList<>();
         List<User> activeMailAccounts = new LinkedList<>();
-        try (LDAPConnection connection = ldapConfiguration.createConnection()){
+        try (LDAPConnection connection = ldapConfiguration.createConnection()) {
             connection.bind(managementConfiguration.getUser().getBindDN(),
                 managementConfiguration.getUser().getPassword());
 
             final int userCount = ldapService.getUserCount(connection);
             final int blockSize = 250;
-            List<User> users = null;
             LocalDate today = LocalDate.now();
             LocalDate nearFuture = today.plusWeeks(nextWeeks);
             for (int i = 0; i < userCount; i = i + blockSize) {
-                users = ldapService.getUsers(connection, i, blockSize);
+                List<User> users = ldapService.getUsers(connection, i, blockSize);
                 if (CollectionUtils.isEmpty(users)) {
                     continue;
                 }
-                    
+
                 for (User user : users) {
                     LocalDate exitDate = user.getEmployeeExitDate();
                     if (exitDate != null && user.getSzzStatus() == User.State.active) {
@@ -146,27 +146,19 @@ public class LdapBusinessService implements InitializingBean {
     }
 
     public List<User> getUnmaintainedMailUsers() {
-        List<User> res = userCache.getIfPresent(ACTIVE_MAIL_ON_INACTIVE_USER);
-        if (res == null) {
-            res = Collections.emptyList();
-        }
-        return res;
+        return getUsersByCacheType(ACTIVE_MAIL_ON_INACTIVE_USER);
     }
 
     public List<User> getUnmaintainedExternals() {
-        List<User> res = userCache.getIfPresent(EXITED_ACTIVE_USERS);
-        if (res == null) {
-            res = Collections.emptyList();
-        }
-        return res;
+        return getUsersByCacheType(EXITED_ACTIVE_USERS);
     }
 
     public List<User> getLeavingUsers() {
-        List<User> res = userCache.getIfPresent(NEAR_FUTURE_EXITING);
-        if (res == null) {
-            res = Collections.emptyList();
-        }
-        return res;
+        return getUsersByCacheType(NEAR_FUTURE_EXITING);
+    }
+
+    private List<User> getUsersByCacheType(String type) {
+        return defaultIfNull(userCache.getIfPresent(type), Collections.emptyList());
     }
 
     public void addDefaultGroups(User user) {
@@ -175,7 +167,7 @@ public class LdapBusinessService implements InitializingBean {
             log.debug("No default groups defined, skipped adding user to default groups");
             return;
         }
-        try (LDAPConnection connection = ldapConfiguration.createConnection()){
+        try (LDAPConnection connection = ldapConfiguration.createConnection()) {
             connection.bind(managementConfiguration.getUser().getBindDN(),
                 managementConfiguration.getUser().getPassword());
 
@@ -197,7 +189,7 @@ public class LdapBusinessService implements InitializingBean {
             log.debug("No default groups defined, skipped removing user from default groups");
             return;
         }
-        try (LDAPConnection connection = ldapConfiguration.createConnection()){
+        try (LDAPConnection connection = ldapConfiguration.createConnection()) {
             connection.bind(managementConfiguration.getUser().getBindDN(),
                 managementConfiguration.getUser().getPassword());
 
