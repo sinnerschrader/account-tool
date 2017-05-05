@@ -5,10 +5,6 @@ import com.mitchellbosecke.pebble.spring4.extension.SpringExtension;
 import com.sinnerschrader.s2b.accounttool.config.embedded.LDAPServer;
 import com.sinnerschrader.s2b.accounttool.config.ldap.LdapConfiguration;
 import com.sinnerschrader.s2b.accounttool.config.ldap.LdapManagementConfiguration;
-import com.sinnerschrader.s2b.accounttool.logic.component.encryption.Encrypter;
-import com.sinnerschrader.s2b.accounttool.logic.component.encryption.PasswordEncrypter;
-import com.sinnerschrader.s2b.accounttool.logic.component.encryption.PlainTextEncrypter;
-import com.sinnerschrader.s2b.accounttool.logic.component.encryption.SambaEncrypter;
 import com.sinnerschrader.s2b.accounttool.logic.component.ldap.LdapBusinessService;
 import com.sinnerschrader.s2b.accounttool.logic.component.ldap.LdapBusinessServiceImpl;
 import com.sinnerschrader.s2b.accounttool.logic.component.ldap.LdapService;
@@ -149,20 +145,6 @@ public class ApplicationConfig extends WebMvcConfigurerAdapter {
     @Bean
     public Extension accountToolExtension() {
         return new AccountToolExtension();
-    }
-
-    @Bean(name = "passwordEncrypter")
-    public Encrypter passwordEncrypter() {
-        if (Arrays.asList(environment.getActiveProfiles()).contains("development")) {
-            log.warn("Loading Plaintext crypter - dont use this on production");
-            return new PlainTextEncrypter();
-        }
-        return new PasswordEncrypter();
-    }
-
-    @Bean(name = "sambaEncrypter")
-    public Encrypter sambaEncrypter() {
-        return new SambaEncrypter();
     }
 
     @Bean(name = "ldapServer")

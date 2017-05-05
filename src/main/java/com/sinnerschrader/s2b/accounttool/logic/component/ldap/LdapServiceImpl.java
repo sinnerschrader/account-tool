@@ -5,7 +5,7 @@ import com.google.common.cache.CacheBuilder;
 import com.sinnerschrader.s2b.accounttool.config.authentication.LdapUserDetails;
 import com.sinnerschrader.s2b.accounttool.config.ldap.LdapConfiguration;
 import com.sinnerschrader.s2b.accounttool.config.ldap.LdapGroupPrefixes;
-import com.sinnerschrader.s2b.accounttool.logic.component.encryption.Encrypter;
+import com.sinnerschrader.s2b.accounttool.logic.component.encryption.Encrypt;
 import com.sinnerschrader.s2b.accounttool.logic.component.mapping.ModelMaping;
 import com.sinnerschrader.s2b.accounttool.logic.entity.Group;
 import com.sinnerschrader.s2b.accounttool.logic.entity.User;
@@ -57,12 +57,6 @@ public class LdapServiceImpl implements LdapService {
 
     @Value("${user.appendCompanyOnDisplayName}")
     private boolean appendCompanyOnDisplayName = false;
-
-    @Resource(name = "passwordEncrypter")
-    private Encrypter passwordEncrypter;
-
-    @Resource(name = "sambaEncrypter")
-    private Encrypter sambaEncrypter;
 
     @Resource(name = "userMapping")
     private ModelMaping<User> userMapping;
@@ -338,8 +332,8 @@ public class LdapServiceImpl implements LdapService {
         }
 
         List<Modification> changes = new ArrayList<>();
-        changes.add(new Modification(ModificationType.REPLACE, "userPassword", passwordEncrypter.encrypt(newPassword)));
-        changes.add(new Modification(ModificationType.REPLACE, "sambaNTPassword", sambaEncrypter.encrypt(newPassword)));
+        changes.add(new Modification(ModificationType.REPLACE, "userPassword", Encrypt.INSTANCE.salt(newPassword)));
+        changes.add(new Modification(ModificationType.REPLACE, "sambaNTPassword", Encrypt.INSTANCE.samba(newPassword)));
         changes.add(new Modification(ModificationType.REPLACE, "sambaPwdLastSet", timestamp));
         try {
             LDAPResult result = connection.modify(ldapUser.getDn(), changes);
@@ -487,8 +481,8 @@ public class LdapServiceImpl implements LdapService {
             attributes.add(new Attribute("sambaAcctFlags", sambaFlags));
             attributes.add(new Attribute("sambaPasswordHistory", sambaPWHistory));
             attributes.add(new Attribute("sambaPwdLastSet", sambaTimestamp.toString()));
-            attributes.add(new Attribute("sambaNTPassword", sambaEncrypter.encrypt(password)));
-            attributes.add(new Attribute("userPassword", passwordEncrypter.encrypt(password)));
+            attributes.add(new Attribute("sambaNTPassword", Encrypt.INSTANCE.samba(password)));
+            attributes.add(new Attribute("userPassword", Encrypt.INSTANCE.salt(password)));
             //attributes.add(new Attribute("szzPublicKey", ""));
 
             // Person informations
