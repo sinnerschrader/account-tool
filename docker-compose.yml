@@ -15,7 +15,6 @@ services:
     volumes:
       - '.:/app'
       - 'node-modules:/app/node_modules'
-      - 'target:/app/target'
     ports:
       - '8080:8080'
       - '8081:8081'
@@ -23,4 +22,3 @@ services:
 
 volumes:
   node-modules:
-  target:
