@@ -15,6 +15,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
+import org.springframework.util.CollectionUtils;
 
 import java.security.GeneralSecurityException;
 import java.time.LocalDate;
@@ -98,20 +99,23 @@ public class LdapBusinessService implements InitializingBean {
             LocalDate nearFuture = today.plusWeeks(nextWeeks);
             for (int i = 0; i < userCount; i = i + blockSize) {
                 users = ldapService.getUsers(connection, i, blockSize);
-                if (users != null && !users.isEmpty()) {
-                    for (User user : users) {
-                        LocalDate exitDate = user.getEmployeeExitDate();
-                        if (exitDate != null && user.getSzzStatus() == User.State.active) {
-                            if (exitDate.isBefore(today)) {
-                                exitedActiveUsers.add(user);
-                            } else if (exitDate.isBefore(nearFuture)) {
-                                futureExitingUser.add(user);
-                            }
-                        }
-                        if (user.getSzzStatus() == User.State.inactive && user.getSzzMailStatus() == User.State.active) {
-                            activeMailAccounts.add(user);
+                if (CollectionUtils.isEmpty(users)) {
+                    continue;
+                }
+                    
+                for (User user : users) {
+                    LocalDate exitDate = user.getEmployeeExitDate();
+                    if (exitDate != null && user.getSzzStatus() == User.State.active) {
+                        if (exitDate.isBefore(today)) {
+                            exitedActiveUsers.add(user);
+                        } else if (exitDate.isBefore(nearFuture)) {
+                            futureExitingUser.add(user);
                         }
                     }
+                    if (user.getSzzStatus() == User.State.inactive && user.getSzzMailStatus() == User.State.active) {
+                        activeMailAccounts.add(user);
+                    }
+
                 }
             }
             log.debug("Found {} user who are exited but have active accounts", exitedActiveUsers.size());
