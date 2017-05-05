@@ -75,7 +75,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
             .accessDeniedPage("/403")
             .and()
             .authorizeRequests()
-            .antMatchers("/version", "/license")
+            .antMatchers("/version")
             .permitAll()
             .and()
             .authorizeRequests()

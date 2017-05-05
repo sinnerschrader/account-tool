@@ -8,7 +8,6 @@ import com.sinnerschrader.s2b.accounttool.config.authentication.LdapUserDetails;
 import com.sinnerschrader.s2b.accounttool.config.ldap.LdapConfiguration;
 import com.sinnerschrader.s2b.accounttool.logic.LogService;
 import com.sinnerschrader.s2b.accounttool.logic.component.ldap.LdapService;
-import com.sinnerschrader.s2b.accounttool.logic.component.licences.LicenseSummary;
 import com.sinnerschrader.s2b.accounttool.presentation.RequestUtils;
 import org.apache.catalina.servlet4preview.http.HttpServletRequest;
 import org.ocpsoft.prettytime.PrettyTime;
@@ -39,9 +38,6 @@ public class MainController {
 
     @Autowired
     private Environment environment;
-
-    @Autowired
-    private LicenseSummary licenseSummary;
 
     @Autowired
     private ApplicationContext applicationContext;
@@ -123,13 +119,6 @@ public class MainController {
         model.addObject("applicationContextRunningSince", new PrettyTime().formatUnrounded(contextStartupDate));
         model.addObject("activeProfiles", activeProfiles);
         return model;
-    }
-
-    @RequestMapping(path = "/license")
-    public ModelAndView licences() {
-        return new ModelAndView("pages/license.html")
-            .addObject("licenseSummary", licenseSummary)
-            .addObject("env", environment);
     }
 
     @RequestMapping(path = "/csp-report", method = RequestMethod.POST)
