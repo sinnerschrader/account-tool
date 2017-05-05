@@ -57,18 +57,6 @@ public class LdapBusinessService implements InitializingBean {
     @Autowired
     private MailService mailService;
 
-    protected LDAPConnection createManagementConnection() throws LDAPException {
-        LDAPConnection connection = null;
-        try {
-            connection = ldapConfiguration.createConnection();
-            connection.bind(managementConfiguration.getUser().getBindDN(),
-                managementConfiguration.getUser().getPassword());
-        } catch (GeneralSecurityException e) {
-            log.error("Could not open a management connection to ldap", e);
-        }
-        return connection;
-    }
-
     @Override
     public void afterPropertiesSet() throws Exception {
         userCache = CacheBuilder.newBuilder()
@@ -85,13 +73,14 @@ public class LdapBusinessService implements InitializingBean {
 
         log.debug("Updating the informations about unmaintained accounts");
         LocalDateTime startTime = LocalDateTime.now();
-        LDAPConnection connection = null;
         final int nextWeeks = managementConfiguration.getLeavingUsersInCW();
         List<User> exitedActiveUsers = new LinkedList<>();
         List<User> futureExitingUser = new LinkedList<>();
         List<User> activeMailAccounts = new LinkedList<>();
-        try {
-            connection = createManagementConnection();
+        try (LDAPConnection connection = ldapConfiguration.createConnection()){
+            connection.bind(managementConfiguration.getUser().getBindDN(),
+                managementConfiguration.getUser().getPassword());
+
             final int userCount = ldapService.getUserCount(connection);
             final int blockSize = 250;
             List<User> users = null;
@@ -132,12 +121,8 @@ public class LdapBusinessService implements InitializingBean {
 
             log.info("Updated the informations about unmaintained accounts in {}",
                 DateTimeHelper.getDurationString(startTime, LocalDateTime.now(), ChronoUnit.MILLIS));
-        } catch (LDAPException e) {
+        } catch (LDAPException | GeneralSecurityException e) {
             log.error("Could not update unmaintained users", e);
-        } finally {
-            if (connection != null) {
-                connection.close();
-            }
         }
     }
 
@@ -186,14 +171,15 @@ public class LdapBusinessService implements InitializingBean {
     }
 
     public void addDefaultGroups(User user) {
-        LDAPConnection connection = null;
         List<String> defaultGroups = ldapConfiguration.getDefaultGroups();
         if (defaultGroups == null || defaultGroups.isEmpty()) {
             log.debug("No default groups defined, skipped adding user to default groups");
             return;
         }
-        try {
-            connection = createManagementConnection();
+        try (LDAPConnection connection = ldapConfiguration.createConnection()){
+            connection.bind(managementConfiguration.getUser().getBindDN(),
+                managementConfiguration.getUser().getPassword());
+
             for (String groupCn : defaultGroups) {
                 Group group = ldapService.getGroupByCN(connection, groupCn);
                 if (group != null) {
@@ -201,24 +187,21 @@ public class LdapBusinessService implements InitializingBean {
                 }
             }
             log.debug("Added user to {} default groups", defaultGroups.size());
-        } catch (LDAPException le) {
-            log.error("Could not add user to default groups", le);
-        } finally {
-            if (connection != null) {
-                connection.close();
-            }
+        } catch (LDAPException | GeneralSecurityException e) {
+            log.error("Could not add user to default groups", e);
         }
     }
 
     public void delDefaulGroups(User user) {
-        LDAPConnection connection = null;
         List<String> defaultGroups = ldapConfiguration.getDefaultGroups();
         if (defaultGroups == null || defaultGroups.isEmpty()) {
             log.debug("No default groups defined, skipped removing user from default groups");
             return;
         }
-        try {
-            connection = createManagementConnection();
+        try (LDAPConnection connection = ldapConfiguration.createConnection()){
+            connection.bind(managementConfiguration.getUser().getBindDN(),
+                managementConfiguration.getUser().getPassword());
+
             for (String groupCn : defaultGroups) {
                 Group group = ldapService.getGroupByCN(connection, groupCn);
                 if (group != null) {
@@ -226,12 +209,8 @@ public class LdapBusinessService implements InitializingBean {
                 }
             }
             log.debug("Removed user from {} default groups", defaultGroups.size());
-        } catch (LDAPException le) {
-            log.error("Could not remove user from default groups", le);
-        } finally {
-            if (connection != null) {
-                connection.close();
-            }
+        } catch (LDAPException | GeneralSecurityException e) {
+            log.error("Could not remove user from default groups", e);
         }
     }
 
