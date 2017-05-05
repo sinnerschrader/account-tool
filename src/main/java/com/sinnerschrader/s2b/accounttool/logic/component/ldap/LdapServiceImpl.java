@@ -332,8 +332,8 @@ public class LdapServiceImpl implements LdapService {
         }
 
         List<Modification> changes = new ArrayList<>();
-        changes.add(new Modification(ModificationType.REPLACE, "userPassword", Encrypt.INSTANCE.salt(newPassword)));
-        changes.add(new Modification(ModificationType.REPLACE, "sambaNTPassword", Encrypt.INSTANCE.samba(newPassword)));
+        changes.add(new Modification(ModificationType.REPLACE, "userPassword", Encrypt.salt(newPassword)));
+        changes.add(new Modification(ModificationType.REPLACE, "sambaNTPassword", Encrypt.samba(newPassword)));
         changes.add(new Modification(ModificationType.REPLACE, "sambaPwdLastSet", timestamp));
         try {
             LDAPResult result = connection.modify(ldapUser.getDn(), changes);
@@ -481,8 +481,8 @@ public class LdapServiceImpl implements LdapService {
             attributes.add(new Attribute("sambaAcctFlags", sambaFlags));
             attributes.add(new Attribute("sambaPasswordHistory", sambaPWHistory));
             attributes.add(new Attribute("sambaPwdLastSet", sambaTimestamp.toString()));
-            attributes.add(new Attribute("sambaNTPassword", Encrypt.INSTANCE.samba(password)));
-            attributes.add(new Attribute("userPassword", Encrypt.INSTANCE.salt(password)));
+            attributes.add(new Attribute("sambaNTPassword", Encrypt.samba(password)));
+            attributes.add(new Attribute("userPassword", Encrypt.salt(password)));
             //attributes.add(new Attribute("szzPublicKey", ""));
 
             // Person informations

@@ -7,16 +7,15 @@ import sun.security.provider.MD4
 import java.io.UnsupportedEncodingException
 
 object Encrypt {
-
-    fun salt(password: String) = salt(password, RandomStringUtils.randomAlphanumeric(16))
-    fun salt(password: String, salt: String): String {
+    @JvmStatic fun salt(password: String) = salt(password, RandomStringUtils.randomAlphanumeric(16))
+    @JvmStatic fun salt(password: String, salt: String): String {
         if (password.isEmpty() or salt.isEmpty()) {
             throw IllegalArgumentException("Password and salt can't be null or empty")
         }
         return "{CRYPT}" + Crypt.crypt(password, "$6$" + salt)
     }
 
-    fun samba(password: String): String {
+    @JvmStatic fun samba(password: String): String {
         if (password.isEmpty()) {
             throw IllegalArgumentException("Password can't be null or empty")
         }
