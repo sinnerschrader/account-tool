@@ -17,9 +17,11 @@ public class AuthorizationService {
     private LdapConfiguration ldapConfiguration;
 
     private boolean isMemberOf(Collection<? extends GrantedAuthority> authorities, String group) {
-        for (GrantedAuthority ga : authorities)
-            if (StringUtils.equals(ga.getAuthority(), group))
+        for (GrantedAuthority ga : authorities) {
+            if (StringUtils.equals(ga.getAuthority(), group)) {
                 return true;
+            }
+        }
         return false;
     }
 
