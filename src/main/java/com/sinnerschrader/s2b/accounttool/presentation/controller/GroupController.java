@@ -25,8 +25,8 @@ import javax.servlet.http.HttpServletRequest;
 import java.util.LinkedList;
 import java.util.List;
 
-import static com.sinnerschrader.s2b.accounttool.logic.component.mail.MailService.Change.ADD;
-import static com.sinnerschrader.s2b.accounttool.logic.component.mail.MailService.Change.REMOVE;
+import static com.sinnerschrader.s2b.accounttool.logic.component.mail.MailService.Companion.Change.ADD;
+import static com.sinnerschrader.s2b.accounttool.logic.component.mail.MailService.Companion.Change.REMOVE;
 
 
 /**

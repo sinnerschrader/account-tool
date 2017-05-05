@@ -20,6 +20,8 @@ class MailService {
 
     companion object {
         private val log = LoggerFactory.getLogger(MailService::class.java)
+
+        enum class Change {ADD, REMOVE }
     }
 
     @Autowired
@@ -68,6 +70,13 @@ class MailService {
             "adminGroup" to adminGroup,
             "publicDomain" to publicDomain))
 
+    fun sendMailForGroupChanged(recipients: List<User>, currentUser: LdapUserDetails, group: Group, user: User, change: Change) =
+        sendMail(recipients, "groupChanged", mapOf(
+            "currentUser" to currentUser,
+            "group" to group,
+            "user" to user,
+            "publicDomain" to publicDomain,
+            "change" to change))
 
     fun sendNotificationOnUnmaintainedAccounts(recipients: Array<String>, unmaintainedUsers: Map<String, List<User>>) =
         sendMail(recipients, "unmaintainedUsers", mapOf(
