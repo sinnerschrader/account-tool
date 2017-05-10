@@ -1,6 +1,18 @@
 {% extends "pages/template/authenticated.html" %}
 
+
+{% macro inputText(label, fieldName, value, pattern=".*", errorMsg="", halfWidth=true, readonly=false) %}
+<div class="s2act-textfield {{ halfWidth ? 's2act-textfield__halfWidth' : '' }} mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+    <input class="mdl-textfield__input" type="text" name="{{ fieldName }}" id="{{ fieldName }}"
+           value="{{ value }}" pattern="{{ pattern }}" {{ readonly ? 'readonly' : '' }}>
+    <label class="mdl-textfield__label" for="{{ fieldName }}">{{ label }}</label>
+    <span class="mdl-textfield__error">{{ errorMsg }}</span>
+</div>
+{% endmacro %}
+
+
 {% block content %}
+
 <form action="/user/edit/{{user.uid}}" method="post">
     <input type="hidden" name="{{request.getAttribute('_csrf').parameterName}}"
            value="{{request.getAttribute('_csrf').token}}"/>
@@ -33,71 +45,22 @@
                 <div class="mdl-selectfield__icon"><i class="material-icons">arrow_drop_down</i></div>
                 <label class="mdl-selectfield__label" for="company">Company</label>
             </div>
-            <div
-                class="s2act-textfield s2act-textfield__halfWidth mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
-                <input class="mdl-textfield__input" type="text" name="firstName" id="firstName"
-                       value="{{ editUserForm.firstName }}" readonly>
-                <label class="mdl-textfield__label" for="firstName">Firstname *</label>
-            </div>
-            <div
-                class="s2act-textfield s2act-textfield__halfWidth mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
-                <input class="mdl-textfield__input" type="text" name="lastName" id="lastName"
-                       value="{{ editUserForm.lastName }}" readonly>
-                <label class="mdl-textfield__label" for="lastName">Lastname *</label>
-            </div>
-            <div
-                class="s2act-textfield s2act-textfield__halfWidth mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
-                <input class="mdl-textfield__input" type="text" name="uid" id="uid"
-                       value="{{ editUserForm.uid }}" pattern="\D\D\D\D\D\D\D?\D?"
-                       readonly>
-                <label class="mdl-textfield__label" for="uid">Username</label>
-                <span class="mdl-textfield__error">Please enter the uid with six, seven or eight characters</span>
-            </div>
-            <div
-                class="s2act-textfield s2act-textfield__halfWidth mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
-                <input class="mdl-textfield__input" type="text" name="birthDate" id="birthDate"
-                       value="{{ editUserForm.birthDate }}" pattern="\d\d\.\d\d">
-                <label class="mdl-textfield__label" for="birthDate">Birthdate</label>
-                <span class="mdl-textfield__error">Please enter the Birthdate in pattern dd.MM</span>
-            </div>
-            <div class="s2act-textfield mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
-                <input class="mdl-textfield__input" type="email" name="email" id="email"
-                       value="{{ editUserForm.email }}" readonly>
-                <label class="mdl-textfield__label" for="email">E-Mail</label>
-            </div>
-            <div
-                class="s2act-textfield s2act-textfield__halfWidth mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
-                <input class="mdl-textfield__input" type="tel" name="telephoneNumber" id="telephoneNumber"
-                       value="{{ editUserForm.telephoneNumber }}" pattern="\+?[0-9 ()]+">
-                <label class="mdl-textfield__label" for="telephoneNumber">Telephone</label>
-            </div>
-            <div
-                class="s2act-textfield s2act-textfield__halfWidth mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
-                <input class="mdl-textfield__input" type="tel" name="mobileNumber" id="mobileNumber"
-                       value="{{ editUserForm.mobileNumber }}" pattern="\+?[0-9 ()]+">
-                <label class="mdl-textfield__label" for="mobileNumber">Mobile</label>
-                <span class="mdl-textfield__error">Please define a valid mobile number</span>
-            </div>
-            <div
-                class="s2act-textfield s2act-textfield__halfWidth mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
-                <input class="mdl-textfield__input" type="text" name="passwordChange" id="passwordChange"
-                       value="{{ user.prettyLastPasswordChange }}" disabled="disabled">
-                <label class="mdl-textfield__label" for="passwordChange">Last password change</label>
-            </div>
-            <div
-                class="s2act-textfield s2act-textfield__halfWidth mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
-                <input class="mdl-textfield__input" type="text" name="modified" id="modified"
-                       value="{{ user.prettyModifytimestamp }} by {{ user.prettyModifiersName }}" disabled="disabled">
-                <label class="mdl-textfield__label" for="modified">Last modified</label>
-            </div>
+
+            {{ inputText("FirstName *", "firstName", editUserForm.firstName) }}
+            {{ inputText("Lastname *", "lastName", editUserForm.lastName) }}
+            {{ inputText("Username", "uid", editUserForm.uid, pattern="\D\D\D\D\D\D\D?\D?", errorMsg="Please enter the uid with six, seven or eight characters") }}
+            {{ inputText("Birthdate", "birthDate", editUserForm.birthDate, pattern="\d\d\.\d\d", errorMsg="Please enter the Birthdate in pattern dd.MM") }}
+            {{ inputText("E-Mail *", "email", editUserForm.email, readonly=true, halfWidth=false) }}
+            {{ inputText("Telephone", "telephoneNumber", editUserForm.telephoneNumber, pattern="\+?[0-9 ()]+") }}
+            {{ inputText("Mobile", "mobileNumber", editUserForm.mobileNumber, pattern="\+?[0-9 ()]+", errorMsg="Please define a valid mobile number") }}
+            {{ inputText("Last password change", "passwordChange", user.prettyLastPasswordChange, readonly=true) }}
+            {{ inputText("Last modified", "modified", user.prettyModifytimestamp + " by " + user.prettyModifiersName, readonly=true) }}
+
         </div>
         <div class="mdl-cell mdl-cell--6-col mdl-cell--4-col-tablet mdl-cell--4-col-phone">
-            <div class="s2act-textfield mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
-                <input class="mdl-textfield__input" type="tel" name="employeeNumber" id="employeeNumber"
-                       value="{{ editUserForm.employeeNumber }}">
-                <label class="mdl-textfield__label" for="employeeNumber">Employee number</label>
-                <span class="mdl-textfield__error">Please define a valid mobile number</span>
-            </div>
+
+            {{ inputText("Employee number", "employeeeNumber", editUserForm.employeeNumber, errorMsg="Please define a valid mobile number", halfWidth=false) }}
+
             <div class="s2act-selectfield mdl-selectfield mdl-js-selectfield mdl-selectfield--floating-label">
                 <select id="team" name="team" class="mdl-selectfield__select">
                     <option value=""></option>
@@ -108,11 +71,9 @@
                 <div class="mdl-selectfield__icon"><i class="material-icons">arrow_drop_down</i></div>
                 <label class="mdl-selectfield__label" for="team">Team *</label>
             </div>
-            <div class="s2act-textfield mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
-                <input class="mdl-textfield__input" type="text" name="title" id="title"
-                       value="{{ editUserForm.title }}">
-                <label class="mdl-textfield__label" for="title">Title *</label>
-            </div>
+
+            {{ inputText("Title *", "title", editUserForm.title, halfWidth=false) }}
+
             <div class="s2act-selectfield mdl-selectfield mdl-js-selectfield mdl-selectfield--floating-label">
                 <select id="location" name="location" class="mdl-selectfield__select">
                     <option value=""></option>
@@ -133,22 +94,9 @@
                 <div class="mdl-selectfield__icon"><i class="material-icons">arrow_drop_down</i></div>
                 <label class="mdl-selectfield__label" for="type">Type *</label>
             </div>
-            <div
-                class="s2act-textfield s2act-textfield__halfWidth mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
-                <input class="mdl-textfield__input" type="text" name="entryDate" id="entryDate"
-                       value="{{ editUserForm.entryDate }}"
-                       pattern="[0-9][0-9]\.[0-9][0-9]\.[0-9][0-9][0-9][0-9]">
-                <label class="mdl-textfield__label" for="entryDate">Entry date *</label>
-                <span class="mdl-textfield__error">Please enter the entry date in pattern dd.MM.yyyy</span>
-            </div>
-            <div
-                class="s2act-textfield s2act-textfield__halfWidth mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
-                <input class="mdl-textfield__input" type="text" name="exitDate" id="exitDate"
-                       value="{{ editUserForm.exitDate }}"
-                       pattern="[0-9][0-9]\.[0-9][0-9]\.[0-9][0-9][0-9][0-9]">
-                <label class="mdl-textfield__label" for="exitDate">Exit date *</label>
-                <span class="mdl-textfield__error">Please enter the exitdate in pattern dd.MM.yyyy</span>
-            </div>
+
+            {{ inputText("Entry date *", "entryDate", editUserForm.entryDate, "[0-9][0-9]\.[0-9][0-9]\.[0-9][0-9][0-9][0-9]", errorMsg="Please enter the entry date in pattern dd.MM.yyyy") }}
+            {{ inputText("Exit date *", "exitDate", editUserForm.exitDate, "[0-9][0-9]\.[0-9][0-9]\.[0-9][0-9][0-9][0-9]", errorMsg="Please enter the exit date in pattern dd.MM.yyyy") }}
         </div>
         <div class="mdl-cell mdl-cell--4-col mdl-cell--4-col-tablet mdl-cell--4-col-phone">
             <div
