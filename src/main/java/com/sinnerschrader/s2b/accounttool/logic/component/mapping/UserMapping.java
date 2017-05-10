@@ -9,7 +9,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.CollectionUtils;
 
-import java.time.DateTimeException;
 import java.time.LocalDate;
 import java.util.Arrays;
 import java.util.Map;
@@ -95,11 +94,9 @@ public class UserMapping implements ModelMaping<User> {
     private LocalDate parseDate(String dn, boolean required, Integer year, Integer month, Integer day) {
         try {
             return LocalDate.of(year, month, day);
-        } catch (DateTimeException dte) {
-            log.error("Could not parse date on account " + dn, dte);
         } catch (Exception e) {
             if (required) {
-                log.error("Date seems to be uncomplete on account " + dn, e);
+                log.warn("Could not parse date [dn={},required={},year={},month={},day={}]", dn, required, year, month, day);
             }
         }
         return null;
