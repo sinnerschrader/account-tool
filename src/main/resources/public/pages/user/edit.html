@@ -24,6 +24,11 @@
 </div>
 {% endmacro %}
 
+{% macro inputButton(label, fieldName, color="mdl-button--primary") %}
+<input class="s2act-button--right mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect {{ color }}"
+    type="submit" name="{{ fieldName }}" value="{{ label }}"/>
+{% endmacro %}
+
 
 {% block content %}
 
@@ -85,21 +90,9 @@
         </div>
         <div class="mdl-cell mdl-cell--12-col mdl-cell--8-col-tablet mdl-cell--4-col-phone">
             <div class="s2act-buttonRow">
-                <input
-                    class="s2act-button--right mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--primary"
-                    type="submit" name="save" value="Save"/>
-                {% if editUserForm.status equals 'active' %}
-                <input
-                    class="s2act-button--right mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-color--red"
-                    type="submit" name="deactivateUser" value="Deactivate"/>
-                {% else %}
-                <input
-                    class="s2act-button--right mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--accent"
-                    type="submit" name="activateUser" value="Activate"/>
-                {% endif %}
-                <input
-                    class="s2act-button--right mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--accent"
-                    type="submit" name="resetPassword" value="Reset Password"/>
+                {{ inputButton("Save", "save") }}
+                {{ editUserForm.status equals 'active' ? inputButton("Deactivate", "deactivateUser", "mdl-color--red") : inputButton("Activate", "activateUser", "mdl-button--accent") }}
+                {{ inputButton("Reset Password", "resetPassword", "mdl-button--accent") }}
             </div>
         </div>
         <div class="mdl-cell mdl-cell--12-col mdl-cell--8-col-tablet mdl-cell--4-col-phone">
