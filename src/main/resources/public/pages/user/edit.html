@@ -11,6 +11,20 @@
 {% endmacro %}
 
 
+{% macro inputSelect(label, fieldName, options, value, optionsAsMap=false) %}
+<div class="s2act-selectfield mdl-selectfield mdl-js-selectfield mdl-selectfield--floating-label">
+    <select id="{{ fieldName }}" name="{{ fieldName }}" class="mdl-selectfield__select">
+        <option value=""></option>
+        {% for option in options %}
+        <option value="{{ optionsAsMap ? option.key : option }}" {{ isSelected(value, optionsAsMap ? option.key : option) }}>{{ optionsAsMap ? option.value : option }}</option>
+        {% endfor %}
+    </select>
+    <div class="mdl-selectfield__icon"><i class="material-icons">arrow_drop_down</i></div>
+    <label class="mdl-selectfield__label" for="{{ fieldName }}">{{ label }}</label>
+</div>
+{% endmacro %}
+
+
 {% block content %}
 
 <form action="/user/edit/{{user.uid}}" method="post">
@@ -34,18 +48,8 @@
         </div>
         {% endif %}
         <div class="mdl-cell mdl-cell--6-col mdl-cell--4-col-tablet mdl-cell--4-col-phone mdl-cell--order-0-phone">
-            <div class="s2act-selectfield mdl-selectfield mdl-js-selectfield mdl-selectfield--floating-label">
-                <select id="company" name="company" class="mdl-selectfield__select">
-                    <option value=""></option>
-                    {% for company in companies %}
-                    <option value="{{company.key}}" {{isSelected(editUserForm.company,company.key)}}>{{company.value}}
-                    </option>
-                    {% endfor %}
-                </select>
-                <div class="mdl-selectfield__icon"><i class="material-icons">arrow_drop_down</i></div>
-                <label class="mdl-selectfield__label" for="company">Company</label>
-            </div>
 
+            {{ inputSelect("Company", "company", companies, editUserForm.company, optionsAsMap=true) }}
             {{ inputText("FirstName *", "firstName", editUserForm.firstName) }}
             {{ inputText("Lastname *", "lastName", editUserForm.lastName) }}
             {{ inputText("Username", "uid", editUserForm.uid, pattern="\D\D\D\D\D\D\D?\D?", errorMsg="Please enter the uid with six, seven or eight characters") }}
@@ -60,41 +64,10 @@
         <div class="mdl-cell mdl-cell--6-col mdl-cell--4-col-tablet mdl-cell--4-col-phone">
 
             {{ inputText("Employee number", "employeeeNumber", editUserForm.employeeNumber, errorMsg="Please define a valid mobile number", halfWidth=false) }}
-
-            <div class="s2act-selectfield mdl-selectfield mdl-js-selectfield mdl-selectfield--floating-label">
-                <select id="team" name="team" class="mdl-selectfield__select">
-                    <option value=""></option>
-                    {% for department in departments %}
-                    <option value="{{department}}" {{isSelected(editUserForm.team,department)}}>{{department}}</option>
-                    {% endfor %}
-                </select>
-                <div class="mdl-selectfield__icon"><i class="material-icons">arrow_drop_down</i></div>
-                <label class="mdl-selectfield__label" for="team">Team *</label>
-            </div>
-
+            {{ inputSelect("Team *", "team", departments, editUserForm.team) }}
             {{ inputText("Title *", "title", editUserForm.title, halfWidth=false) }}
-
-            <div class="s2act-selectfield mdl-selectfield mdl-js-selectfield mdl-selectfield--floating-label">
-                <select id="location" name="location" class="mdl-selectfield__select">
-                    <option value=""></option>
-                    {% for location in locations %}
-                    <option value="{{location}}" {{isSelected(editUserForm.location,location)}}>{{location}}</option>
-                    {% endfor %}
-                </select>
-                <div class="mdl-selectfield__icon"><i class="material-icons">arrow_drop_down</i></div>
-                <label class="mdl-selectfield__label" for="location">Location *</label>
-            </div>
-            <div class="s2act-selectfield mdl-selectfield mdl-js-selectfield mdl-selectfield--floating-label">
-                <select id="type" name="type" class="mdl-selectfield__select">
-                    <option value=""></option>
-                    {% for type in types %}
-                    <option value="{{type}}" {{isSelected(editUserForm.type,type)}}>{{type}}</option>
-                    {% endfor %}
-                </select>
-                <div class="mdl-selectfield__icon"><i class="material-icons">arrow_drop_down</i></div>
-                <label class="mdl-selectfield__label" for="type">Type *</label>
-            </div>
-
+            {{ inputSelect("Location *", "location", locations, editUserForm.location) }}
+            {{ inputSelect("Type *", "type", types, editUserForm.type) }}
             {{ inputText("Entry date *", "entryDate", editUserForm.entryDate, "[0-9][0-9]\.[0-9][0-9]\.[0-9][0-9][0-9][0-9]", errorMsg="Please enter the entry date in pattern dd.MM.yyyy") }}
             {{ inputText("Exit date *", "exitDate", editUserForm.exitDate, "[0-9][0-9]\.[0-9][0-9]\.[0-9][0-9][0-9][0-9]", errorMsg="Please enter the exit date in pattern dd.MM.yyyy") }}
         </div>
