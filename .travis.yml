@@ -28,9 +28,7 @@ before_script:
   - nvm use $NODE_VERSION
 
 script:
-  - ./mvnw --batch-mode clean
-  - ./mvnw --batch-mode -P security org.owasp:dependency-check-maven:check
-  - ./mvnw --batch-mode package
+  - ./mvnw --batch-mode clean package
 
 before_deploy:
   - ./mvnw --batch-mode -P release clean package

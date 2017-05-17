@@ -414,32 +414,6 @@
     </build>
     <profiles>
         <profile>
-            <id>security</id>
-            <build>
-                <plugins>
-                    <plugin>
-                        <groupId>org.owasp</groupId>
-                        <artifactId>dependency-check-maven</artifactId>
-                        <configuration>
-                            <cveValidForHours>14</cveValidForHours>
-                            <failBuildOnCVSS>11</failBuildOnCVSS>
-                            <showSummary>true</showSummary>
-                            <suppressionFile>${project.basedir}/.dependency-suppressions.xml</suppressionFile>
-                        </configuration>
-                        <executions>
-                            <execution>
-                                <id>check-dependencies</id>
-                                <phase>prepare-package</phase>
-                                <goals>
-                                    <goal>check</goal>
-                                </goals>
-                            </execution>
-                        </executions>
-                    </plugin>
-                </plugins>
-            </build>
-        </profile>
-        <profile>
             <id>release</id>
             <properties>
                 <!-- Remove suffix to perform a clean semver version -->
