@@ -50,7 +50,7 @@ public class GroupMapping implements ModelMaping<Group> {
             return new GroupOfNames(
                 entry.getDN(),
                 cn,
-                entry.getAttributeValue("description"),
+                defaultString(entry.getAttributeValue("description")),
                 unique,
                 getGroupClassification(cn),
                 asList(defaultIfNull(entry.getAttributeValues(memberAttribute), EMPTY_STRING_ARRAY))
