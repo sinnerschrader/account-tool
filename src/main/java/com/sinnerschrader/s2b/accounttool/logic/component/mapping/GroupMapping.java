@@ -14,6 +14,7 @@ import java.util.List;
 import static java.util.Arrays.asList;
 import static org.apache.commons.lang3.ArrayUtils.EMPTY_STRING_ARRAY;
 import static org.apache.commons.lang3.ObjectUtils.defaultIfNull;
+import static org.apache.commons.lang3.StringUtils.defaultString;
 
 
 /**
@@ -35,7 +36,7 @@ public class GroupMapping implements ModelMaping<Group> {
                 entry.getDN(),
                 cn,
                 entry.getAttributeValueAsInteger("gid"),
-                entry.getAttributeValue("description"),
+                defaultString(entry.getAttributeValue("description")),
                 getGroupClassification(cn),
                 asList(defaultIfNull(entry.getAttributeValues("memberUid"), EMPTY_STRING_ARRAY))
             );
