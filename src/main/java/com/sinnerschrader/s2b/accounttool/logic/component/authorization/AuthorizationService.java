@@ -17,11 +17,9 @@ public class AuthorizationService {
     private LdapConfiguration ldapConfiguration;
 
     private boolean isMemberOf(Collection<? extends GrantedAuthority> authorities, String group) {
-        for (GrantedAuthority ga : authorities) {
-            if (StringUtils.equals(ga.getAuthority(), group)) {
+        for (GrantedAuthority ga : authorities)
+            if (StringUtils.equals(ga.getAuthority(), group))
                 return true;
-            }
-        }
         return false;
     }
 
@@ -30,7 +28,10 @@ public class AuthorizationService {
     }
 
     public boolean isUserAdministration(LdapUserDetails user) {
-        return isMemberOf(user.getAuthorities(), ldapConfiguration.getPermissions().getUserAdminGroup());
+        for (String userAdminGroup : ldapConfiguration.getPermissions().getUserAdminGroups())
+            if (isMemberOf(user.getAuthorities(), userAdminGroup))
+                return true;
+        return false;
     }
 
     public boolean isGroupAdmin(LdapUserDetails user, String groupCn) {

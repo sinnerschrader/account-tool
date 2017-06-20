@@ -6,6 +6,8 @@ import com.sinnerschrader.s2b.accounttool.logic.entity.GroupOfNames;
 import com.sinnerschrader.s2b.accounttool.logic.entity.PosixGroup;
 import com.unboundid.ldap.sdk.SearchResultEntry;
 import org.apache.commons.lang3.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.Collection;
@@ -22,6 +24,8 @@ import static org.apache.commons.lang3.StringUtils.defaultString;
  */
 public class GroupMapping implements ModelMaping<Group> {
 
+    private static final Logger LOG = LoggerFactory.getLogger(GroupMapping.class);
+
     @Autowired
     private LdapConfiguration ldapConfiguration;
 
@@ -29,32 +33,38 @@ public class GroupMapping implements ModelMaping<Group> {
     public Group map(SearchResultEntry entry) {
         if (entry == null)
             return null;
-        final List<String> objectClasses = asList(entry.getObjectClassValues());
-        final String cn = entry.getAttributeValue("cn");
-        if (isPosixGroup(objectClasses)) {
-            return new PosixGroup(
-                entry.getDN(),
-                cn,
-                entry.getAttributeValueAsInteger("gid"),
-                defaultString(entry.getAttributeValue("description")),
-                getGroupClassification(cn),
-                asList(defaultIfNull(entry.getAttributeValues("memberUid"), EMPTY_STRING_ARRAY))
-            );
-        }
-        final boolean unique = isGroupOfUniqueNames(objectClasses);
-        if (unique || isGroupOfNames(objectClasses)) {
-            final String memberAttribute = unique
-                ? Group.GroupType.GroupOfUniqueNames.getMemberAttritube()
-                : Group.GroupType.GroupOfNames.getMemberAttritube();
 
-            return new GroupOfNames(
-                entry.getDN(),
-                cn,
-                defaultString(entry.getAttributeValue("description")),
-                unique,
-                getGroupClassification(cn),
-                asList(defaultIfNull(entry.getAttributeValues(memberAttribute), EMPTY_STRING_ARRAY))
-            );
+        try {
+            final List<String> objectClasses = asList(entry.getObjectClassValues());
+            final String cn = entry.getAttributeValue("cn");
+            if (isPosixGroup(objectClasses)) {
+                return new PosixGroup(
+                    entry.getDN(),
+                    cn,
+                    entry.getAttributeValueAsInteger("gid"),
+                    defaultString(entry.getAttributeValue("description")),
+                    getGroupClassification(cn),
+                    asList(defaultIfNull(entry.getAttributeValues("memberUid"), EMPTY_STRING_ARRAY))
+                );
+            }
+            final boolean unique = isGroupOfUniqueNames(objectClasses);
+            if (unique || isGroupOfNames(objectClasses)) {
+                final String memberAttribute = unique
+                    ? Group.GroupType.GroupOfUniqueNames.getMemberAttritube()
+                    : Group.GroupType.GroupOfNames.getMemberAttritube();
+
+                return new GroupOfNames(
+                    entry.getDN(),
+                    cn,
+                    defaultString(entry.getAttributeValue("description")),
+                    unique,
+                    getGroupClassification(cn),
+                    asList(defaultIfNull(entry.getAttributeValues(memberAttribute), EMPTY_STRING_ARRAY))
+                );
+            }
+        } catch(Exception e){
+            LOG.error("failed to map: " + entry.getDN(), e);
+            return null;
         }
         throw new IllegalArgumentException("Provided result entry is not supported. Please call isCompatible before.");
     }

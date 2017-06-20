@@ -14,6 +14,7 @@ import java.util.Arrays;
 import java.util.Map;
 
 import static org.apache.commons.lang3.ObjectUtils.defaultIfNull;
+import static org.apache.commons.lang3.StringUtils.defaultString;
 
 
 /**
@@ -45,41 +46,46 @@ public class UserMapping implements ModelMaping<User> {
             entry.getAttributeValueAsInteger("szzExitMonth"),
             entry.getAttributeValueAsInteger("szzExitDay"));
 
-        return new User(
-            dn,
-            entry.getAttributeValue("uid"),
-            entry.getAttributeValueAsInteger("uidNumber"),
-            entry.getAttributeValueAsInteger("gidNumber"),
-            entry.getAttributeValue("displayName"),
-            entry.getAttributeValue("gecos"),
-            entry.getAttributeValue("cn"),
-            entry.getAttributeValue("givenName"),
-            entry.getAttributeValue("sn"),
-            entry.getAttributeValue("homeDirectory"),
-            entry.getAttributeValue("loginShell"),
-            birthDate,
-            entry.getAttributeValue("sambaSID"),
-            entry.getAttributeValue("sambaPasswordHistory"),
-            entry.getAttributeValue("sambaAcctFlags"),
-            entry.getAttributeValue("mail"),
-            User.State.Companion.fromString(entry.getAttributeValue("szzStatus")),
-            User.State.Companion.fromString(entry.getAttributeValue("szzMailStatus")),
-            entry.getAttributeValueAsLong("sambaPwdLastSet"),
-            entryDate,
-            exitDate,
-            entry.getAttributeValue("ou"),
-            entry.getAttributeValue("description"),
-            defaultIfNull(entry.getAttributeValue("telephoneNumber"), ""),
-            defaultIfNull(entry.getAttributeValue("mobile"), ""),
-            entry.getAttributeValue("employeeNumber"),
-            entry.getAttributeValue("title"),
-            entry.getAttributeValue("l"),
-            entry.getAttributeValue("szzPublicKey"),
-            company.getValue(),
-            company.getKey(),
-            entry.getAttributeValue("modifiersName"),
-            entry.getAttributeValue("modifytimestamp")
-        );
+        try {
+            return new User(
+                dn,
+                entry.getAttributeValue("uid"),
+                entry.getAttributeValueAsInteger("uidNumber"),
+                entry.getAttributeValueAsInteger("gidNumber"),
+                entry.getAttributeValue("displayName"),
+                entry.getAttributeValue("gecos"),
+                entry.getAttributeValue("cn"),
+                entry.getAttributeValue("givenName"),
+                entry.getAttributeValue("sn"),
+                entry.getAttributeValue("homeDirectory"),
+                entry.getAttributeValue("loginShell"),
+                birthDate,
+                entry.getAttributeValue("sambaSID"),
+                entry.getAttributeValue("sambaPasswordHistory"),
+                entry.getAttributeValue("sambaAcctFlags"),
+                entry.getAttributeValue("mail"),
+                User.State.Companion.fromString(entry.getAttributeValue("szzStatus")),
+                User.State.Companion.fromString(entry.getAttributeValue("szzMailStatus")),
+                defaultIfNull(entry.getAttributeValueAsLong("sambaPwdLastSet"), 0L),
+                entryDate,
+                exitDate,
+                entry.getAttributeValue("ou"),
+                entry.getAttributeValue("description"),
+                defaultString(entry.getAttributeValue("telephoneNumber")),
+                defaultString(entry.getAttributeValue("mobile")),
+                entry.getAttributeValue("employeeNumber"),
+                defaultString(entry.getAttributeValue("title")),
+                entry.getAttributeValue("l"),
+                entry.getAttributeValue("szzPublicKey"),
+                company.getValue(),
+                company.getKey(),
+                entry.getAttributeValue("modifiersName"),
+                entry.getAttributeValue("modifytimestamp")
+            );
+        } catch (Exception e){
+            log.error("failed to map: " + entry.getDN(), e);
+            return null;
+        }
     }
 
     private Map.Entry<String, String> getCompany(String dn, String organization) {
