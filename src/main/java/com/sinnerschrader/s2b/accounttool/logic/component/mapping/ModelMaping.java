@@ -19,7 +19,8 @@ public interface ModelMaping<T extends Comparable<T>> {
         entries.forEach(entry ->
         {
             if (isCompatible(entry)) {
-                result.add(map(entry));
+                T mapped = map(entry);
+                if(mapped != null) result.add(map(entry));
             }
         });
         Collections.sort(result);

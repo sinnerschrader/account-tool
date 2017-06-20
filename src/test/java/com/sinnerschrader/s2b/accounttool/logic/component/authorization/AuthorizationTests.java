@@ -44,7 +44,9 @@ public class AuthorizationTests {
             "tesadm", "Test Admin", "testuser", "e1c1", adminAuthorities, false, true);
 
         List<GrantedAuthority> userAdminAuthorities = new ArrayList<>();
-        userAdminAuthorities.add(new SimpleGrantedAuthority(ldapConfiguration.getPermissions().getUserAdminGroup()));
+        for(String group : ldapConfiguration.getPermissions().getUserAdminGroups()){
+            userAdminAuthorities.add(new SimpleGrantedAuthority(group));
+        }
 
         userAdmin = new LdapUserDetails("uid=tesuse,ou=users,ou=e1c1,dc=example,dc=org",
             "tesuse", "Tes Useradmin", "testuser", "e1c1", userAdminAuthorities, false, true);

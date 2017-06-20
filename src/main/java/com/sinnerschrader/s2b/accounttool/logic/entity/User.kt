@@ -115,12 +115,12 @@ data class User(
     /**
      * Day of entry
      */
-    val employeeEntryDate: LocalDate,
+    val employeeEntryDate: LocalDate?,
 
     /**
      * Day of exit (1-31)
      */
-    val employeeExitDate: LocalDate,
+    val employeeExitDate: LocalDate?,
 
     /**
      * Department or Team of this employee
