@@ -4,7 +4,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>com.sinnerschrader.s2b</groupId>
     <artifactId>account-tool</artifactId>
-    <version>2.2.0</version>
+    <version>2.2.1</version>
     <packaging>jar</packaging>
     <name>S2 Account Tool</name>
     <organization>
