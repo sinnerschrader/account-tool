@@ -67,7 +67,7 @@
             <!-- some utils and helper: Apache 2.0 -->
             <groupId>org.apache.commons</groupId>
             <artifactId>commons-lang3</artifactId>
-            <version>3.5</version>
+            <version>3.6</version>
         </dependency>
         <dependency>
             <!-- pretty time formatter for relative time: Apache -->
