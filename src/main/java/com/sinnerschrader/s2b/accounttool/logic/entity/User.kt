@@ -1,9 +1,9 @@
 package com.sinnerschrader.s2b.accounttool.logic.entity
 
-import com.sinnerschrader.s2b.accounttool.logic.ReflectionDiffBuilder
 import org.apache.commons.lang3.builder.CompareToBuilder
 import org.apache.commons.lang3.builder.DiffResult
 import org.apache.commons.lang3.builder.Diffable
+import org.apache.commons.lang3.builder.ReflectionDiffBuilder
 import org.apache.commons.lang3.builder.ToStringStyle.SHORT_PREFIX_STYLE
 import org.ocpsoft.prettytime.PrettyTime
 import java.time.LocalDate
