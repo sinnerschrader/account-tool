@@ -32,6 +32,8 @@ import javax.validation.Valid;
 import java.util.LinkedList;
 import java.util.List;
 
+import static org.apache.commons.lang3.StringUtils.isNotBlank;
+
 
 /**
  *
@@ -96,7 +98,7 @@ public class UserController {
         authorizationService.ensureUserAdministration(details);
 
         List<User> users = new LinkedList<>();
-        if (StringUtils.isNotBlank(searchTerm)) {
+        if (isNotBlank(searchTerm)) {
             users.addAll(ldapService.findUserBySearchTerm(connection, searchTerm));
         }
 
@@ -156,7 +158,7 @@ public class UserController {
             return "redirect:/user/edit/" + userId;
         }
         try {
-            if (userForm.isChangeUser()) {
+            if (isNotBlank(userForm.getSave())) {
                 User currentUser = ldapService.getUserByUid(connection, userId);
                 User changedUser = ldapService.update(connection, userForm.createUserEntityFromForm(ldapConfiguration));
 
@@ -164,7 +166,7 @@ public class UserController {
                     globalMessageFactory.createInfo("user.edit.success", changedUser.getUid()));
                 log.info("{} updated the account of user {}: {}", details.getUid(), currentUser.getUid(), currentUser.diff(changedUser));
             }
-            if (userForm.isResetpassword() || userForm.isActivateUser() || userForm.isDeactivateUser()) {
+            if (isNotBlank(userForm.getResetPassword()) || isNotBlank(userForm.getActivateUser()) || isNotBlank(userForm.getDeactivateUser())) {
                 boolean hidePassword = false;
                 User user = ldapService.getUserByUid(connection, userId);
                 String password = ldapService.resetPassword(connection, user);
@@ -172,13 +174,13 @@ public class UserController {
                 if (StringUtils.equals(details.getUid(), user.getUid())) {
                     details.setPassword(password);
                 }
-                if (userForm.isResetpassword()) {
+                if (isNotBlank(userForm.getResetPassword())) {
                     log.info("{} reseted the password of user {}", details.getUid(), user.getUid());
                     logService.event("logging.logstash.event.user.password-reset",
                         "success", details.getUid(), user.getUid());
                 }
                 String message = hidePassword ? "user.passwordReset.simple" : "user.passwordReset.full";
-                if (userForm.isActivateUser()) {
+                if (isNotBlank(userForm.getActivateUser())) {
                     message = "user.activated";
                     ldapService.activate(connection, user);
                     ldapBusinessService.addDefaultGroups(user);
@@ -186,7 +188,7 @@ public class UserController {
                     logService.event("logging.logstash.event.user.activate",
                         "success", details.getUid(), user.getUid());
                 }
-                if (userForm.isDeactivateUser()) {
+                if (isNotBlank(userForm.getDeactivateUser())) {
                     message = "user.deactivated";
                     ldapService.deactivate(connection, user);
                     ldapBusinessService.delDefaulGroups(user);

@@ -96,7 +96,7 @@ public class UserFormValidator implements Validator {
 
         if (StringUtils.isNotBlank(form.getBirthDate())) {
             try {
-                form.getBirthAsDate().getYear();
+                form.birthAsDate().getYear();
             } catch (Exception e) {
                 errors.rejectValue("birthDate", "date", new Object[]{form.getBirthDate()},
                     "Birth Date is not a valid date.");
@@ -104,13 +104,13 @@ public class UserFormValidator implements Validator {
         }
 
         try {
-            form.getEntryAsDate().getYear();
+            form.entryAsDate().getYear();
         } catch (Exception e) {
             errors.rejectValue("entryDate", "date", new Object[]{form.getEntryDate()},
                 "Entry Date is not a valid date.");
         }
         try {
-            form.getExitAsDate().getYear();
+            form.exitAsDate().getYear();
         } catch (Exception e) {
             errors.rejectValue("exitDate", "date", new Object[]{form.getExitDate()},
                 "Exit Date is not a valid date.");
