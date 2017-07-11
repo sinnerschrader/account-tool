@@ -19,7 +19,7 @@ data class User(
      * Full DN of LDAP
      * Example: "dn: uid=firlas,ou=users,ou=e1c1,dc=exampe,dc=org"
      */
-    val dn: String?,
+    val dn: String? = "",
 
     /**
      * Username based on first- and lastname
@@ -30,12 +30,12 @@ data class User(
     /**
      * Unique User ID for PosixAccounts.
      */
-    val uidNumber: Int?,
+    val uidNumber: Int? = null,
 
     /**
      * Numeric Group ID, current always set to 100
      */
-    val gidNumber: Int?,
+    val gidNumber: Int? = null,
 
     val displayName: String?,
 
@@ -64,12 +64,12 @@ data class User(
      * Custom home directory, for personal fileshare.
      * Pattern: /export/home/{USERNAME}
      */
-    val homeDirectory: String?,
+    val homeDirectory: String? = "",
 
     /**
      * PosixAccount part, but always set with "/bin/false"
      */
-    val loginShell: String?,
+    val loginShell: String? = "",
 
     /**
      * Date of Birth (always in year 1972)
@@ -80,17 +80,17 @@ data class User(
      * Seperated into constant part an calculated part based on uidNumber.
      * S-1-5-21-1517199603-1739104038-1321870143-2552
      */
-    val sambaSID: String?,
+    val sambaSID: String? = "",
 
     /**
      * Currently not really used, so it is a constant: 0000000000000000000000000000000000000000000000000000000000000000
      */
-    val sambaPasswordHistory: String?,
+    val sambaPasswordHistory: String? = "",
 
     /**
      * Currently not used, so it is a constant: [U          ]
      */
-    val sambaAcctFlags: String?,
+    val sambaAcctFlags: String? = "",
 
     /**
      * The E-Mail Address: firstname.lastname@example.com
@@ -164,7 +164,7 @@ data class User(
     /**
      * The Public SSH Key of the User.
      */
-    val szzPublicKey: String?,
+    val szzPublicKey: String? = "",
 
     /**
      * The Organization where the Employee belongs to.
@@ -176,9 +176,9 @@ data class User(
      */
     val companyKey: String,
 
-    val modifiersName: String,
+    val modifiersName: String = "",
 
-    val modifytimestamp: String
+    val modifytimestamp: String = ""
 
 ) : Comparable<User>, Diffable<User> {
 

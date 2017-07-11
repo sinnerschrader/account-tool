@@ -25,8 +25,8 @@ public class UserFormTest {
         final LocalDate exitDate = entryDate.plusYears(50).minusDays(1);
 
         UserForm userForm = new UserForm();
-        Assert.assertTrue(userForm.getEntryAsDate().equals(entryDate));
-        Assert.assertTrue(userForm.getExitAsDate().equals(exitDate));
+        Assert.assertTrue(userForm.entryAsDate().equals(entryDate));
+        Assert.assertTrue(userForm.exitAsDate().equals(exitDate));
     }
 
     @Test
@@ -66,8 +66,8 @@ public class UserFormTest {
             ""
         );
         UserForm userForm = new UserForm(user);
-        Assert.assertTrue(userForm.getEntryAsDate().equals(user.getEmployeeEntryDate()));
-        Assert.assertTrue(userForm.getExitAsDate().equals(user.getEmployeeExitDate()));
+        Assert.assertTrue(userForm.entryAsDate().equals(user.getEmployeeEntryDate()));
+        Assert.assertTrue(userForm.exitAsDate().equals(user.getEmployeeExitDate()));
         Assert.assertEquals(userForm.getEmail(), user.getMail());
         Assert.assertEquals(userForm.getStatus(), user.getSzzStatus().name());
         Assert.assertEquals(userForm.getMailStatus(), user.getSzzMailStatus().name());
