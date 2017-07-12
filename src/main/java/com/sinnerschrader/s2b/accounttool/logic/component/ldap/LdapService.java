@@ -57,7 +57,7 @@ public class LdapService {
     private String loginShell;
 
     @Value("${user.appendCompanyOnDisplayName}")
-    private boolean appendCompanyOnDisplayName = false;
+    private boolean appendCompanyOnDisplayName = true;
 
     @Resource(name = "userMapping")
     private ModelMaping<User> userMapping;
@@ -441,7 +441,7 @@ public class LdapService {
             final String username = getUidSuggestion(connection, user.getUid(), user.getGivenName(), user.getSn());
             final String dn = ldapConfiguration.getUserBind(username, user.getCompanyKey());
             final String fullName = user.getGivenName() + " " + user.getSn();
-            final String displayName = fullName + " (" + user.getCompanyKey().toUpperCase() + ")";
+            final String displayName = fullName + " (" + user.getCompanyKey().toLowerCase() + ")";
             final Integer uidNumber = getNextUserID(connection);
             final String password = RandomStringUtils.randomAlphanumeric(16, 33);
             final Integer gidNumber = 100;
