@@ -1,8 +1,24 @@
-FROM maven:3.3-jdk-8-alpine
+FROM maven:3.5-jdk-8-alpine
 
-RUN apk add --no-cache git nodejs
+RUN apk add --no-cache git nodejs nodejs-npm
 
-ADD . /app
+RUN echo $'\
+<settings xmlns="http://maven.apache.org/SETTINGS/1.0.0"\n\
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"\n\
+  xsi:schemaLocation="http://maven.apache.org/SETTINGS/1.0.0\n\
+                      https://maven.apache.org/xsd/settings-1.0.0.xsd">\n\
+  <localRepository>/usr/share/maven/repo</localRepository>\n\
+</settings>'\
+>> /usr/share/maven/ref/settings.xml
+
 WORKDIR /app
 
-CMD mvn clean install spring-boot:run
+ADD pom.xml /app/
+RUN mvn-entrypoint.sh mvn dependency:go-offline
+
+ADD . /app
+RUN mvn-entrypoint.sh mvn compile
+
+ENV ENVIRONMENT=production
+
+CMD mvn spring-boot:run -Drun.jvmArguments='-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=5005'
