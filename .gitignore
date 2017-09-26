@@ -1,30 +1,21 @@
-# IntelliJ IDEA Project Configuration
-.idea/
-*.iml
-
-# Eclipse Project Configuration
-.classpath
-.project
-.settings
-.externalToolBuilders
-
-# Avoid adding Binaries to Project
-*.deb
-*.jar
-*.zip
-
-# Maven & Maven Wrapper
-release.properties
-pom.xml.releaseBackup
-
-# Project Builds and NPM
-target/
-node_modules
-npm-debug.log
-
-# Mac OS and General
-.DS_Store
 *~
 *.bak
-*.tmp
+.classpath
+*.deb
+.DS_Store
+.env
+.externalToolBuilders
+.idea/
+*.iml
+*.jar
+node_modules
+npm-debug.log
+pom.xml.releaseBackup
+.project
+release.properties
+.settings
 *.swp
+target/
+*.tmp
+*.zip
+docker-compose.override.yml

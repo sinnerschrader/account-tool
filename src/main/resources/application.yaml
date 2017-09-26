@@ -166,10 +166,10 @@ endpoints:
 # = Appserver Configuration
 # =============================================================
 server:
-  use-forward-headers: "true"
+  use-forward-headers: true
   address: "0.0.0.0"
   http:
-    port: "0"
+    port: 8080
   compression:
     enabled: "true"
     min-response-size: "1024"
@@ -181,6 +181,9 @@ server:
       http-only: "true"
       secure: "true"
   tomcat:
+    remote-ip-header: x-forwarded-for
+    protocol-header: x-forwarded-proto
+    proxies-header: x-forwarded-by
     max-threads: "25"
     min-spare-threads: "5"
 
