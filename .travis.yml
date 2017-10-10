@@ -34,6 +34,6 @@ script:
   - npm install
   - npm run build
   - mvn --batch-mode clean package
-  - docker login -u "$DOCKER_USERNAME" -p "$DOCKER_PASSWORD"
+  - docker login -u="$DOCKER_USERNAME" -p="$DOCKER_PASSWORD"
   - docker build -f Dockerfile.prod -t "$DOCKER_REPO"/account-tool .
   - docker push "$DOCKER_REPO"/account-tool
