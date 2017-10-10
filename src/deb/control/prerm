@@ -1,4 +1,0 @@
-#!/bin/sh
-
-# Stop service
-systemctl stop accounttool

@@ -16,8 +16,12 @@ WORKDIR /app
 ADD pom.xml /app/
 RUN mvn-entrypoint.sh mvn dependency:go-offline
 
+ADD package.json /app/
+RUN npm install
+
 ADD . /app
-RUN mvn-entrypoint.sh mvn compile
+RUN npm run build \
+ && mvn-entrypoint.sh mvn package
 
 ENV ENVIRONMENT=production
 
