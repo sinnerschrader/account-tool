@@ -2,6 +2,9 @@ language: java
 dist: trusty
 sudo: required
 
+services:
+  - docker
+
 addons:
   apt:
     packages:
@@ -31,3 +34,4 @@ script:
   - npm install
   - npm run build
   - mvn --batch-mode clean package
+  - docker build -f Dockerfile.prod -t sinnerschrader/account-tool .
