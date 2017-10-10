@@ -28,19 +28,6 @@ before_script:
   - nvm use $NODE_VERSION
 
 script:
-  - ./mvnw --batch-mode clean package
-
-before_deploy:
-  - ./mvnw --batch-mode -P release clean package
-  - ./mvnw --batch-mode -P release versions:revert
-
-deploy:
-  provider: packagecloud
-  username: ${PACKAGECLOUD_USER}
-  token: ${PACKAGECLOUD_TOKEN}
-  repository: "szops"
-  dist: "ubuntu/xenial"
-  package_glob: "target/*.deb"
-  skip_cleanup: true
-  on:
-    tags: true
+  - npm install
+  - npm run build
+  - mvn --batch-mode clean package

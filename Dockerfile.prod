@@ -1,0 +1,12 @@
+FROM openjdk:jre-alpine
+
+ADD docker/entrypoint.sh \
+    target/account-tool.jar \
+    /app/
+
+WORKDIR /app
+
+ENV SPRING_PROFILES_ACTIVE=overrides 
+
+ENTRYPOINT [ "/app/entrypoint.sh" ]
+CMD java -jar account-tool.jar
