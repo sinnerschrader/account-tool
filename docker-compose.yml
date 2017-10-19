@@ -17,4 +17,4 @@ services:
       - '8081:8081'
       - '5005:5005'
     environment:
-      MAILDEV_PROFILE: maildev
+      SPRING_PROFILES_ACTIVE: development,maildev

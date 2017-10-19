@@ -12,8 +12,7 @@ addons:
 
 cache:
   directories:
-    - $HOME/.m2/repository/
-    - $HOME/.m2/wrapper/
+    - $HOME/.gradle/
     - node_modules
 
 notifications:
@@ -27,13 +26,12 @@ install:
   - nvm install $NODE_VERSION
 
 before_script:
-  - export MAVEN_OPTS="-Xmx256m"
   - nvm use $NODE_VERSION
 
 script:
   - npm install
   - npm run build
-  - mvn --batch-mode clean package
+  - gradle --no-daemon clean build
   - docker login -u="$DOCKER_USERNAME" -p="$DOCKER_PASSWORD"
   - docker build -f Dockerfile.prod -t "$DOCKER_REPO"/account-tool .
   - docker push "$DOCKER_REPO"/account-tool
