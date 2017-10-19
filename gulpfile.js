@@ -2,7 +2,7 @@ var gulp = require('gulp');
 
 var config = {
 	source: 'src/main/resources/public/',
-	target: 'target/classes/public/',
+	target: 'build/resources/main/public/',
 	finalName: 'account-tool',
 	failAfterError: true
 }

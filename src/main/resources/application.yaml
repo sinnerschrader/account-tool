@@ -3,11 +3,11 @@
 # =============================================================
 spring:
   application:
-    name: "@project.name@"
+    name: account-tool
   messages:
     basename: "i18n/messages, i18n/validation"
     cache-seconds: "-1"
-    encoding: "@project.build.sourceEncoding@"
+    encoding: "UTF-8"
     fallback-to-system-locale: "true"
   resources:
     cache-period: "2678400"
@@ -15,7 +15,7 @@ spring:
     contentSecurityPolicy: "default-src 'none'; manifest-src 'self'; img-src 'self'; script-src 'self'; style-src 'self' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; connect-src 'self'; report-uri /csp-report"
   mail:
     logOnly: "false"
-    default-encoding: "@project.build.sourceEncoding@"
+    default-encoding: "UTF-8"
     from: "accounttool@${domain.primary}"
     reply: "no-reply@${domain.primary}"
     host: "smtp.${domain.primary}"
@@ -27,27 +27,6 @@ spring:
         smtp:
           auth: "false"
     to: #not used on production mode
-
-# =============================================================
-# = Versions Block
-# =============================================================
-app:
-  name: "@project.name@"
-  version: "@project.version@@version.phase@"
-  revision: "@git.commit.id.abbrev@"
-  build-time: "@git.commit.time@"
-  build-by: "@git.commit.user.name@"
-  build-on: "@os.name@ (v@os.version@, arch: @os.arch@)"
-  issues: "https://github.com/sinnerschrader/account-tool/issues"
-versions:
-  spring-boot: "@project.parent.version@"
-  spring-core: "@spring.version@"
-  spring-security: "@spring-security.version@"
-  spring-pebble: "@pebble-spring.version@"
-  java_build: "@java.version@"
-  java_target: "@maven.compiler.target@"
-  tomcat: "@tomcat.version@"
-  unboundid: "@unboundid-ldapsdk.version@"
 
 # =============================================================
 # = Security

@@ -1,28 +1,21 @@
-FROM maven:3.5-jdk-8-alpine
+FROM gradle:jdk8-alpine
 
+USER root
 RUN apk add --no-cache git nodejs nodejs-npm
-
-RUN echo $'\
-<settings xmlns="http://maven.apache.org/SETTINGS/1.0.0"\n\
-  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"\n\
-  xsi:schemaLocation="http://maven.apache.org/SETTINGS/1.0.0\n\
-                      https://maven.apache.org/xsd/settings-1.0.0.xsd">\n\
-  <localRepository>/usr/share/maven/repo</localRepository>\n\
-</settings>'\
->> /usr/share/maven/ref/settings.xml
 
 WORKDIR /app
 
-ADD pom.xml /app/
-RUN mvn-entrypoint.sh mvn dependency:go-offline
+ENV GRADLE_USER_HOME=/gradle
+ADD build.gradle /app/
+RUN gradle --no-daemon --refresh-dependencies
 
 ADD package.json /app/
 RUN npm install
 
 ADD . /app
 RUN npm run build \
- && mvn-entrypoint.sh mvn package
+ && gradle build
 
 ENV ENVIRONMENT=production
 
-CMD mvn spring-boot:run -Drun.jvmArguments='-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=5005'
+CMD gradle --no-daemon bootRun -Drun.jvmArguments='-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=5005'

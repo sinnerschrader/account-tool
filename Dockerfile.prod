@@ -1,7 +1,7 @@
 FROM openjdk:jre-alpine
 
 ADD docker/entrypoint.sh \
-    target/account-tool.jar \
+    build/libs/account-tool-*.jar \
     /app/
 
 WORKDIR /app
@@ -9,4 +9,4 @@ WORKDIR /app
 ENV SPRING_PROFILES_ACTIVE=overrides 
 
 ENTRYPOINT [ "/app/entrypoint.sh" ]
-CMD java -jar account-tool.jar
+CMD java -jar account-tool-*.jar
