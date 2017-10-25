@@ -19,10 +19,6 @@ tasks.withType(JavaCompile) {
 
 processResources.dependsOn npm_run_build
 
-springBoot {
-    mainClass = 'com.sinnerschrader.s2b.accounttool.Application'
-}
-
 repositories {
      mavenCentral()
 }
