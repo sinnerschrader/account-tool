@@ -17,4 +17,4 @@ RUN gradle --no-daemon build
 
 ENV ENVIRONMENT=production
 
-CMD gradle --no-daemon bootRun -Drun.jvmArguments='-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=5005'
+CMD gradle --no-daemon bootRun
