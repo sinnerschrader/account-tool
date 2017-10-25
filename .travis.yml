@@ -29,9 +29,11 @@ before_script:
   - nvm use $NODE_VERSION
 
 script:
-  - npm install
-  - npm run build
   - gradle --no-daemon clean build
-  - docker login -u="$DOCKER_USERNAME" -p="$DOCKER_PASSWORD"
-  - docker build -f Dockerfile.prod -t "$DOCKER_REPO"/account-tool .
-  - docker push "$DOCKER_REPO"/account-tool
+
+deploy:
+  script:
+    - gradle --no-daemon clean build
+    - docker login -u="$DOCKER_USERNAME" -p="$DOCKER_PASSWORD"
+    - docker build -f Dockerfile.prod -t "$DOCKER_REPO"/account-tool .
+    - docker push "$DOCKER_REPO"/account-tool
