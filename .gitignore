@@ -21,3 +21,4 @@ target/
 docker-compose.override.yml
 build
 .gradle
+package-lock.json

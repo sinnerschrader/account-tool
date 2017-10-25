@@ -37,7 +37,7 @@ dependencies {
     compile group: 'org.springframework.boot', name: 'spring-boot-starter-mail', version:'1.5.3.RELEASE'
     compile group: 'org.springframework.boot', name: 'spring-boot-starter-security', version:'1.5.3.RELEASE'
     compile group: 'org.springframework.boot', name: 'spring-boot-starter-web', version:'1.5.3.RELEASE'
-    testCompile group: 'org.jetbrains.kotlin', name: 'kotlin-test', version:'1.1.2'
+    testCompile group: 'org.jetbrains.kotlin', name: 'kotlin-test', version:'1.1.51'
     testCompile(group: 'org.springframework.boot', name: 'spring-boot-starter-test', version:'1.5.3.RELEASE') {
         exclude(module: 'commons-logging')
     }
