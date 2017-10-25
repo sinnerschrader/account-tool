@@ -19,7 +19,7 @@ data class User(
      * Full DN of LDAP
      * Example: "dn: uid=firlas,ou=users,ou=e1c1,dc=exampe,dc=org"
      */
-    val dn: String? = "",
+    val dn: String = "",
 
     /**
      * Username based on first- and lastname
