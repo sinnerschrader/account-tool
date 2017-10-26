@@ -151,7 +151,7 @@ public class LdapServiceTests {
     }
 
     private User createUser(String firstName, String lastName, String uid, String email, String employeeNumber) {
-        return new User(null,
+        return new User("",
             uid,
             null,
             null,
