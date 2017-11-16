@@ -133,7 +133,7 @@ public class ApplicationConfig extends WebMvcConfigurerAdapter {
     @Bean(name = "ldapServer")
     @Profile({"development", "test"})
     public LDAPServer ldapServer() {
-        return new LDAPServer();
+        return new LDAPServer(ldapConfiguration);
     }
 
 }
