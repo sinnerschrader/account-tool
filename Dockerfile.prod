@@ -6,7 +6,8 @@ ADD docker/entrypoint.sh \
 
 WORKDIR /app
 
+ENV JAVA_OPTS="-Xmx256m -Xss256k"
 ENV SPRING_PROFILES_ACTIVE=overrides 
 
 ENTRYPOINT [ "/app/entrypoint.sh" ]
-CMD java -Xmx256m -Xss256k -jar account-tool-*.jar
+CMD java -jar account-tool-*.jar
