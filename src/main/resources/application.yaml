@@ -163,8 +163,8 @@ server:
     remote-ip-header: x-forwarded-for
     protocol-header: x-forwarded-proto
     proxies-header: x-forwarded-by
-    max-threads: "25"
-    min-spare-threads: "5"
+    max-threads: "10"
+    min-spare-threads: "2"
 
 # =============================================================
 # = Custom Dictionary for Password validation
