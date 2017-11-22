@@ -9,4 +9,4 @@ WORKDIR /app
 ENV SPRING_PROFILES_ACTIVE=overrides 
 
 ENTRYPOINT [ "/app/entrypoint.sh" ]
-CMD java -Xmx32m -Xss256k -jar account-tool-*.jar
+CMD java -Xmx256m -Xss256k -jar account-tool-*.jar
