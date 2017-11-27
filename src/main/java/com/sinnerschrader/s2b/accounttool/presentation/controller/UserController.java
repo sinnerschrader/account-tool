@@ -182,16 +182,14 @@ public class UserController {
                 String message = hidePassword ? "user.passwordReset.simple" : "user.passwordReset.full";
                 if (isNotBlank(userForm.getActivateUser())) {
                     message = "user.activated";
-                    ldapService.activate(connection, user);
-                    ldapBusinessService.addDefaultGroups(user);
+                    if (ldapService.activate(connection, user)) ldapBusinessService.addDefaultGroups(user);
                     log.info("{} activated the user {} right now", details.getUid(), user.getUid());
                     logService.event("logging.logstash.event.user.activate",
                         "success", details.getUid(), user.getUid());
                 }
                 if (isNotBlank(userForm.getDeactivateUser())) {
                     message = "user.deactivated";
-                    ldapService.deactivate(connection, user);
-                    ldapBusinessService.delDefaulGroups(user);
+                    if(ldapService.deactivate(connection, user)) ldapBusinessService.delDefaulGroups(user);
                     log.info("{} deactivated the user {} right now", details.getUid(), user.getUid());
                     logService.event("logging.logstash.event.user.deactivate",
                         "success", details.getUid(), user.getUid());
