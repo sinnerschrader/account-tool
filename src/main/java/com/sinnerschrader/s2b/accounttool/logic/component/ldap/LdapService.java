@@ -337,10 +337,10 @@ public class LdapService {
         return newPassword;
     }
 
-    public User activate(LDAPConnection connection, User user) {
+    public boolean activate(LDAPConnection connection, User user) {
         User ldapUser = getUserByUid(connection, user.getUid());
         if (ldapUser == null)
-            return user;
+            return false;
 
         final String[] freelancerValues = {"Freelancer", "Feelancer"};
         List<Modification> changes = new ArrayList<>();
@@ -368,15 +368,15 @@ public class LdapService {
             if (log.isDebugEnabled()) {
                 log.error("Could not activate user", le);
             }
-            return ldapUser;
+            return false;
         }
-        return getUserByUid(connection, ldapUser.getUid());
+        return true;
     }
 
-    public User deactivate(LDAPConnection connection, User user) {
+    public boolean deactivate(LDAPConnection connection, User user) {
         User ldapUser = getUserByUid(connection, user.getUid());
         if (ldapUser == null)
-            return user;
+            return false;
 
         List<Modification> changes = new ArrayList<>();
         changes.add(new Modification(ModificationType.REPLACE, "szzStatus", "inactive"));
@@ -386,15 +386,16 @@ public class LdapService {
             if (result.getResultCode() != ResultCode.SUCCESS) {
                 log.warn("Could not properly activate user {}. Reason: {} Status: {}",
                     ldapUser.getUid(), result.getDiagnosticMessage(), result.getResultCode());
+                return false;
             }
         } catch (LDAPException le) {
             log.error("Could not activate user {}. Reason: {}", ldapUser.getUid(), le.getResultString());
             if (log.isDebugEnabled()) {
                 log.error("Could not activate user", le);
             }
-            return ldapUser;
+            return false;
         }
-        return getUserByUid(connection, ldapUser.getUid());
+        return false;
     }
 
     private String createMail(String firstName, String surname, String domain, boolean shortFirstname) {
