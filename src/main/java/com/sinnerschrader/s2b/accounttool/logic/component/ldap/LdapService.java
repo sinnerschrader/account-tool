@@ -17,6 +17,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
@@ -27,6 +28,7 @@ import java.util.concurrent.TimeUnit;
 
 import static com.unboundid.ldap.sdk.SearchRequest.ALL_OPERATIONAL_ATTRIBUTES;
 import static com.unboundid.ldap.sdk.SearchRequest.ALL_USER_ATTRIBUTES;
+import static java.util.Arrays.asList;
 
 @Service
 public class LdapService {
@@ -64,6 +66,9 @@ public class LdapService {
 
     @Resource(name = "groupMapping")
     private ModelMaping<Group> groupMapping;
+
+    @Autowired
+    private Environment environment;
 
     private transient Integer lastUserNumber = null;
 
@@ -318,7 +323,12 @@ public class LdapService {
         }
 
         List<Modification> changes = new ArrayList<>();
-        changes.add(new Modification(ModificationType.REPLACE, "userPassword", Encrypt.salt(newPassword)));
+        if (asList(environment.getActiveProfiles()).contains("development")) {
+            log.warn("Plaintext crypter - dont use this on production");
+            changes.add(new Modification(ModificationType.REPLACE, "userPassword", StringUtils.trim(newPassword)));
+        } else{
+            changes.add(new Modification(ModificationType.REPLACE, "userPassword", Encrypt.salt(newPassword)));
+        }
         changes.add(new Modification(ModificationType.REPLACE, "sambaNTPassword", Encrypt.samba(newPassword)));
         changes.add(new Modification(ModificationType.REPLACE, "sambaPwdLastSet", timestamp));
         try {

@@ -33,7 +33,7 @@ class ChangeProfile(
             mobile = mobile.trim(),
             szzPublicKey = publicKey.trim())
 
-    val isPasswordChange = changePassword.isNotBlank()
-    val isPhoneChange = changePhones.isNotBlank()
-    val isPublicKeyChange = changePublicKey.isNotBlank()
+    fun isPasswordChange() = changePassword.isNotBlank()
+    fun isPhoneChange() = changePhones.isNotBlank()
+    fun isPublicKeyChange() = changePublicKey.isNotBlank()
 }
