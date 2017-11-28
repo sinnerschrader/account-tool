@@ -20,7 +20,7 @@ object Encrypt {
             throw IllegalArgumentException("Password can't be null or empty")
         }
         try {
-            return String(Hex.encode(MD4.getInstance().digest(password.toByteArray(charset("UTF-16LE"))))).toUpperCase()
+            return String(Hex.encode(MD4.getInstance().digest(password.toByteArray(Charsets.UTF_16LE)))).toUpperCase()
         } catch (uee: UnsupportedEncodingException) {
             throw RuntimeException("Could not generate samba password hash", uee)
         }
