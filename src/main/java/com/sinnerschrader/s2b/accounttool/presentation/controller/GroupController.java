@@ -9,6 +9,7 @@ import com.sinnerschrader.s2b.accounttool.logic.component.authorization.Authoriz
 import com.sinnerschrader.s2b.accounttool.logic.component.ldap.LdapService;
 import com.sinnerschrader.s2b.accounttool.logic.component.mail.MailService;
 import com.sinnerschrader.s2b.accounttool.logic.entity.Group;
+import com.sinnerschrader.s2b.accounttool.logic.entity.UserInfo;
 import com.sinnerschrader.s2b.accounttool.logic.entity.User;
 import com.sinnerschrader.s2b.accounttool.presentation.RequestUtils;
 import com.sinnerschrader.s2b.accounttool.presentation.messaging.GlobalMessageFactory;
@@ -24,6 +25,7 @@ import org.springframework.web.servlet.ModelAndView;
 import javax.servlet.http.HttpServletRequest;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.SortedSet;
 
 import static com.sinnerschrader.s2b.accounttool.logic.component.mail.MailService.Companion.Change.ADD;
 import static com.sinnerschrader.s2b.accounttool.logic.component.mail.MailService.Companion.Change.REMOVE;
@@ -93,7 +95,7 @@ public class GroupController {
         if (selectedGroup == null) {
             return new ModelAndView("redirect:/group");
         }
-        List<User> users = ldapService.getUsersByGroup(connection, selectedGroup);
+        SortedSet<UserInfo> users = ldapService.getGroupMembers(connection, selectedGroup);
 
         ModelAndView mav = new ModelAndView("pages/group/index.html");
         mav.addObject("company", ldapConfiguration.getCompaniesAsMap());
