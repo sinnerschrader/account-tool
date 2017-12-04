@@ -77,8 +77,8 @@ public class UserMapping implements ModelMaping<User> {
                 defaultString(entry.getAttributeValue("title")),
                 entry.getAttributeValue("l"),
                 entry.getAttributeValue("szzPublicKey"),
-                company.getValue(),
-                company.getKey(),
+                company != null ? company.getValue() : "",
+                company != null ? company.getKey() : "",
                 entry.getAttributeValue("modifiersName"),
                 entry.getAttributeValue("modifytimestamp")
             );
