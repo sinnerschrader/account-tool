@@ -7,6 +7,6 @@ data class UserInfo(val uid: String,
                     val givenName: String,
                     val sn: String,
                     val o: String) : Comparable<UserInfo> {
-    private val fullName = "$givenName $sn"
-    override fun compareTo(other: UserInfo) = fullName.compareTo(other.fullName)
+    private fun fullName() = "$sn, $givenName"
+    override fun compareTo(other: UserInfo) = fullName().compareTo(other.fullName())
 }
