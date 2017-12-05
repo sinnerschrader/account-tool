@@ -38,9 +38,6 @@ public class RequestInterceptor implements HandlerInterceptor {
             !StringUtils.startsWithAny(modelAndView.getViewName(), "redirect:") &&
             environment != null) {
             modelAndView.addObject("env", environment);
-            modelAndView.addObject("version", environment.getProperty("app.version"));
-            modelAndView.addObject("rev", environment.getProperty("app.revision"));
-            modelAndView.addObject("time", environment.getProperty("app.build-time"));
         }
     }
 
