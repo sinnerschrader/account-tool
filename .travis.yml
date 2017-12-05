@@ -31,11 +31,11 @@ before_script:
 script:
   - gradle --no-daemon clean build
   - echo "ENV COMMIT_ID $TRAVIS_BRANCH@$TRAVIS_COMMIT" >> Dockerfile.prod
-  - docker build -f Dockerfile.prod -t "$DOCKER_REPO"/account-tool .
+  - docker build -f Dockerfile.prod -t "$DOCKER_REPO"/account-tool:${TRAVIS_TAG:-latest} .
 
 after_success:
-  - if [ "$TRAVIS_BRANCH" == "master" ]; then
+  - if [ "$TRAVIS_BRANCH" == "master" -o -n "$TRAVIS_TAG" ]; then
     docker login -u="$DOCKER_USERNAME" -p="$DOCKER_PASSWORD";
-    docker push "$DOCKER_REPO"/account-tool;
-    curl -X POST -F token=$TRIGGER_TOKEN -F ref=master $TRIGGER_URL 1>/dev/null 2>/dev/null;
+    docker push "$DOCKER_REPO"/account-tool:${TRAVIS_TAG:-latest};
+    [ -z "$TRAVIS_TAG" ] && curl -X POST -F token=$TRIGGER_TOKEN -F ref=master $TRIGGER_URL 1>/dev/null 2>/dev/null;
     fi
