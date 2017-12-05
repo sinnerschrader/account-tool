@@ -5,15 +5,14 @@ import com.sinnerschrader.s2b.accounttool.logic.entity.UserInfo
 import com.unboundid.ldap.sdk.Filter.createANDFilter
 import com.unboundid.ldap.sdk.Filter.createEqualityFilter
 import com.unboundid.ldap.sdk.LDAPConnection
-import com.unboundid.ldap.sdk.SearchRequest
 import com.unboundid.ldap.sdk.SearchScope
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.cache.annotation.Cacheable
 import org.springframework.stereotype.Service
-import java.util.NoSuchElementException
+import java.util.*
 
-interface CachedLdapService{
+interface CachedLdapService {
     fun getGroupMember(connection: LDAPConnection, uid: String): UserInfo?
 }
 
@@ -26,7 +25,7 @@ class CachedLdapServiceImpl : CachedLdapService {
     @Autowired
     private lateinit var ldapConfiguration: LdapConfiguration
 
-    @Cacheable("groupMembers", key = "#uid", unless="#result == null")
+    @Cacheable("groupMembers", key = "#uid", unless = "#result == null")
     override fun getGroupMember(connection: LDAPConnection, uid: String): UserInfo? {
         try {
             val searchResult = connection.search(
@@ -36,33 +35,32 @@ class CachedLdapServiceImpl : CachedLdapService {
                     createEqualityFilter("objectclass", "posixAccount"),
                     createEqualityFilter("uid", uid)
                 ),
-                SearchRequest.ALL_USER_ATTRIBUTES,
-                SearchRequest.ALL_OPERATIONAL_ATTRIBUTES,
                 "uid", "givenName", "sn"
             )
 
-            return when(searchResult.searchEntries.size){
-                0 -> UserInfo(uid,"UNKNOWN", "UNKNOWN", "UNKNOWN")
-                1 ->  with(searchResult.searchEntries.first()) {
+            return when (searchResult.searchEntries.size) {
+                0 -> UserInfo(uid, "UNKNOWN", "UNKNOWN", "UNKNOWN")
+                1 -> with(searchResult.searchEntries.first()) {
                     UserInfo(
-                        uid=getAttributeValue("uid"),
+                        uid = getAttributeValue("uid"),
                         givenName = getAttributeValue("givenName"),
                         sn = getAttributeValue("sn"),
-                        o = companyForDn(dn)) }
+                        o = companyForDn(dn))
+                }
                 else -> throw IllegalStateException()
             }
         } catch (e: Exception) {
-            LOG.error("Could retrieve user [uid: $uid]")
+            LOG.error("Could retrieve user [uid: $uid]", e)
             return null
         }
     }
 
-    private fun companyForDn(dn: String): String{
-        try{
-            val key = Regex(",ou=([^,]+)").findAll(dn).last().groupValues[1]
-            return ldapConfiguration.companiesAsMap?.get(key) ?: "UNKNOWN"
-        } catch (e: NoSuchElementException){
-            return "UNKNOWN"
+    private fun companyForDn(dn: String) =
+        try {
+            with(Regex(",ou=([^,]+)").findAll(dn).last().groupValues[1]) {
+                ldapConfiguration.companiesAsMap?.get(this) ?: "UNKNOWN"
+            }
+        } catch (e: NoSuchElementException) {
+            "UNKNOWN"
         }
-    }
 }

@@ -49,42 +49,7 @@
             {{ showGlobalMessages(request.getAttribute('globalMessages')) }}
             {% block content %}Default content goes here. {% endblock%}
         </div>
-        <footer class="mdl-mini-footer s2act-footer">
-            <div class="mdl-mini-footer__left-section">
-                <ul class="mdl-mini-footer__link-list">
-                    <li>
-                        <a href="https://www.sinnerschrader.com" target="_blank">
-                            <i class="material-icons">open_in_new</i>
-                            <span>www.sinnerschrader.com</span>
-                        </a>
-                    </li>
-                </ul>
-            </div>
-            <div class="mdl-mini-footer__right-section">
-                <ul class="mdl-mini-footer__link-list">
-                    <li>
-                        <a href="{{ env.getProperty('app.issues') }}" target="_blank">
-                            <i class="material-icons">bug_report</i>
-                            <span>Found a Bug?</span>
-                        </a>
-                    </li>
-                    <li>
-                        <a href="https://github.com/sinnerschrader/account-tool/blob/master/license.md">
-                            <i class="material-icons">copyright</i>
-                            <span>License</span>
-                        </a>
-                    </li>
-                    {% if isAdmin() %}
-                    <li>
-                        <a href="/version">
-                            <i class="material-icons">build</i>
-                            <span>{{version}}</span>
-                        </a>
-                    </li>
-                    {% endif %}
-                </ul>
-            </div>
-        </footer>
+        {% include "pages/template/footer.html" %}
     </div>
 </div>
 <script async src="/extensions/account-tool.min.js?v={{time}}"></script>

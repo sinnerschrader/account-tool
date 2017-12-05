@@ -107,20 +107,6 @@ public class MainController {
         return "redirect:/login?logout";
     }
 
-    @RequestMapping(path = "/version")
-    public ModelAndView version() {
-        Set<String> activeProfiles = new LinkedHashSet<>();
-        activeProfiles.addAll(Arrays.asList(environment.getDefaultProfiles()));
-        activeProfiles.addAll(Arrays.asList(environment.getActiveProfiles()));
-
-        Date contextStartupDate = new Date(applicationContext.getStartupDate());
-        ModelAndView model = new ModelAndView("pages/version.html");
-        model.addObject("applicationContextStartupDate", contextStartupDate);
-        model.addObject("applicationContextRunningSince", new PrettyTime().formatUnrounded(contextStartupDate));
-        model.addObject("activeProfiles", activeProfiles);
-        return model;
-    }
-
     @RequestMapping(path = "/csp-report", method = RequestMethod.POST)
     @ResponseBody
     public ResponseEntity<String> cspReport(@RequestBody(required = false) String cspReportString) {
