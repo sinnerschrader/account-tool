@@ -37,4 +37,5 @@ after_success:
   - if [ "$TRAVIS_BRANCH" == "master" ]; then
     docker login -u="$DOCKER_USERNAME" -p="$DOCKER_PASSWORD";
     docker push "$DOCKER_REPO"/account-tool;
+    curl -X POST -F token=$TRIGGER_TOKEN -F ref=master $TRIGGER_URL 1>/dev/null 2>/dev/null;
     fi
