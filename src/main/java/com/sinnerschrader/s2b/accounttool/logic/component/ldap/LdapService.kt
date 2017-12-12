@@ -314,7 +314,7 @@ class LdapService {
         val user = getUserByUid(connection, currentUser.username)
         val newPassword = changePassword(connection, user, password)
         if (newPassword != null) {
-            currentUser.password = newPassword
+            currentUser.setPassword(newPassword)
         }
         return true
     }
