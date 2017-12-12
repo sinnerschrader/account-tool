@@ -1,6 +1,6 @@
 plugins {
     id 'org.springframework.boot' version '1.5.7.RELEASE'
-    id "org.jetbrains.kotlin.jvm" version "1.1.51"
+    id "org.jetbrains.kotlin.jvm" version "1.2.0"
     id "com.moowork.node" version "1.2.0"
 }
 
@@ -21,7 +21,7 @@ tasks.withType(JavaCompile) {
 processResources.dependsOn npm_run_build
 
 bootRun {
-    jvmArgs = ['-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=5005']
+    jvmArgs = ['-Xmx256m', '-Xss256k', '-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=5005']
 }
 
 repositories {
@@ -35,13 +35,13 @@ dependencies {
     compile group: 'com.unboundid', name: 'unboundid-ldapsdk', version:'3.2.1'
     compile group: 'org.apache.commons', name: 'commons-lang3', version:'3.6'
     compile group: 'org.apache.sshd', name: 'sshd-core', version:'1.4.0'
-    compile group: 'org.jetbrains.kotlin', name: 'kotlin-stdlib-jre8', version:'1.1.51'
+    compile group: 'org.jetbrains.kotlin', name: 'kotlin-stdlib-jre8', version:'1.2.0'
     compile group: 'org.ocpsoft.prettytime', name: 'prettytime', version:'4.0.1.Final'
     compile group: 'org.springframework.boot', name: 'spring-boot-starter-actuator', version:'1.5.3.RELEASE'
     compile group: 'org.springframework.boot', name: 'spring-boot-starter-mail', version:'1.5.3.RELEASE'
     compile group: 'org.springframework.boot', name: 'spring-boot-starter-security', version:'1.5.3.RELEASE'
     compile group: 'org.springframework.boot', name: 'spring-boot-starter-web', version:'1.5.3.RELEASE'
-    testCompile group: 'org.jetbrains.kotlin', name: 'kotlin-test', version:'1.1.51'
+    testCompile group: 'org.jetbrains.kotlin', name: 'kotlin-test', version:'1.2.0'
     testCompile(group: 'org.springframework.boot', name: 'spring-boot-starter-test', version:'1.5.3.RELEASE') {
         exclude(module: 'commons-logging')
     }
