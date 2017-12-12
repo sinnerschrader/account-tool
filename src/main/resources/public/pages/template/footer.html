@@ -14,7 +14,7 @@
             <div class="mdl-mini-footer__right-section">
                 <ul class="mdl-mini-footer__link-list">
                     <li>
-                        <span>{{ env.getProperty('COMMIT_ID') }}</span>
+                      <span><a href="https://github.com/sinnerschrader/account-tool/tree/{{ env.getProperty('GIT_COMMIT') }}">{{ env.getProperty('GIT_BRANCH') + '@' + env.getProperty('GIT_COMMIT') }}</a></span>
                     </li>
                     <li>
                         <a href="{{ env.getProperty('app.issues') }}" target="_blank">
