@@ -15,6 +15,8 @@ RUN npm install
 ADD . /app
 RUN gradle --no-daemon build
 
-ENV ENVIRONMENT=production
+ENV ENVIRONMENT=production \
+    GIT_BRANCH=some_branch \
+    GIT_COMMIT=some_commit
 
 CMD gradle --no-daemon bootRun

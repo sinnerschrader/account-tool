@@ -30,7 +30,8 @@ before_script:
 
 script:
   - gradle --no-daemon clean build
-  - echo "ENV COMMIT_ID $TRAVIS_BRANCH@$TRAVIS_COMMIT" >> Dockerfile.prod
+  - echo "ENV GIT_COMMIT $TRAVIS_COMMIT" >> Dockerfile.prod
+  - echo "ENV GIT_BRANCH $TRAVIS_BRANCH" >> Dockerfile.prod
   - docker build -f Dockerfile.prod -t "$DOCKER_REPO"/account-tool:${TRAVIS_TAG:-latest} .
 
 after_success:
