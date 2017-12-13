@@ -25,7 +25,7 @@ class AuthorizationService {
     fun isAdmin(user: LdapUserDetails) = isMemberOf(user.authorities, ldapConfiguration.permissions.ldapAdminGroup)
 
     fun isUserAdministration(user: LdapUserDetails): Boolean {
-        for (userAdminGroup in ldapConfiguration.permissions.userAdminGroups!!)
+        for (userAdminGroup in ldapConfiguration.permissions.userAdminGroups)
             if (isMemberOf(user.authorities, userAdminGroup))
                 return true
         return false

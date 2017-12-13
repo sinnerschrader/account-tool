@@ -10,25 +10,25 @@ import org.springframework.stereotype.Component
 @Component
 @ConfigurationProperties(prefix = "ldap-management")
 class LdapManagementConfiguration {
-    var user: ManagementUser? = null
+    var user: ManagementUser = ManagementUser()
     var leavingUsersInCW: Int = 4
-    var notifyReceipients: List<String>? = null
-    var jobs: JobsConfiguration? = null
-    var trackedGroups: List<String>? = ArrayList()
+    var notifyReceipients = mutableListOf<String>()
+    var jobs: JobsConfiguration = JobsConfiguration()
+    var trackedGroups = mutableListOf<String>()
 
     open class ManagementUser {
-        var bindDN: String? = null
-        var password: String? = null
+        var bindDN = ""
+        var password = ""
     }
 
     open class JobsConfiguration {
-        var isActive: Boolean = false
-        var updateUnmaintained: JobConfiguration? = null
-        var notifyAboutUnmaintained: JobConfiguration? = null
+        var isActive = false
+        var updateUnmaintained = JobConfiguration()
+        var notifyAboutUnmaintained = JobConfiguration()
     }
 
     open class JobConfiguration {
         var isActive = false
-        var cronExpr: String? = null
+        var cronExpr = ""
     }
 }

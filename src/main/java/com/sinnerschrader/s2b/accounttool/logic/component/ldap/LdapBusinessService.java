@@ -162,7 +162,7 @@ public class LdapBusinessService implements InitializingBean {
     }
 
     public void addDefaultGroups(User user) {
-        List<String> defaultGroups = ldapConfiguration.getDefaultGroups();
+        List<String> defaultGroups = ldapConfiguration.getPermissions().getDefaultGroups();
         if (defaultGroups == null || defaultGroups.isEmpty()) {
             log.debug("No default groups defined, skipped adding user to default groups");
             return;
@@ -184,7 +184,7 @@ public class LdapBusinessService implements InitializingBean {
     }
 
     public void delDefaulGroups(User user) {
-        List<String> defaultGroups = ldapConfiguration.getDefaultGroups();
+        List<String> defaultGroups = ldapConfiguration.getPermissions().getDefaultGroups();
         if (defaultGroups == null || defaultGroups.isEmpty()) {
             log.debug("No default groups defined, skipped removing user from default groups");
             return;

@@ -103,7 +103,7 @@ public class UserController {
         }
 
         ModelAndView mav = new ModelAndView("pages/user/userSearch.html");
-        mav.addObject("company", ldapConfiguration.getCompaniesAsMap());
+        mav.addObject("company", ldapConfiguration.getCompanies());
         mav.addObject("users", users);
         return mav;
     }
@@ -126,7 +126,7 @@ public class UserController {
         ModelAndView mav = new ModelAndView();
         mav.addAllObjects(model.asMap());
         mav.addObject("user", user);
-        mav.addObject("companies", ldapConfiguration.getCompaniesAsMap());
+        mav.addObject("companies", ldapConfiguration.getCompanies());
         mav.addObject("types", ldapService.getEmployeeType(connection));
         mav.addObject("departments", ldapService.getDepartments(connection));
         mav.addObject("locations", ldapService.getLocations(connection));
@@ -221,7 +221,7 @@ public class UserController {
         mav.addAllObjects(model.asMap());
         mav.addObject("primaryDomain", userFormValidator.getPrimaryDomain());
         mav.addObject("secondaryDomain", userFormValidator.getSecondaryDomain());
-        mav.addObject("companies", ldapConfiguration.getCompaniesAsMap());
+        mav.addObject("companies", ldapConfiguration.getCompanies());
         mav.addObject("types", ldapService.getEmployeeType(connection));
         mav.addObject("departments", ldapService.getDepartments(connection));
         mav.addObject("locations", ldapService.getLocations(connection));
