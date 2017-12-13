@@ -88,7 +88,7 @@ class UserForm(
         employeeNumber = employeeNumber,
         title = title,
         l = location,
-        o = ldapConfiguration.companiesAsMap[company]!!,
+        o = ldapConfiguration.companies[company]!!,
         companyKey = company)
 }
 

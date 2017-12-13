@@ -29,7 +29,7 @@ class CachedLdapServiceImpl : CachedLdapService {
     override fun getGroupMember(connection: LDAPConnection, uid: String): UserInfo? {
         try {
             val searchResult = connection.search(
-                ldapConfiguration.baseDN,
+                ldapConfiguration.config.baseDN,
                 SearchScope.SUB,
                 createANDFilter(
                     createEqualityFilter("objectclass", "posixAccount"),
@@ -58,7 +58,7 @@ class CachedLdapServiceImpl : CachedLdapService {
     private fun companyForDn(dn: String) =
         try {
             with(Regex(",ou=([^,]+)").findAll(dn).last().groupValues[1]) {
-                ldapConfiguration.companiesAsMap?.get(this) ?: "UNKNOWN"
+                ldapConfiguration.companies[this] ?: "UNKNOWN"
             }
         } catch (e: NoSuchElementException) {
             "UNKNOWN"

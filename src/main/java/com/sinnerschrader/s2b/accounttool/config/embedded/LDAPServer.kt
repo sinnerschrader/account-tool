@@ -42,9 +42,9 @@ class LDAPServer(
             return
 
         LOG.info("Starting embedded LDAP Server")
-        val host = InetAddress.getByName(ldapConfiguration.host)
-        val config = InMemoryDirectoryServerConfig("cn=config", ldapConfiguration.baseDN)
-        config.setListenerConfigs(InMemoryListenerConfig.createLDAPConfig("default", host, ldapConfiguration.port, null))
+        val host = InetAddress.getByName(ldapConfiguration.config.host)
+        val config = InMemoryDirectoryServerConfig("cn=config", ldapConfiguration.config.baseDN)
+        config.setListenerConfigs(InMemoryListenerConfig.createLDAPConfig("default", host, ldapConfiguration.config.port, null))
 
         val schemaLdifs = arrayOf(
             "classpath:ldap/schema/01-system.ldif",
@@ -79,7 +79,7 @@ class LDAPServer(
         }
 
         directoryServer.startListening()
-        LOG.info("Started embedded LDAP Service on {}", "ldap://${host.hostAddress}:${ldapConfiguration.port}")
+        LOG.info("Started embedded LDAP Service on {}", "ldap://${host.hostAddress}:${ldapConfiguration.config.port}")
     }
 
     @Throws(DestroyFailedException::class)

@@ -60,8 +60,8 @@ ldap:
     baseDN: "${ldap.config.dc}"
     groupDN: "${ldap.config.dc}"
     userDN:
-      - "e1c1:uid={0},ou=users,ou=e1c1,${ldap.config.dc}"
-      - "e1c2:uid={0},ou=users,ou=e1c2,${ldap.config.dc}"
+      e1c1: "uid={0},ou=users,ou=e1c1,${ldap.config.dc}"
+      e1c2: "uid={0},ou=users,ou=e1c2,${ldap.config.dc}"
   groupPrefixes:
     admin: "admin"
     team: "team"
@@ -71,8 +71,8 @@ ldap:
     userAdminGroups: "ldap-user-management"
     defaultGroups: "company-users"
   companies:
-    - "e1c1:Example - Company 1"
-    - "e1c2:Example - Company 2"
+    e1c1: "Example - Company 1"
+    e1c2: "Example - Company 2"
 
 # =============================================================
 # = LDAP Management Configuration for Background Jobs

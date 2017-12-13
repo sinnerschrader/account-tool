@@ -80,7 +80,7 @@ class LdapService {
 
     fun getUserCount(connection: LDAPConnection): Int {
         try {
-            val searchResult = connection.search(ldapConfiguration.baseDN, SearchScope.SUB,
+            val searchResult = connection.search(ldapConfiguration.config.baseDN, SearchScope.SUB,
                 LdapQueries.listAllUsers)
             return searchResult.entryCount
         } catch (e: Exception) {
@@ -92,7 +92,7 @@ class LdapService {
 
     fun getUsers(connection: LDAPConnection, firstResult: Int, maxResults: Int): List<User> {
         try {
-            val request = SearchRequest(ldapConfiguration.baseDN, SearchScope.SUB,
+            val request = SearchRequest(ldapConfiguration.config.baseDN, SearchScope.SUB,
                 LdapQueries.listAllUsers, ALL_USER_ATTRIBUTES, ALL_OPERATIONAL_ATTRIBUTES)
             val searchResult = connection.search(request)
             val count = searchResult.entryCount
@@ -111,7 +111,7 @@ class LdapService {
         if (result == null) {
             try {
                 val tempResult = HashSet<String>()
-                val searchResult = connection.search(ldapConfiguration.baseDN, SearchScope.SUB,
+                val searchResult = connection.search(ldapConfiguration.config.baseDN, SearchScope.SUB,
                         LdapQueries.listAllUsers, attribute)
 
                 var value: String
@@ -149,7 +149,7 @@ class LdapService {
 
     fun getUserByUid(connection: LDAPConnection, uid: String): User? {
         try {
-            val searchResult = connection.search(ldapConfiguration.baseDN, SearchScope.SUB,
+            val searchResult = connection.search(ldapConfiguration.config.baseDN, SearchScope.SUB,
                 MessageFormat.format(LdapQueries.findUserByUid,uid), ALL_USER_ATTRIBUTES, ALL_OPERATIONAL_ATTRIBUTES)
             if (searchResult.entryCount > 1) {
                 val msg = "Found multiple entries for uid \"" + uid + "\""
@@ -177,7 +177,7 @@ class LdapService {
 
     fun getGroupByCN(connection: LDAPConnection, groupCn: String?): Group? {
         try {
-            val searchResult = connection.search(ldapConfiguration.groupDN, SearchScope.SUB,
+            val searchResult = connection.search(ldapConfiguration.config.groupDN, SearchScope.SUB,
                     MessageFormat.format(LdapQueries.findGroupByCn, groupCn))
             if (searchResult.entryCount > 1) {
                 val msg = "Found multiple entries for group cn \"" + groupCn + "\""
@@ -202,7 +202,7 @@ class LdapService {
     fun findUserBySearchTerm(connection: LDAPConnection, searchTerm: String): List<User> {
         val result = LinkedList<User>()
         try {
-            val searchResult = connection.search(ldapConfiguration.baseDN,
+            val searchResult = connection.search(ldapConfiguration.config.baseDN,
                     SearchScope.SUB, MessageFormat.format(LdapQueries.searchUser, "*$searchTerm*"), ALL_USER_ATTRIBUTES, ALL_OPERATIONAL_ATTRIBUTES)
             result.addAll(userMapping.map(searchResult.searchEntries))
             Collections.sort(result)
@@ -216,7 +216,7 @@ class LdapService {
     fun getGroups(connection: LDAPConnection): List<Group> {
         val result = LinkedList<Group>()
         try {
-            val searchResult = connection.search(ldapConfiguration.groupDN, SearchScope.SUB,
+            val searchResult = connection.search(ldapConfiguration.config.groupDN, SearchScope.SUB,
                 LdapQueries.listAllGroups)
             result.addAll(groupMapping.map(searchResult.searchEntries))
             Collections.sort(result)
@@ -230,7 +230,7 @@ class LdapService {
     fun getGroupsByUser(connection: LDAPConnection, uid: String, userDN: String): List<Group> {
         val result = LinkedList<Group>()
         try {
-            val searchResult = connection.search(ldapConfiguration.groupDN, SearchScope.SUB,
+            val searchResult = connection.search(ldapConfiguration.config.groupDN, SearchScope.SUB,
                 MessageFormat.format(LdapQueries.findGroupsByUser, uid, userDN))
             result.addAll(groupMapping.map(searchResult.searchEntries))
             Collections.sort(result)
@@ -810,7 +810,7 @@ class LdapService {
         val attribute = "uidNumber"
         var result: Int = 1000
         try {
-            val searchResult = connection.search(ldapConfiguration.baseDN, SearchScope.SUB,
+            val searchResult = connection.search(ldapConfiguration.config.baseDN, SearchScope.SUB,
                 LdapQueries.listAllUsers, attribute)
 
             var uidNumber: Int?
@@ -837,7 +837,7 @@ class LdapService {
         val maxUserNumber = lastUserNumber!! + maxTriesForNextUidNumber
         for (uidNumber in lastUserNumber!! + 1..maxUserNumber - 1) {
             try {
-                val searchResult = connection.search(ldapConfiguration.baseDN, SearchScope.SUB,
+                val searchResult = connection.search(ldapConfiguration.config.baseDN, SearchScope.SUB,
                     MessageFormat.format(LdapQueries.findUserByUidNumber, uidNumber.toString()))
                 if (searchResult.entryCount == 0) {
                     lastUserNumber = uidNumber
@@ -862,7 +862,7 @@ class LdapService {
     @Throws(BusinessException::class)
     private fun isUserAttributeAlreadyUsed(connection: LDAPConnection, attribute: String, value: String): Boolean {
         try {
-            val result = connection.search(ldapConfiguration.baseDN, SearchScope.SUB,
+            val result = connection.search(ldapConfiguration.config.baseDN, SearchScope.SUB,
                 MessageFormat.format(LdapQueries.checkUniqAttribute, attribute, value), attribute)
             if (result.resultCode === ResultCode.SUCCESS) {
                 return result.entryCount != 0

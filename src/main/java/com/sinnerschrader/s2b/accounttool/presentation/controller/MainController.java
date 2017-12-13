@@ -75,7 +75,7 @@ public class MainController {
             model.addObject("msg", "logout.success");
         }
         model.addObject("selectedCompany", company);
-        model.addObject("companies", ldapConfiguration.getCompaniesAsMap());
+        model.addObject("companies", ldapConfiguration.getCompanies());
         return model;
     }
 

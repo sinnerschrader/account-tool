@@ -98,7 +98,7 @@ public class GroupController {
         SortedSet<UserInfo> users = ldapService.getGroupMembers(connection, selectedGroup);
 
         ModelAndView mav = new ModelAndView("pages/group/index.html");
-        mav.addObject("company", ldapConfiguration.getCompaniesAsMap());
+        mav.addObject("company", ldapConfiguration.getCompanies());
         mav.addObject("messageKey", messageKey);
         mav.addObject("showAllGroups", listAllGroups);
         mav.addObject("groups", groups);
@@ -130,7 +130,7 @@ public class GroupController {
         }
 
         ModelAndView mav = new ModelAndView("pages/group/userSearch.html");
-        mav.addObject("company", ldapConfiguration.getCompaniesAsMap());
+        mav.addObject("company", ldapConfiguration.getCompanies());
         mav.addObject("group", group);
         mav.addObject("users", users);
         mav.addObject("showAllGroups", listAllGroups);

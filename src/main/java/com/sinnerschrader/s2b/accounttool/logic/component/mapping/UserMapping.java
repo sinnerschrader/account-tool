@@ -89,7 +89,7 @@ public class UserMapping implements ModelMaping<User> {
     }
 
     private Map.Entry<String, String> getCompany(String dn, String organization) {
-        for (Map.Entry<String, String> entry : ldapConfiguration.getCompaniesAsMap().entrySet()) {
+        for (Map.Entry<String, String> entry : ldapConfiguration.getCompanies().entrySet()) {
             if (StringUtils.equals(entry.getValue(), organization)) {
                 return entry;
             }
@@ -119,9 +119,9 @@ public class UserMapping implements ModelMaping<User> {
         if (StringUtils.startsWith(key, companyPrefix)) {
             key = StringUtils.replaceOnce(key, companyPrefix, "");
         }
-        if (ldapConfiguration.getCompaniesAsMap().containsKey(key)) {
+        if (ldapConfiguration.getCompanies().containsKey(key)) {
             final String comKey = key;
-            final String comVal = ldapConfiguration.getCompaniesAsMap().get(key);
+            final String comVal = ldapConfiguration.getCompanies().get(key);
             return new Map.Entry<String, String>() {
 
                 @Override
