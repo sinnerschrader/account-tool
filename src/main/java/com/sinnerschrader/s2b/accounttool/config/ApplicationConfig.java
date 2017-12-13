@@ -6,8 +6,6 @@ import com.sinnerschrader.s2b.accounttool.config.embedded.LDAPServer;
 import com.sinnerschrader.s2b.accounttool.config.ldap.LdapConfiguration;
 import com.sinnerschrader.s2b.accounttool.config.ldap.LdapManagementConfiguration;
 import com.sinnerschrader.s2b.accounttool.logic.component.ldap.LdapBusinessService;
-import com.sinnerschrader.s2b.accounttool.logic.component.ldap.LdapBusinessService;
-import com.sinnerschrader.s2b.accounttool.logic.component.ldap.LdapService;
 import com.sinnerschrader.s2b.accounttool.logic.component.ldap.LdapService;
 import com.sinnerschrader.s2b.accounttool.logic.component.mapping.GroupMapping;
 import com.sinnerschrader.s2b.accounttool.logic.component.mapping.ModelMaping;
@@ -47,6 +45,7 @@ public class ApplicationConfig extends WebMvcConfigurerAdapter {
     @Autowired
     private Environment environment;
 
+    @Autowired
     private LdapConfiguration ldapConfiguration;
 
     private LdapManagementConfiguration ldapManagementConfiguration;
@@ -105,13 +104,6 @@ public class ApplicationConfig extends WebMvcConfigurerAdapter {
         return new ResourceUrlEncodingFilter();
     }
 
-    @Bean(name = "ldapConfiguration")
-    public LdapConfiguration ldapConfiguration() {
-        if (ldapConfiguration == null) {
-            ldapConfiguration = new LdapConfiguration();
-        }
-        return ldapConfiguration;
-    }
     @Bean(name = "userMapping")
     public ModelMaping<User> userMapping() {
         return new UserMapping();
@@ -131,11 +123,4 @@ public class ApplicationConfig extends WebMvcConfigurerAdapter {
     public Extension accountToolExtension() {
         return new AccountToolExtension();
     }
-
-    @Bean(name = "ldapServer")
-    @Profile({"development", "test"})
-    public LDAPServer ldapServer() {
-        return new LDAPServer(ldapConfiguration);
-    }
-
 }

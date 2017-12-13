@@ -4,6 +4,7 @@ import com.google.common.cache.Cache
 import com.google.common.cache.CacheBuilder
 import com.sinnerschrader.s2b.accounttool.config.authentication.LdapUserDetails
 import com.sinnerschrader.s2b.accounttool.config.ldap.LdapConfiguration
+import com.sinnerschrader.s2b.accounttool.config.ldap.LdapQueries
 import com.sinnerschrader.s2b.accounttool.logic.component.encryption.Encrypt
 import com.sinnerschrader.s2b.accounttool.logic.component.mapping.ModelMaping
 import com.sinnerschrader.s2b.accounttool.logic.entity.Group
@@ -27,6 +28,7 @@ import java.util.concurrent.TimeUnit
 
 import com.unboundid.ldap.sdk.SearchRequest.ALL_OPERATIONAL_ATTRIBUTES
 import com.unboundid.ldap.sdk.SearchRequest.ALL_USER_ATTRIBUTES
+import java.text.MessageFormat
 import java.util.Arrays.asList
 
 @Service
@@ -79,7 +81,7 @@ class LdapService {
     fun getUserCount(connection: LDAPConnection): Int {
         try {
             val searchResult = connection.search(ldapConfiguration.baseDN, SearchScope.SUB,
-                    ldapConfiguration.getLdapQueryByName("listAllUsers"))
+                LdapQueries.listAllUsers)
             return searchResult.entryCount
         } catch (e: Exception) {
             log.error("Could not fetch count of all users", e)
@@ -91,7 +93,7 @@ class LdapService {
     fun getUsers(connection: LDAPConnection, firstResult: Int, maxResults: Int): List<User> {
         try {
             val request = SearchRequest(ldapConfiguration.baseDN, SearchScope.SUB,
-                    ldapConfiguration.getLdapQueryByName("listAllUsers"), ALL_USER_ATTRIBUTES, ALL_OPERATIONAL_ATTRIBUTES)
+                LdapQueries.listAllUsers, ALL_USER_ATTRIBUTES, ALL_OPERATIONAL_ATTRIBUTES)
             val searchResult = connection.search(request)
             val count = searchResult.entryCount
             val fr = Math.min(Math.max(0, firstResult), count)
@@ -110,7 +112,7 @@ class LdapService {
             try {
                 val tempResult = HashSet<String>()
                 val searchResult = connection.search(ldapConfiguration.baseDN, SearchScope.SUB,
-                        ldapConfiguration.getLdapQueryByName("listAllUsers"), attribute)
+                        LdapQueries.listAllUsers, attribute)
 
                 var value: String
                 for (entry in searchResult.searchEntries) {
@@ -148,7 +150,7 @@ class LdapService {
     fun getUserByUid(connection: LDAPConnection, uid: String): User? {
         try {
             val searchResult = connection.search(ldapConfiguration.baseDN, SearchScope.SUB,
-                    ldapConfiguration.getLdapQueryByName("findUserByUid", uid), ALL_USER_ATTRIBUTES, ALL_OPERATIONAL_ATTRIBUTES)
+                MessageFormat.format(LdapQueries.findUserByUid,uid), ALL_USER_ATTRIBUTES, ALL_OPERATIONAL_ATTRIBUTES)
             if (searchResult.entryCount > 1) {
                 val msg = "Found multiple entries for uid \"" + uid + "\""
                 log.warn(msg)
@@ -176,7 +178,7 @@ class LdapService {
     fun getGroupByCN(connection: LDAPConnection, groupCn: String?): Group? {
         try {
             val searchResult = connection.search(ldapConfiguration.groupDN, SearchScope.SUB,
-                    ldapConfiguration.getLdapQueryByName("findGroupByCn", groupCn))
+                    MessageFormat.format(LdapQueries.findGroupByCn, groupCn))
             if (searchResult.entryCount > 1) {
                 val msg = "Found multiple entries for group cn \"" + groupCn + "\""
                 log.warn(msg)
@@ -201,7 +203,7 @@ class LdapService {
         val result = LinkedList<User>()
         try {
             val searchResult = connection.search(ldapConfiguration.baseDN,
-                    SearchScope.SUB, ldapConfiguration.getLdapQueryByName("searchUser", "*$searchTerm*"), ALL_USER_ATTRIBUTES, ALL_OPERATIONAL_ATTRIBUTES)
+                    SearchScope.SUB, MessageFormat.format(LdapQueries.searchUser, "*$searchTerm*"), ALL_USER_ATTRIBUTES, ALL_OPERATIONAL_ATTRIBUTES)
             result.addAll(userMapping.map(searchResult.searchEntries))
             Collections.sort(result)
         } catch (e: Exception) {
@@ -215,7 +217,7 @@ class LdapService {
         val result = LinkedList<Group>()
         try {
             val searchResult = connection.search(ldapConfiguration.groupDN, SearchScope.SUB,
-                    ldapConfiguration.getLdapQueryByName("listAllGroups"))
+                LdapQueries.listAllGroups)
             result.addAll(groupMapping.map(searchResult.searchEntries))
             Collections.sort(result)
         } catch (e: Exception) {
@@ -229,7 +231,7 @@ class LdapService {
         val result = LinkedList<Group>()
         try {
             val searchResult = connection.search(ldapConfiguration.groupDN, SearchScope.SUB,
-                    ldapConfiguration.getLdapQueryByName("findGroupsByUser", uid, userDN))
+                MessageFormat.format(LdapQueries.findGroupsByUser, uid, userDN))
             result.addAll(groupMapping.map(searchResult.searchEntries))
             Collections.sort(result)
         } catch (e: Exception) {
@@ -805,12 +807,11 @@ class LdapService {
     }
 
     private fun fetchMaxUserIDNumber(connection: LDAPConnection): Int? {
-        val queryName = "listAllUsers"
         val attribute = "uidNumber"
         var result: Int = 1000
         try {
             val searchResult = connection.search(ldapConfiguration.baseDN, SearchScope.SUB,
-                    ldapConfiguration.getLdapQueryByName(queryName), attribute)
+                LdapQueries.listAllUsers, attribute)
 
             var uidNumber: Int?
             for (entry in searchResult.searchEntries) {
@@ -832,13 +833,12 @@ class LdapService {
         if (lastUserNumber == null) {
             lastUserNumber = fetchMaxUserIDNumber(connection)
         }
-        val queryName = "findUserByUidNumber"
         val maxTriesForNextUidNumber = 1000
         val maxUserNumber = lastUserNumber!! + maxTriesForNextUidNumber
         for (uidNumber in lastUserNumber!! + 1..maxUserNumber - 1) {
             try {
                 val searchResult = connection.search(ldapConfiguration.baseDN, SearchScope.SUB,
-                        ldapConfiguration.getLdapQueryByName(queryName, uidNumber.toString()))
+                    MessageFormat.format(LdapQueries.findUserByUidNumber, uidNumber.toString()))
                 if (searchResult.entryCount == 0) {
                     lastUserNumber = uidNumber
                     return uidNumber
@@ -861,10 +861,9 @@ class LdapService {
 
     @Throws(BusinessException::class)
     private fun isUserAttributeAlreadyUsed(connection: LDAPConnection, attribute: String, value: String): Boolean {
-        val queryName = "checkUniqAttribute"
         try {
             val result = connection.search(ldapConfiguration.baseDN, SearchScope.SUB,
-                    ldapConfiguration.getLdapQueryByName(queryName, attribute, value), attribute)
+                MessageFormat.format(LdapQueries.checkUniqAttribute, attribute, value), attribute)
             if (result.resultCode === ResultCode.SUCCESS) {
                 return result.entryCount != 0
             }

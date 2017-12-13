@@ -9,7 +9,7 @@ import org.springframework.stereotype.Component
  */
 @Component
 @ConfigurationProperties(prefix = "ldap-management")
-open class LdapManagementConfiguration {
+class LdapManagementConfiguration {
     var user: ManagementUser? = null
     var leavingUsersInCW: Int = 4
     var notifyReceipients: List<String>? = null

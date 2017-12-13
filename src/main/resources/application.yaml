@@ -62,15 +62,6 @@ ldap:
     userDN:
       - "e1c1:uid={0},ou=users,ou=e1c1,${ldap.config.dc}"
       - "e1c2:uid={0},ou=users,ou=e1c2,${ldap.config.dc}"
-  queries:
-    searchUser: "(&(objectClass=posixAccount)(|(uid={0})(givenName={0})(sn={0})(mail={0})(cn={0})))"
-    findUserByUid: "(&(objectClass=posixAccount)(uid={0}))"
-    findGroupByCn: "(&(|(objectClass=posixGroup)(objectClass=groupOfUniqueNames)(objectClass=groupOfNames))(cn={0}))"
-    findGroupsByUser: "(|(&(objectClass=posixGroup)(memberUid={0}))(&(objectClass=groupOfUniqueNames)(uniqueMember={1}))(&(objectClass=groupOfNames)(member={1})))"
-    listAllGroups: "(|(objectClass=posixGroup)(objectClass=groupOfUniqueNames)(objectClass=groupOfNames))"
-    listAllUsers: "(&(objectClass=inetOrgPerson)(objectClass=posixAccount))"
-    findUserByUidNumber: "(&(objectClass=posixAccount)(uidNumber={0}))"
-    checkUniqAttribute: "(&(objectClass=posixAccount)({0}={1}))"
   groupPrefixes:
     admin: "admin"
     team: "team"
