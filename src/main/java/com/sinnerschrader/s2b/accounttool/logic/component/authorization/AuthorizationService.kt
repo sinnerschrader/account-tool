@@ -13,7 +13,7 @@ import org.springframework.stereotype.Service
 class AuthorizationService {
 
     @Autowired
-    private val ldapConfiguration: LdapConfiguration? = null
+    private lateinit var ldapConfiguration: LdapConfiguration
 
     private fun isMemberOf(authorities: Collection<GrantedAuthority>, group: String?): Boolean {
         for (ga in authorities)
@@ -22,10 +22,10 @@ class AuthorizationService {
         return false
     }
 
-    fun isAdmin(user: LdapUserDetails) = isMemberOf(user.authorities, ldapConfiguration!!.permissions.ldapAdminGroup)
+    fun isAdmin(user: LdapUserDetails) = isMemberOf(user.authorities, ldapConfiguration.permissions.ldapAdminGroup)
 
     fun isUserAdministration(user: LdapUserDetails): Boolean {
-        for (userAdminGroup in ldapConfiguration!!.permissions.userAdminGroups!!)
+        for (userAdminGroup in ldapConfiguration.permissions.userAdminGroups!!)
             if (isMemberOf(user.authorities, userAdminGroup))
                 return true
         return false
@@ -33,7 +33,7 @@ class AuthorizationService {
 
     fun isGroupAdmin(user: LdapUserDetails, groupCn: String): Boolean {
         val prefixSuffix = "-" //yepp, a suffix on a prefix.
-        val adminPrefix = ldapConfiguration!!.groupPrefixes.admin + prefixSuffix
+        val adminPrefix = ldapConfiguration.groupPrefixes.admin + prefixSuffix
         val technicalPrefix = ldapConfiguration.groupPrefixes.technical + prefixSuffix
         val teamPrefix = ldapConfiguration.groupPrefixes.team + prefixSuffix
         if (StringUtils.startsWith(groupCn, adminPrefix) || StringUtils.startsWith(groupCn, technicalPrefix)) {

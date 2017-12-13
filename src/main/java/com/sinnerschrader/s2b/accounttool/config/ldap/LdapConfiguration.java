@@ -8,7 +8,9 @@ import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.context.annotation.Configuration;
 
 import javax.net.SocketFactory;
 import java.beans.Transient;
@@ -18,14 +20,14 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentSkipListMap;
 
 
+@Configuration
 @ConfigurationProperties(prefix = "ldap")
 public class LdapConfiguration implements InitializingBean {
 
     private static final Logger log = LoggerFactory.getLogger(LdapConfiguration.class);
 
-    private LdapBaseConfig config = new LdapBaseConfig();
-
-    private LdapQueries queries = new LdapQueries();
+    @Autowired
+    private LdapBaseConfig config;
 
     private LdapPermissions permissions = new LdapPermissions();
 
@@ -33,7 +35,7 @@ public class LdapConfiguration implements InitializingBean {
 
     private List<String> companies = null;
 
-    private transient Map<String, String> companiesAsMap;
+    private Map<String, String> companiesAsMap;
 
     public LdapConfiguration() {
         this.companiesAsMap = new ConcurrentSkipListMap<>();
@@ -41,9 +43,6 @@ public class LdapConfiguration implements InitializingBean {
 
     @Override
     public void afterPropertiesSet() throws Exception {
-        config.afterPropertiesSet();
-        queries.afterPropertiesSet();
-
         final String rawDataSeparator = ":";
         final int keyPadding = 5;
         for (String rawCompany : companies) {
@@ -83,41 +82,20 @@ public class LdapConfiguration implements InitializingBean {
         this.permissions = permissions;
     }
 
-    public LdapQueries getQueries() {
-        return queries;
-    }
-
-    public void setQueries(LdapQueries queries) {
-        this.queries = queries;
-    }
-
-    @Transient
     public String getHost() {
         return config.getHost();
     }
 
-    @Transient
     public int getPort() {
         return config.getPort();
     }
 
-    @Transient
     public String getBaseDN() {
         return config.getBaseDN();
     }
 
-    @Transient
     public List<String> getDefaultGroups() {
         return permissions.getDefaultGroups();
-    }
-
-    @Transient
-    public String getLdapQueryByName(String queryName, String... parameter) {
-        String query = queries.getQuery(queryName);
-        if (query != null && !query.isEmpty()) {
-            return replacePlaceholders(query, parameter);
-        }
-        throw new IllegalStateException("Could not find a LDAP Query for name '" + queryName + "'");
     }
 
     private String replacePlaceholders(String query, String... args) {
@@ -142,7 +120,6 @@ public class LdapConfiguration implements InitializingBean {
         return new LDAPConnection(socketFactory, config.getHost(), config.getPort());
     }
 
-    @Transient
     public String getUserBind(String uid, String companyKey) {
         String userDN = config.getUserDnByCompany(companyKey);
         if (userDN != null && !userDN.isEmpty()) {
@@ -151,7 +128,6 @@ public class LdapConfiguration implements InitializingBean {
         throw new IllegalArgumentException("The provided company key '" + companyKey + "'is not allowed or known");
     }
 
-    @Transient
     public String getGroupDN() {
         return config.getGroupDN();
     }
@@ -164,7 +140,6 @@ public class LdapConfiguration implements InitializingBean {
         this.companies = companies;
     }
 
-    @Transient
     public Map<String, String> getCompaniesAsMap() {
         return companiesAsMap;
     }

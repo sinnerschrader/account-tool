@@ -1,6 +1,6 @@
 package com.sinnerschrader.s2b.accounttool.config;
 
-import com.sinnerschrader.s2b.accounttool.config.authentication.LdapAuthenticationDetailsSource;
+import com.sinnerschrader.s2b.accounttool.config.authentication.LdapAuthenticationDetails;
 import com.sinnerschrader.s2b.accounttool.config.authentication.LdapUserDetails;
 import com.sinnerschrader.s2b.accounttool.config.authentication.LdapUserDetailsAuthenticationProvider;
 import com.sinnerschrader.s2b.accounttool.config.ldap.LdapConfiguration;
@@ -19,6 +19,7 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.web.authentication.ForwardAuthenticationSuccessHandler;
+import org.springframework.security.web.authentication.WebAuthenticationDetails;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 
 import javax.servlet.ServletException;
@@ -86,7 +87,12 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     }
 
     private WebAuthenticationDetailsSource authenticationDetailsSource() {
-        return new LdapAuthenticationDetailsSource(ldapConfiguration);
+        return new WebAuthenticationDetailsSource()  {
+            @Override
+            public WebAuthenticationDetails buildDetails(HttpServletRequest context) {
+                return new LdapAuthenticationDetails(ldapConfiguration,context);
+            }
+        };
     }
 
     @Autowired

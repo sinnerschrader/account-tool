@@ -12,6 +12,9 @@ import org.springframework.beans.factory.InitializingBean
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.context.ApplicationContext
 import org.springframework.context.ApplicationContextAware
+import org.springframework.context.annotation.Bean
+import org.springframework.context.annotation.Profile
+import org.springframework.stereotype.Service
 import java.net.InetAddress
 import javax.security.auth.DestroyFailedException
 import javax.security.auth.Destroyable
@@ -21,6 +24,8 @@ import javax.security.auth.Destroyable
  * Custom embedded LDAP Server for development purpose. This embedded LDAP server will be started on development profile
  * automatically. For production profile this spring bean will be skipped.
  */
+@Service("ldapServer")
+@Profile("development", "test")
 class LDAPServer(
     private val ldapConfiguration: LdapConfiguration
 ) : ApplicationContextAware, InitializingBean, Destroyable {
