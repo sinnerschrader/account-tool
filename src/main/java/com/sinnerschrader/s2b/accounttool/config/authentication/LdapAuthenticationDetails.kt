@@ -14,7 +14,5 @@ internal constructor(ldapConfiguration: LdapConfiguration,
     val password = request.getParameter("password")
     val company = request.getParameter("company")
 
-    init {
-        this.userDN = ldapConfiguration.getUserBind(username, company)
-    }
+    init { this.userDN = ldapConfiguration.getUserBind(username, company) }
 }

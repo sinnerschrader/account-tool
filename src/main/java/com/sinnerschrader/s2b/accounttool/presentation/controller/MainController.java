@@ -6,11 +6,9 @@ import com.fasterxml.jackson.databind.SerializationFeature;
 import com.sinnerschrader.s2b.accounttool.config.WebConstants;
 import com.sinnerschrader.s2b.accounttool.config.authentication.LdapUserDetails;
 import com.sinnerschrader.s2b.accounttool.config.ldap.LdapConfiguration;
-import com.sinnerschrader.s2b.accounttool.logic.LogService;
 import com.sinnerschrader.s2b.accounttool.logic.component.ldap.LdapService;
 import com.sinnerschrader.s2b.accounttool.presentation.RequestUtils;
 import org.apache.catalina.servlet4preview.http.HttpServletRequest;
-import org.ocpsoft.prettytime.PrettyTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,10 +23,6 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 
 import java.io.StringWriter;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.LinkedHashSet;
-import java.util.Set;
 
 
 @Controller
@@ -47,9 +41,6 @@ public class MainController {
 
     @Autowired
     private LdapService ldapService;
-
-    @Autowired
-    private LogService logService;
 
     @RequestMapping(path = "/")
     public String root() {
@@ -101,7 +92,6 @@ public class MainController {
         LdapUserDetails details = RequestUtils.getCurrentUserDetails();
         if (details != null) {
             log.debug("{} has been successfully logged off", details.getUid());
-            logService.event("logging.logstash.event.logout", "success", details.getUid());
         }
         request.getSession().invalidate();
         return "redirect:/login?logout";

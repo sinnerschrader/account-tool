@@ -2,7 +2,6 @@ package com.sinnerschrader.s2b.accounttool.presentation.controller;
 
 import com.sinnerschrader.s2b.accounttool.config.WebConstants;
 import com.sinnerschrader.s2b.accounttool.config.authentication.LdapUserDetails;
-import com.sinnerschrader.s2b.accounttool.logic.LogService;
 import com.sinnerschrader.s2b.accounttool.logic.component.ldap.LdapService;
 import com.sinnerschrader.s2b.accounttool.logic.component.mail.MailService;
 import com.sinnerschrader.s2b.accounttool.logic.entity.User;
@@ -27,19 +26,12 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.annotation.Resource;
 
-
-/**
- *
- */
 @Controller
 public class ProfileController {
 
     private final static Logger log = LoggerFactory.getLogger(ProfileController.class);
 
     private final static String FORMNAME = "changeProfileForm";
-
-    @Autowired
-    private LogService logService;
 
     @Autowired
     private LdapService ldapService;
@@ -87,7 +79,6 @@ public class ProfileController {
                     boolean res = ldapService.changePassword(connection, details, form.getPassword());
                     String state = res ? "sucess" : "failure";
                     log.info("{} changed his/her password", details.getUid());
-                    logService.event("logging.logstash.event.password-change", state, details.getUid());
                     mailService.sendMailForAccountChange(ldapUser, "passwordChanged");
                 } else {
                     ldapService.update(connection, updatedUser);

@@ -29,7 +29,7 @@ before_script:
   - nvm use $NODE_VERSION
 
 script:
-  - gradle --no-daemon clean build
+  - gradle --no-daemon clean build dependencyUpdates
   - echo "ENV GIT_COMMIT $TRAVIS_COMMIT" >> Dockerfile.prod
   - echo "ENV GIT_BRANCH $TRAVIS_BRANCH" >> Dockerfile.prod
   - docker build -f Dockerfile.prod -t "$DOCKER_REPO"/account-tool:${TRAVIS_TAG:-latest} .

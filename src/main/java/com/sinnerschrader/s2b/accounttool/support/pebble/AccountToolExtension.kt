@@ -54,11 +54,9 @@ class AccountToolExtension : AbstractExtension() {
                 }
 
                 val authorities = userDetails!!.authorities
-                if (authorities != null) {
-                    for (ga in authorities) {
-                        if (StringUtils.equals(ga.authority, groupCn)) {
-                            return true
-                        }
+                for (ga in authorities) {
+                    if (StringUtils.equals(ga.authority, groupCn)) {
+                        return true
                     }
                 }
                 return group != null && group.hasMember(userDetails.uid, userDetails.dn)
