@@ -7,15 +7,17 @@ import com.sinnerschrader.s2b.accounttool.logic.entity.Group
 import com.sinnerschrader.s2b.accounttool.presentation.RequestUtils.getCurrentUserDetails
 import org.apache.commons.lang3.StringUtils
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.stereotype.Service
 
 
 /**
  * Custom Extension for Pebble support which are required for the Tool
  */
+@Service
 class AccountToolExtension : AbstractExtension() {
 
     @Autowired
-    private val authorizationService: AuthorizationService? = null
+    private lateinit var authorizationService: AuthorizationService
 
     override fun getFunctions() = mapOf(
         "isLoggedIn" to object : Function {
