@@ -9,6 +9,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 import java.util.Collection;
 import java.util.List;
@@ -22,6 +23,7 @@ import static org.apache.commons.lang3.StringUtils.defaultString;
 /**
  * Converter for Groups from LDAP to Application
  */
+@Service
 public class GroupMapping implements ModelMaping<Group> {
 
     private static final Logger LOG = LoggerFactory.getLogger(GroupMapping.class);
