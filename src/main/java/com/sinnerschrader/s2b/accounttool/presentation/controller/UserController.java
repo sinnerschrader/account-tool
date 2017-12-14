@@ -3,7 +3,6 @@ package com.sinnerschrader.s2b.accounttool.presentation.controller;
 import com.sinnerschrader.s2b.accounttool.config.WebConstants;
 import com.sinnerschrader.s2b.accounttool.config.authentication.LdapUserDetails;
 import com.sinnerschrader.s2b.accounttool.config.ldap.LdapConfiguration;
-import com.sinnerschrader.s2b.accounttool.logic.LogService;
 import com.sinnerschrader.s2b.accounttool.logic.component.authorization.AuthorizationService;
 import com.sinnerschrader.s2b.accounttool.logic.component.ldap.LdapBusinessService;
 import com.sinnerschrader.s2b.accounttool.logic.component.ldap.LdapService;
@@ -46,9 +45,6 @@ public class UserController {
     private static final String FORMNAME_CREATE = "createUserForm";
 
     private static final String FORMNAME_EDIT = "editUserForm";
-
-    @Autowired
-    private LogService logService;
 
     @Resource(name = "userFormValidator")
     private UserFormValidator userFormValidator;
@@ -176,23 +172,17 @@ public class UserController {
                 }
                 if (isNotBlank(userForm.getResetPassword())) {
                     log.info("{} reseted the password of user {}", details.getUid(), user.getUid());
-                    logService.event("logging.logstash.event.user.password-reset",
-                        "success", details.getUid(), user.getUid());
                 }
                 String message = hidePassword ? "user.passwordReset.simple" : "user.passwordReset.full";
                 if (isNotBlank(userForm.getActivateUser())) {
                     message = "user.activated";
                     if (ldapService.activate(connection, user)) ldapBusinessService.addDefaultGroups(user);
                     log.info("{} activated the user {} right now", details.getUid(), user.getUid());
-                    logService.event("logging.logstash.event.user.activate",
-                        "success", details.getUid(), user.getUid());
                 }
                 if (isNotBlank(userForm.getDeactivateUser())) {
                     message = "user.deactivated";
                     if(ldapService.deactivate(connection, user)) ldapBusinessService.delDefaulGroups(user);
                     log.info("{} deactivated the user {} right now", details.getUid(), user.getUid());
-                    logService.event("logging.logstash.event.user.deactivate",
-                        "success", details.getUid(), user.getUid());
                 }
                 globalMessageFactory.store(request,
                     globalMessageFactory.createInfo(message, user.getUid(), password));
@@ -251,7 +241,6 @@ public class UserController {
             globalMessageFactory.store(request,
                 globalMessageFactory.createInfo("user.create.success", newUser.getUid(), password));
             log.info("{} created a new account with uid {}", currentUser.getUid(), newUser.getUid());
-            logService.event("logging.logstash.event.user.create", "success", currentUser.getUid(), newUser.getUid());
         } catch (BusinessException be) {
             bindingResult.reject(be.getCode(), be.getArgs(), "Could not create user");
             attr.addFlashAttribute(BindingResult.class.getName() + "." + FORMNAME_CREATE, bindingResult);

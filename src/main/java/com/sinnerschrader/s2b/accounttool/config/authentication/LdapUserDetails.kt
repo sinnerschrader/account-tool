@@ -18,9 +18,7 @@ class LdapUserDetails(val dn: String,
 
     override fun getPassword() = password
 
-    fun setPassword(password: String) {
-        this.password = password
-    }
+    fun setPassword(password: String) { this.password = password }
 
     override fun getUsername() = uid
 

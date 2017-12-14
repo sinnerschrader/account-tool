@@ -770,7 +770,7 @@ class LdapService {
                         "szzMailStatus", user.szzMailStatus.name))
             }
 
-            var result: LDAPResult? = null
+            var result: LDAPResult?
             // save modifications
             if (!changes.isEmpty()) {
                 result = connection.modify(currentDN, changes)

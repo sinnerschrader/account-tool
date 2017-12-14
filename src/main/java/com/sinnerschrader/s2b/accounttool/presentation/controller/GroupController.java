@@ -4,7 +4,6 @@ import com.sinnerschrader.s2b.accounttool.config.WebConstants;
 import com.sinnerschrader.s2b.accounttool.config.authentication.LdapUserDetails;
 import com.sinnerschrader.s2b.accounttool.config.ldap.LdapConfiguration;
 import com.sinnerschrader.s2b.accounttool.config.ldap.LdapManagementConfiguration;
-import com.sinnerschrader.s2b.accounttool.logic.LogService;
 import com.sinnerschrader.s2b.accounttool.logic.component.authorization.AuthorizationService;
 import com.sinnerschrader.s2b.accounttool.logic.component.ldap.LdapService;
 import com.sinnerschrader.s2b.accounttool.logic.component.mail.MailService;
@@ -38,9 +37,6 @@ import static com.sinnerschrader.s2b.accounttool.logic.component.mail.MailServic
 public class GroupController {
 
     private final static Logger log = LoggerFactory.getLogger(GroupController.class);
-
-    @Autowired
-    private LogService logService;
 
     @Autowired
     private LdapService ldapService;
@@ -152,7 +148,6 @@ public class GroupController {
         group = ldapService.addUserToGroup(connection, user, group);
         if (group.hasMember(user.getUid(), user.getDn())) {
             log.info("User {} added user {} into group {}", details.getUid(), uid, groupCN);
-            logService.event(eventKey, "success", details.getUid(), uid, groupCN);
             globalMessageFactory.store(request, globalMessageFactory.createInfo(
                 "addUser.success", user.getUid(), group.getCn()));
 
@@ -163,7 +158,6 @@ public class GroupController {
             }
         } else {
             log.warn("Adding user {} into group {} failed", uid, groupCN);
-            logService.event(eventKey, "success", details.getUid(), uid, groupCN);
             globalMessageFactory.store(request, globalMessageFactory.createError(
                 "addUser.error", user.getUid(), group.getCn()));
         }
@@ -185,7 +179,6 @@ public class GroupController {
         group = ldapService.removeUserFromGroup(connection, user, group);
         if (!group.hasMember(user.getUid(), user.getDn())) {
             log.info("{} removed user {} from group {}", details.getUid(), uid, groupCN);
-            logService.event(eventKey, "success", details.getUid(), uid, groupCN);
             globalMessageFactory.store(request, globalMessageFactory.createInfo(
                 "removeUser.success", user.getUid(), group.getCn()));
 
@@ -195,7 +188,6 @@ public class GroupController {
             }
         } else {
             log.warn("{} removed user {} from group {}; but it failed", details.getUid(), uid, groupCN);
-            logService.event(eventKey, "success", details.getUid(), uid, groupCN);
             globalMessageFactory.store(request, globalMessageFactory.createError(
                 "removeUser.error", user.getUid(), group.getCn()));
         }
