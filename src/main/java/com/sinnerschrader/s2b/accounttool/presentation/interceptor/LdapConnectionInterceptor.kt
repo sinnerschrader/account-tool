@@ -5,7 +5,7 @@ import com.sinnerschrader.s2b.accounttool.config.ldap.LdapConfiguration
 import com.sinnerschrader.s2b.accounttool.presentation.RequestUtils.*
 import com.unboundid.ldap.sdk.LDAPConnection
 import com.unboundid.ldap.sdk.LDAPException
-import com.unboundid.ldap.sdk.ResultCode
+import com.unboundid.ldap.sdk.ResultCode.SUCCESS
 import org.springframework.web.servlet.ModelAndView
 import org.springframework.web.servlet.handler.HandlerInterceptorAdapter
 
@@ -18,13 +18,14 @@ class LdapConnectionInterceptor(private val ldapConfiguration: LdapConfiguration
     @Throws(Exception::class)
     override fun preHandle(request: HttpServletRequest, response: HttpServletResponse, handler: Any): Boolean {
         getCurrentUserDetails()?.apply {
+            var connection: LDAPConnection? = null
             try {
-                ldapConfiguration.createConnection().use {
-                    val bindResult = it.bind(this.dn, this.password)
-                    if(bindResult.resultCode == ResultCode.SUCCESS)
-                        setLdapConnection(request, it)
+                connection = ldapConfiguration.createConnection()
+                with(connection.bind(dn, password)) {
+                    if (resultCode === SUCCESS) setLdapConnection(request, connection)
                 }
             } catch (le: LDAPException) {
+                connection?.close()
                 request.session.invalidate()
                 return false
             }
@@ -37,10 +38,8 @@ class LdapConnectionInterceptor(private val ldapConfiguration: LdapConfiguration
                             handler: Any, modelAndView: ModelAndView?) {
         getLdapConnection(request)?.close()
         request.removeAttribute(WebConstants.ATTR_CONNECTION)
-        with(getCurrentUserDetails()){
-            if (this != null && modelAndView != null) {
-                modelAndView.addObject("currentUser", this)
-            }
+        getCurrentUserDetails()?.let {
+            modelAndView?.addObject("currentUser", it)
         }
     }
 }
