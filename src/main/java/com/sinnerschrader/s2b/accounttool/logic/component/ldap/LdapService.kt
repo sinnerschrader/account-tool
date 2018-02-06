@@ -6,7 +6,7 @@ import com.sinnerschrader.s2b.accounttool.config.authentication.LdapUserDetails
 import com.sinnerschrader.s2b.accounttool.config.ldap.LdapConfiguration
 import com.sinnerschrader.s2b.accounttool.config.ldap.LdapQueries
 import com.sinnerschrader.s2b.accounttool.logic.component.encryption.Encrypt
-import com.sinnerschrader.s2b.accounttool.logic.component.mapping.ModelMaping
+import com.sinnerschrader.s2b.accounttool.logic.component.mapping.GroupMapping
 import com.sinnerschrader.s2b.accounttool.logic.component.mapping.UserMapping
 import com.sinnerschrader.s2b.accounttool.logic.entity.Group
 import com.sinnerschrader.s2b.accounttool.logic.entity.UserInfo
@@ -21,7 +21,6 @@ import org.springframework.beans.factory.annotation.Value
 import org.springframework.core.env.Environment
 import org.springframework.stereotype.Service
 
-import javax.annotation.Resource
 import java.text.Normalizer
 import java.time.LocalDate
 import java.util.*
@@ -65,8 +64,8 @@ class LdapService {
     @Autowired
     private lateinit var userMapping: UserMapping
 
-    @Resource(name = "groupMapping")
-    private lateinit var groupMapping: ModelMaping<Group>
+    @Autowired
+    private lateinit var groupMapping: GroupMapping
 
     @Autowired
     private lateinit var environment: Environment
