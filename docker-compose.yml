@@ -18,3 +18,5 @@ services:
       - '5005:5005'
     environment:
       SPRING_PROFILES_ACTIVE: development,maildev
+      GIT_COMMIT: dummycommit
+      GIT_BRANCH: dummybranch

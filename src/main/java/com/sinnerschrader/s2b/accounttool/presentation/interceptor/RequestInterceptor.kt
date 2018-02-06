@@ -17,7 +17,7 @@ class RequestInterceptor(private val environment: Environment) : HandlerIntercep
                             modelAndView: ModelAndView?) {
         if (request.method.equals("GET", ignoreCase = true) &&
             modelAndView != null &&
-            modelAndView.viewName.startsWith("redirect:")) {
+            !modelAndView.viewName.startsWith("redirect:")) {
             modelAndView.addObject("env", environment)
         }
     }
