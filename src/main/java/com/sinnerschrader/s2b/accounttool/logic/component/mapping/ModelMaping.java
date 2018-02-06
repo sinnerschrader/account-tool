@@ -28,5 +28,4 @@ public interface ModelMaping<T extends Comparable<T>> {
     }
 
     boolean isCompatible(SearchResultEntry entry);
-
 }

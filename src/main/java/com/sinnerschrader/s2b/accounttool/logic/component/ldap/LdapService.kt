@@ -7,6 +7,7 @@ import com.sinnerschrader.s2b.accounttool.config.ldap.LdapConfiguration
 import com.sinnerschrader.s2b.accounttool.config.ldap.LdapQueries
 import com.sinnerschrader.s2b.accounttool.logic.component.encryption.Encrypt
 import com.sinnerschrader.s2b.accounttool.logic.component.mapping.ModelMaping
+import com.sinnerschrader.s2b.accounttool.logic.component.mapping.UserMapping
 import com.sinnerschrader.s2b.accounttool.logic.entity.Group
 import com.sinnerschrader.s2b.accounttool.logic.entity.UserInfo
 import com.sinnerschrader.s2b.accounttool.logic.entity.User
@@ -29,6 +30,7 @@ import java.util.concurrent.TimeUnit
 import com.unboundid.ldap.sdk.SearchRequest.ALL_OPERATIONAL_ATTRIBUTES
 import com.unboundid.ldap.sdk.SearchRequest.ALL_USER_ATTRIBUTES
 import java.text.MessageFormat
+import java.time.format.DateTimeFormatter
 import java.util.Arrays.asList
 
 @Service
@@ -60,8 +62,8 @@ class LdapService {
     @Value("\${user.appendCompanyOnDisplayName}")
     private var appendCompanyOnDisplayName = true
 
-    @Resource(name = "userMapping")
-    private lateinit var userMapping: ModelMaping<User>
+    @Autowired
+    private lateinit var userMapping: UserMapping
 
     @Resource(name = "groupMapping")
     private lateinit var groupMapping: ModelMaping<Group>
@@ -98,11 +100,14 @@ class LdapService {
             val count = searchResult.entryCount
             val fr = Math.min(Math.max(0, firstResult), count)
             val mr = Math.min(fr + maxResults, count)
-            return userMapping.map(searchResult.searchEntries.subList(fr, mr))
+
+            return searchResult.searchEntries.subList(fr, mr).mapNotNull {
+                userMapping.map(it)
+            }.sorted()
+
         } catch (e: Exception) {
             log.error("Could not fetch all users", e)
         }
-
         return emptyList()
     }
 
@@ -161,9 +166,7 @@ class LdapService {
                 return null
             }
             val entry = searchResult.searchEntries[0]
-            if (userMapping.isCompatible(entry)) {
-                return userMapping.map(entry)
-            }
+            return userMapping.map(entry)
         } catch (e: Exception) {
             log.error("Could not retrieve user from user with uid " + uid, e)
         }
@@ -200,17 +203,17 @@ class LdapService {
     }
 
     fun findUserBySearchTerm(connection: LDAPConnection, searchTerm: String): List<User> {
-        val result = LinkedList<User>()
         try {
             val searchResult = connection.search(ldapConfiguration.config.baseDN,
                     SearchScope.SUB, MessageFormat.format(LdapQueries.searchUser, "*$searchTerm*"), ALL_USER_ATTRIBUTES, ALL_OPERATIONAL_ATTRIBUTES)
-            result.addAll(userMapping.map(searchResult.searchEntries))
-            Collections.sort(result)
+
+            return searchResult.searchEntries.mapNotNull {
+                userMapping.map(it)
+            }.sorted()
         } catch (e: Exception) {
             log.error("Could not find user by searchTermn " + searchTerm, e)
         }
-
-        return result
+        return emptyList()
     }
 
     fun getGroups(connection: LDAPConnection): List<Group> {
@@ -528,12 +531,14 @@ class LdapService {
             attributes.add(Attribute("szzEntryDay", entry.dayOfMonth.toString()))
             attributes.add(Attribute("szzEntryMonth", entry.monthValue.toString()))
             attributes.add(Attribute("szzEntryYear", entry.year.toString()))
+            attributes.add(Attribute("szzEntryDate", entry.format(DateTimeFormatter.ISO_DATE)))
 
             // Exit Date
             val exit = user.employeeExitDate ?: throw BusinessException("Exit could not be null", "user.exit.required")
             attributes.add(Attribute("szzExitDay", exit.dayOfMonth.toString()))
             attributes.add(Attribute("szzExitMonth", exit.monthValue.toString()))
             attributes.add(Attribute("szzExitYear", exit.year.toString()))
+            attributes.add(Attribute("szzExitDate", exit.format(DateTimeFormatter.ISO_DATE)))
 
             // States
             attributes.add(Attribute("szzStatus", user.szzStatus.name))
@@ -747,6 +752,8 @@ class LdapService {
                         "szzEntryMonth", entry.monthValue.toString()))
                 changes.add(Modification(ModificationType.REPLACE,
                         "szzEntryYear", entry.year.toString()))
+                changes.add(Modification(ModificationType.REPLACE,
+                        "szzEntryDate", entry.format(DateTimeFormatter.ISO_DATE)))
             }
 
             // Exit Date
@@ -758,6 +765,8 @@ class LdapService {
                         "szzExitMonth", exit.monthValue.toString()))
                 changes.add(Modification(ModificationType.REPLACE,
                         "szzExitYear", exit.year.toString()))
+                changes.add(Modification(ModificationType.REPLACE,
+                        "szzExitDate", exit.format(DateTimeFormatter.ISO_DATE)))
             }
 
             // States
