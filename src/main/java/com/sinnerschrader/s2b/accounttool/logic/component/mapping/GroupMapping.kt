@@ -15,12 +15,12 @@ import org.springframework.stereotype.Service
 import java.util.Arrays.asList
 
 @Service
-class GroupMapping : ModelMaping<Group> {
+class GroupMapping {
 
     @Autowired
     private lateinit var ldapConfiguration: LdapConfiguration
 
-    override fun map(entry: SearchResultEntry?): Group? {
+    fun map(entry: SearchResultEntry?): Group? {
         if (entry == null) return null
 
         fun SearchResultEntry.str(attributeName: String) = getAttributeValue(attributeName)
@@ -87,7 +87,7 @@ class GroupMapping : ModelMaping<Group> {
     private fun isGroupOfUniqueNames(objectClasses: Collection<String>) = objectClasses.contains(GroupType.GroupOfUniqueNames.objectClass)
     private fun isPosixGroup(objectClasses: Collection<String>) = objectClasses.contains(GroupType.Posix.objectClass)
 
-    override fun isCompatible(entry: SearchResultEntry?): Boolean {
+    fun isCompatible(entry: SearchResultEntry?): Boolean {
         if (entry == null) return false
 
         val objectClasses = asList(*entry.objectClassValues)
@@ -95,6 +95,8 @@ class GroupMapping : ModelMaping<Group> {
                 isGroupOfNames(objectClasses) ||
                 isGroupOfUniqueNames(objectClasses)
     }
+
+    fun map(entries: List<SearchResultEntry>) = entries.filter { isCompatible(it) }.mapNotNull { map(it) }.sorted()
 
     companion object {
         private val LOG = LoggerFactory.getLogger(GroupMapping::class.java)
