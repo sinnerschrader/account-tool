@@ -64,6 +64,16 @@ attributeTypes: ( 1.3.6.1.4.1.12415.2.1.28
   EQUALITY caseExactMatch
   SUBSTR caseExactSubstringsMatch
   SYNTAX 1.3.6.1.4.1.1466.115.121.1.44 )
+attributeTypes: ( 1.3.6.1.4.1.12415.2.1.42
+  NAME 'szzEntryDate'
+  DESC 'IA5 String'
+  EQUALITY caseExactIA5Match
+  SYNTAX 1.3.6.1.4.1.1466.115.121.1.26 SINGLE-VALUE )
+attributeTypes: ( 1.3.6.1.4.1.12415.2.1.43
+  NAME 'szzExitDate'
+  DESC 'IA5 String'
+  EQUALITY caseExactIA5Match
+  SYNTAX 1.3.6.1.4.1.1466.115.121.1.26 SINGLE-VALUE )
 objectClasses: ( 1.3.1.5.1.4.1.12415.2.2.1
   NAME 'szzUser'
   DESC 'SZZ user information'
@@ -72,4 +82,4 @@ objectClasses: ( 1.3.1.5.1.4.1.12415.2.2.1
   MAY ( sn $ cn $ uid $ userPassword $ ou $ givenName $ mail $ szzBirthDay $
         szzBirthMonth $ szzEntryDay $ szzEntryMonth $ szzEntryYear $
         szzExitDay $ szzExitMonth $ szzExitYear $ szzPublicKey $ szzStatus $
-        szzMailStatus ) )
+        szzMailStatus $ szzEntryDate $ szzExitDate ) )

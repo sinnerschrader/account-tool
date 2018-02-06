@@ -27,19 +27,18 @@ class AccountToolExtension : AbstractExtension() {
         "isGroupAdmin" to object : Function {
             override fun getArgumentNames() = listOf("groupCn")
             override fun execute(args: Map<String, Any>) =
-                authorizationService!!.isGroupAdmin(getCurrentUserDetails(), args["groupCn"] as String)
+                authorizationService.isGroupAdmin(getCurrentUserDetails(), args["groupCn"] as String)
                     || authorizationService.isAdmin(getCurrentUserDetails())
         },
         "isAdmin" to object : Function {
             override fun getArgumentNames() = emptyList<String>()
-            override fun execute(args: Map<String, Any>) = authorizationService!!.isAdmin(getCurrentUserDetails())
+            override fun execute(args: Map<String, Any>) = authorizationService.isAdmin(getCurrentUserDetails())
         },
         "isUserAdmin" to object : Function {
             override fun getArgumentNames() = emptyList<String>()
             override fun execute(args: Map<String, Any>) =
-                authorizationService!!.isUserAdministration(getCurrentUserDetails())
+                authorizationService.isUserAdministration(getCurrentUserDetails())
                     || authorizationService.isAdmin(getCurrentUserDetails())
-
         },
         "isMemberOf" to object : Function {
             override fun getArgumentNames() = listOf("groupCn")
