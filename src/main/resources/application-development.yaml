@@ -31,6 +31,9 @@ ldap:
     ssl: "false"
   permissions:
     defaultGroups: "git-users,jira-users,company-users,company-vpn"
+  companies:
+    e1c1: "Example - Company 1"
+    e1c2: "Example - Company 2"
 
 ldap-management:
   user:
