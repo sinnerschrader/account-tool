@@ -70,9 +70,6 @@ ldap:
     ldapAdminGroup: "ldap-admins"
     userAdminGroups: "ldap-user-management"
     defaultGroups: "company-users"
-  companies:
-    e1c1: "Example - Company 1"
-    e1c2: "Example - Company 2"
 
 # =============================================================
 # = LDAP Management Configuration for Background Jobs
