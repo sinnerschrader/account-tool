@@ -29,23 +29,24 @@ class CachedLdapServiceImpl : CachedLdapService {
     override fun getGroupMember(connection: LDAPConnection, uid: String): UserInfo? {
         try {
             val searchResult = connection.search(
-                ldapConfiguration.config.baseDN,
-                SearchScope.SUB,
-                createANDFilter(
-                    createEqualityFilter("objectclass", "posixAccount"),
-                    createEqualityFilter("uid", uid)
-                ),
-                "uid", "givenName", "sn"
+                    ldapConfiguration.config.baseDN,
+                    SearchScope.SUB,
+                    createANDFilter(
+                            createEqualityFilter("objectclass", "posixAccount"),
+                            createEqualityFilter("uid", uid)
+                    ),
+                    "uid", "givenName", "sn", "mail"
             )
 
             return when (searchResult.searchEntries.size) {
-                0 -> UserInfo(uid, "UNKNOWN", "UNKNOWN", "UNKNOWN")
+                0 -> UserInfo(uid, "UNKNOWN", "UNKNOWN", "UNKNOWN", "UNKNOWN")
                 1 -> with(searchResult.searchEntries.first()) {
                     UserInfo(
-                        uid = getAttributeValue("uid"),
-                        givenName = getAttributeValue("givenName"),
-                        sn = getAttributeValue("sn"),
-                        o = companyForDn(dn))
+                            uid = getAttributeValue("uid"),
+                            givenName = getAttributeValue("givenName"),
+                            sn = getAttributeValue("sn"),
+                            o = companyForDn(dn),
+                            mail = getAttributeValue("mail"))
                 }
                 else -> throw IllegalStateException()
             }
@@ -56,11 +57,11 @@ class CachedLdapServiceImpl : CachedLdapService {
     }
 
     private fun companyForDn(dn: String) =
-        try {
-            with(Regex(",ou=([^,]+)").findAll(dn).last().groupValues[1]) {
-                ldapConfiguration.companies[this] ?: "UNKNOWN"
+            try {
+                with(Regex(",ou=([^,]+)").findAll(dn).last().groupValues[1]) {
+                    ldapConfiguration.companies[this] ?: "UNKNOWN"
+                }
+            } catch (e: NoSuchElementException) {
+                "UNKNOWN"
             }
-        } catch (e: NoSuchElementException) {
-            "UNKNOWN"
-        }
 }
