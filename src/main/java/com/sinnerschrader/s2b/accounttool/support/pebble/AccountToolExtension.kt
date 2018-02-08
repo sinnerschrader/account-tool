@@ -7,7 +7,9 @@ import com.sinnerschrader.s2b.accounttool.logic.entity.Group
 import com.sinnerschrader.s2b.accounttool.presentation.RequestUtils.getCurrentUserDetails
 import org.apache.commons.lang3.StringUtils
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Service
+import org.springframework.util.DigestUtils
 
 
 /**
@@ -18,6 +20,12 @@ class AccountToolExtension : AbstractExtension() {
 
     @Autowired
     private lateinit var authorizationService: AuthorizationService
+
+    @Value("\${gravatar.domain}")
+    private lateinit var gravatarDomain: String
+
+    @Value("\${gravatar.path}")
+    private lateinit var gravatarPath: String
 
     override fun getFunctions() = mapOf(
         "isLoggedIn" to object : Function {
@@ -66,6 +74,12 @@ class AccountToolExtension : AbstractExtension() {
         "isSelected" to object : Function {
             override fun getArgumentNames() = listOf("current", "match")
             override fun execute(args: Map<String, Any>) = if (args["current"] == args["match"]) "selected" else ""
+        },
+        "gravatarUrl" to object : Function {
+            override fun getArgumentNames() = listOf("mail", "size")
+            override fun execute(args: Map<String, Any>) =
+                   with(DigestUtils.md5DigestAsHex((args["mail"] as String).toLowerCase().trim().toByteArray())) {
+                    "${gravatarDomain}${gravatarPath}/${this}?s=${args["size"]}" }
         }
     )
 }

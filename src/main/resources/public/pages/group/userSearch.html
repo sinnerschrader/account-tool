@@ -7,7 +7,7 @@
     {% for user in users %}
     <div class="mdl-list__item mdl-list__item--two-line s2act-groupList__item">
 			<span class="mdl-list__item-primary-content">
-				<i class="material-icons mdl-list__item-avatar">account_circle</i>
+                <img class="mdl-list__item-avatar" src="{{ gravatarUrl(user.mail, 50) }}"/>
 				<span>{{ user.givenName }} <strong>{{ user.sn }}</strong></span>
 				<span class="uid">({{ user.uid }})</span>
 				<span class="mdl-list__item-sub-title">{{ user.o }}</span>

@@ -12,7 +12,7 @@ spring:
   resources:
     cache-period: "2678400"
   security:
-    contentSecurityPolicy: "default-src 'none'; manifest-src 'self'; img-src 'self'; script-src 'self'; style-src 'self' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; connect-src 'self'; report-uri /csp-report"
+    contentSecurityPolicy: "default-src 'none'; manifest-src 'self'; img-src 'self' ${gravatar.domain}; script-src 'self'; style-src 'self' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; connect-src 'self'; report-uri /csp-report"
   mail:
     logOnly: "false"
     default-encoding: "UTF-8"
@@ -46,6 +46,10 @@ pebble:
   suffix:
   cache: "true"
   encoding: "UTF-8"
+
+gravatar:
+  domain: 'https://gravatar.com' 
+  path: '/avatar' 
 
 # =============================================================
 # = LDAP Configuration
