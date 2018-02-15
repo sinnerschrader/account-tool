@@ -31,24 +31,6 @@
                             <label class="mdl-textfield__label" for="password">Password</label>
                         </div>
                     </div>
-                    {% if companies | length > 1 %}
-                    <div class="mdl-cell mdl-cell--12-col">
-                        <div
-                            class="s2act-selectfield mdl-selectfield mdl-js-selectfield mdl-selectfield--floating-label">
-                            <select id="company" name="company" class="mdl-selectfield__select">
-                                {% for company in companies %}
-                                <option value="{{company.key}}" {{ selectedCompany equals company.key ?
-                                "selected" : "" }}>{{company.value}}</option>
-                                {% endfor %}
-                            </select>
-                            <div class="mdl-selectfield__icon"><i class="material-icons">arrow_drop_down</i></div>
-                            <label class="mdl-selectfield__label" for="company">Company</label>
-                        </div>
-                    </div>
-                    {% else %}
-                    {% set companyKey = companies.keySet | first %}
-                    <input type="hidden" name="company" value="{{companyKey}}">
-                    {% endif %}
                     <div class="mdl-cell mdl-cell--12-col s2act-buttonRow">
                         <input type="submit" value="Login"
                                class="s2act-button--right mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect"/>

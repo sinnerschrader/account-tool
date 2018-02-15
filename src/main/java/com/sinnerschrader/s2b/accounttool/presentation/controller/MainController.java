@@ -50,7 +50,6 @@ public class MainController {
     @RequestMapping(value = "/login", method = RequestMethod.GET)
     public ModelAndView login(
         HttpServletRequest request,
-        @CookieValue(name = WebConstants.COMPANY_COOKIE_NAME, defaultValue = "") String company,
         @RequestParam(value = "error", required = false) String error,
         @RequestParam(value = "logout", required = false) String logout) {
         ModelAndView model = new ModelAndView("pages/login.html");
@@ -65,8 +64,6 @@ public class MainController {
         if (logout != null) {
             model.addObject("msg", "logout.success");
         }
-        model.addObject("selectedCompany", company);
-        model.addObject("companies", ldapConfiguration.getCompanies());
         return model;
     }
 

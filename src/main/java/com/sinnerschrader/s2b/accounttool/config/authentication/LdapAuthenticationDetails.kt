@@ -7,12 +7,8 @@ import javax.servlet.http.HttpServletRequest
 
 
 class LdapAuthenticationDetails
-internal constructor(ldapConfiguration: LdapConfiguration,
+internal constructor(val userDN: String,
                      request: HttpServletRequest) : WebAuthenticationDetails(request) {
-    val userDN: String
     val username = request.getParameter("uid")
     val password = request.getParameter("password")
-    val company = request.getParameter("company")
-
-    init { this.userDN = ldapConfiguration.getUserBind(username, company) }
 }

@@ -4,6 +4,11 @@ import com.sinnerschrader.s2b.accounttool.config.authentication.LdapAuthenticati
 import com.sinnerschrader.s2b.accounttool.config.authentication.LdapUserDetails;
 import com.sinnerschrader.s2b.accounttool.config.authentication.LdapUserDetailsAuthenticationProvider;
 import com.sinnerschrader.s2b.accounttool.config.ldap.LdapConfiguration;
+import com.sinnerschrader.s2b.accounttool.config.ldap.LdapManagementConfiguration;
+import com.sinnerschrader.s2b.accounttool.logic.component.ldap.CachedLdapService;
+import com.sinnerschrader.s2b.accounttool.logic.entity.UserInfo;
+import com.unboundid.ldap.sdk.LDAPConnection;
+import com.unboundid.ldap.sdk.LDAPException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,6 +32,7 @@ import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.security.GeneralSecurityException;
 
 
 @Configuration
@@ -41,7 +47,13 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     private LdapUserDetailsAuthenticationProvider userDetailsAuthenticationProvider;
 
     @Autowired
+    private CachedLdapService cachedLdapService;
+
+    @Autowired
     private LdapConfiguration ldapConfiguration;
+
+    @Autowired
+    private LdapManagementConfiguration ldapManagementConfiguration;
 
     @Value("${spring.security.contentSecurityPolicy}")
     private String contentSecurityPolicy;
@@ -66,7 +78,6 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
             .loginProcessingUrl("/login")
             .permitAll()
             .authenticationDetailsSource(authenticationDetailsSource())
-            .successHandler(new CustomAuthenticationSuccessHandler("/"))
             .and()
             .logout()
             .logoutUrl("/logout")
@@ -87,10 +98,19 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     }
 
     private WebAuthenticationDetailsSource authenticationDetailsSource() {
-        return new WebAuthenticationDetailsSource()  {
+        return new WebAuthenticationDetailsSource() {
             @Override
             public WebAuthenticationDetails buildDetails(HttpServletRequest context) {
-                return new LdapAuthenticationDetails(ldapConfiguration,context);
+
+                try (
+                    LDAPConnection connection = ldapConfiguration.createConnection()){
+                    connection.bind(ldapManagementConfiguration.getUser().getBindDN(),
+                            ldapManagementConfiguration.getUser().getPassword());
+                    UserInfo n = cachedLdapService.getGroupMember(connection, context.getParameter("uid"));
+                    return n == null ? null : new LdapAuthenticationDetails(n.getDn(), context);
+                } catch (LDAPException | GeneralSecurityException e) {
+                    return null;
+                }
             }
         };
     }
@@ -99,26 +119,4 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     public void configureGlobal(AuthenticationManagerBuilder auth) throws Exception {
         auth.authenticationProvider(userDetailsAuthenticationProvider);
     }
-
-    private final class CustomAuthenticationSuccessHandler extends ForwardAuthenticationSuccessHandler {
-
-        CustomAuthenticationSuccessHandler(String forwardUrl) {
-            super(forwardUrl);
-        }
-
-        @Override
-        public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response,
-                                            Authentication authentication) throws IOException, ServletException {
-            // set the company cookie for company pre selection on login
-            LdapUserDetails details = (LdapUserDetails) authentication.getPrincipal();
-            Cookie companyCookie = new Cookie(WebConstants.COMPANY_COOKIE_NAME, details.getCompany());
-            companyCookie.setMaxAge(WebConstants.COMPANY_COOKIE_MAXAGE);
-            companyCookie.setHttpOnly(httpOnlyCookie);
-            companyCookie.setSecure(secureCookie);
-            response.addCookie(companyCookie);
-            super.onAuthenticationSuccess(request, response, authentication);
-        }
-
-    }
-
 }
