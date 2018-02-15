@@ -3,7 +3,8 @@ package com.sinnerschrader.s2b.accounttool.logic.entity
 /**
  * Short user representation for better performance (cached)
  */
-data class UserInfo(val uid: String,
+data class UserInfo(val dn: String,
+                    val uid: String,
                     val givenName: String,
                     val sn: String,
                     val o: String,

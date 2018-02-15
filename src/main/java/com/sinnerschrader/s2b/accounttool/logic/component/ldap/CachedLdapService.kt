@@ -14,6 +14,7 @@ import java.util.*
 
 interface CachedLdapService {
     fun getGroupMember(connection: LDAPConnection, uid: String): UserInfo?
+    fun companyForDn(dn: String): String
 }
 
 @Service
@@ -39,9 +40,10 @@ class CachedLdapServiceImpl : CachedLdapService {
             )
 
             return when (searchResult.searchEntries.size) {
-                0 -> UserInfo(uid, "UNKNOWN", "UNKNOWN", "UNKNOWN", "UNKNOWN")
+                0 -> UserInfo("UNKNOWN",uid, "UNKNOWN", "UNKNOWN", "UNKNOWN", "UNKNOWN")
                 1 -> with(searchResult.searchEntries.first()) {
                     UserInfo(
+                            dn = dn,
                             uid = getAttributeValue("uid"),
                             givenName = getAttributeValue("givenName"),
                             sn = getAttributeValue("sn"),
@@ -56,7 +58,7 @@ class CachedLdapServiceImpl : CachedLdapService {
         }
     }
 
-    private fun companyForDn(dn: String) =
+    override fun companyForDn(dn: String) =
             try {
                 with(Regex(",ou=([^,]+)").findAll(dn).last().groupValues[1]) {
                     ldapConfiguration.companies[this] ?: "UNKNOWN"
