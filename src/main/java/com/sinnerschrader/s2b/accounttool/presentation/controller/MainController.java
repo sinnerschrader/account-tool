@@ -6,6 +6,7 @@ import com.fasterxml.jackson.databind.SerializationFeature;
 import com.sinnerschrader.s2b.accounttool.config.WebConstants;
 import com.sinnerschrader.s2b.accounttool.config.authentication.LdapUserDetails;
 import com.sinnerschrader.s2b.accounttool.config.ldap.LdapConfiguration;
+import com.sinnerschrader.s2b.accounttool.logic.component.PwnedPasswordService;
 import com.sinnerschrader.s2b.accounttool.logic.component.ldap.LdapService;
 import com.sinnerschrader.s2b.accounttool.presentation.RequestUtils;
 import org.apache.catalina.servlet4preview.http.HttpServletRequest;
@@ -49,9 +50,9 @@ public class MainController {
 
     @RequestMapping(value = "/login", method = RequestMethod.GET)
     public ModelAndView login(
-        HttpServletRequest request,
-        @RequestParam(value = "error", required = false) String error,
-        @RequestParam(value = "logout", required = false) String logout) {
+            HttpServletRequest request,
+            @RequestParam(value = "error", required = false) String error,
+            @RequestParam(value = "logout", required = false) String logout) {
         ModelAndView model = new ModelAndView("pages/login.html");
         LdapUserDetails details = RequestUtils.getCurrentUserDetails();
         if (details != null) {
@@ -65,6 +66,11 @@ public class MainController {
             model.addObject("msg", "logout.success");
         }
         return model;
+    }
+
+    @RequestMapping(value = "/pwned", method = RequestMethod.GET)
+    public ModelAndView pwned() {
+        return new ModelAndView("pages/pwned.html");
     }
 
     //customize the error message

@@ -5,6 +5,7 @@ import com.sinnerschrader.s2b.accounttool.config.authentication.LdapUserDetailsA
 import com.sinnerschrader.s2b.accounttool.config.ldap.LdapConfiguration
 import com.sinnerschrader.s2b.accounttool.config.ldap.LdapManagementConfiguration
 import com.sinnerschrader.s2b.accounttool.logic.component.ldap.CachedLdapService
+import com.sinnerschrader.s2b.accounttool.presentation.interceptor.PwnedAuthenticationSuccessHandler
 import com.unboundid.ldap.sdk.LDAPException
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Autowired
@@ -56,6 +57,7 @@ class SecurityConfig : WebSecurityConfigurerAdapter() {
     override fun configure(http: HttpSecurity) {
         LOG.debug("Setting up authorization")
         http.formLogin()
+                .successHandler(PwnedAuthenticationSuccessHandler)
                 .loginPage("/login")
                 .loginProcessingUrl("/login")
                 .permitAll()
