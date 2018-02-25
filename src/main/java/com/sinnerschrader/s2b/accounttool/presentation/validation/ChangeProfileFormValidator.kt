@@ -1,6 +1,7 @@
 package com.sinnerschrader.s2b.accounttool.presentation.validation
 
 import com.sinnerschrader.s2b.accounttool.config.authentication.LdapUserDetails
+import com.sinnerschrader.s2b.accounttool.logic.component.PwnedPasswordService
 import com.sinnerschrader.s2b.accounttool.logic.component.zxcvbn.PasswordAnalyzeService
 import com.sinnerschrader.s2b.accounttool.logic.component.zxcvbn.PasswordValidationResult
 import com.sinnerschrader.s2b.accounttool.presentation.RequestUtils
@@ -117,6 +118,9 @@ class ChangeProfileFormValidator : Validator {
                     errors.rejectValue("password", code, "Your password violates a rule.")
                 }
             }
+        } else if (PwnedPasswordService.isPwned(form.password)) {
+            errors.rejectValue("password", "passwordValidation.isPwned.error",
+                    "The password has previously appeared in a security breach")
         }
     }
 
