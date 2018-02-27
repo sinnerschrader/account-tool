@@ -1,4 +1,4 @@
-package com.sinnerschrader.s2b.accounttool.logic.component
+package com.sinnerschrader.s2b.accounttool.logic.component.security
 
 import org.slf4j.LoggerFactory
 import org.springframework.http.HttpEntity
