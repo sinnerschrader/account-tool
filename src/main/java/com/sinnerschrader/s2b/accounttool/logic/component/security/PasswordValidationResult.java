@@ -1,4 +1,4 @@
-package com.sinnerschrader.s2b.accounttool.logic.component.zxcvbn;
+package com.sinnerschrader.s2b.accounttool.logic.component.security;
 
 import com.nulabinc.zxcvbn.Feedback;
 import com.nulabinc.zxcvbn.Strength;
@@ -25,8 +25,8 @@ public class PasswordValidationResult {
     private PasswordValidationResult(int score, String messageCode, List<String> suggestionCodes) {
         this.valid = score >= 3;
         this.suggestionCodes = (suggestionCodes != null)
-            ? Collections.unmodifiableList(suggestionCodes)
-            : Collections.emptyList();
+                ? Collections.unmodifiableList(suggestionCodes)
+                : Collections.emptyList();
         this.score = score;
         this.messageCode = messageCode;
     }

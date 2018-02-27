@@ -1,4 +1,4 @@
-package com.sinnerschrader.s2b.accounttool.logic.component.zxcvbn;
+package com.sinnerschrader.s2b.accounttool.logic.component.security;
 
 import com.nulabinc.zxcvbn.Feedback;
 import com.nulabinc.zxcvbn.Strength;

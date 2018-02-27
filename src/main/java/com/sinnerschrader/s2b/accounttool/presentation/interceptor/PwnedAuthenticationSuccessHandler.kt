@@ -1,6 +1,6 @@
 package com.sinnerschrader.s2b.accounttool.presentation.interceptor
 
-import com.sinnerschrader.s2b.accounttool.logic.component.PwnedPasswordService
+import com.sinnerschrader.s2b.accounttool.logic.component.security.PwnedPasswordService
 import com.sinnerschrader.s2b.accounttool.presentation.RequestUtils.getCurrentUserDetails
 import org.springframework.security.core.Authentication
 import org.springframework.security.web.DefaultRedirectStrategy
