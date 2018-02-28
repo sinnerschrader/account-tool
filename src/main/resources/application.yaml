@@ -159,14 +159,6 @@ server:
     min-spare-threads: "2"
 
 # =============================================================
-# = Custom Dictionary for Password validation
-# =============================================================
-zxcvbn:
-  dictionary:
-    active: "top500"
-    top500: "classpath:/zxcvbn/top500-worst-passwords.dic"
-
-# =============================================================
 # = Logging
 # =============================================================
 logging:
