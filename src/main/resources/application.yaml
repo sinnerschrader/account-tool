@@ -178,6 +178,3 @@ logging:
     org.springframework.context: "WARN"
     org.springframework.boot.web: "WARN"
     org.springframework.security.web: "WARN"
-
-logService:
-  simple: "true"
