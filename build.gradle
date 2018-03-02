@@ -1,8 +1,8 @@
 plugins {
-    id 'org.springframework.boot' version '1.5.9.RELEASE'
-    id "org.jetbrains.kotlin.jvm" version "1.2.21"
-    id "org.jetbrains.kotlin.plugin.spring" version "1.2.21"
-    id "com.moowork.node" version "1.1.0"
+    id 'org.springframework.boot' version '2.0.0.RELEASE'
+    id "org.jetbrains.kotlin.jvm" version "1.2.30"
+    id "org.jetbrains.kotlin.plugin.spring" version "1.2.30"
+    id "com.moowork.node" version "1.2.0"
     id 'com.github.ben-manes.versions' version '0.17.0'
 }
 
@@ -31,19 +31,19 @@ repositories {
 dependencies {
     compile group: 'commons-codec', name: 'commons-codec', version: '1.11'
     compile group: 'com.mitchellbosecke', name: 'pebble-spring-boot-starter', version: '2.4.0'
-    compile group: 'com.nulab-inc', name: 'zxcvbn', version: '1.2.3'
-    compile group: 'com.unboundid', name: 'unboundid-ldapsdk', version: '4.0.3'
+    compile group: 'com.nulab-inc', name: 'zxcvbn', version: '1.2.4'
+    compile group: 'com.unboundid', name: 'unboundid-ldapsdk', version: '4.0.4'
     compile group: 'net.logstash.logback', name: 'logstash-logback-encoder', version: '5.0'
     compile group: 'org.apache.commons', name: 'commons-lang3', version: '3.7'
-    compile group: 'org.apache.sshd', name: 'sshd-core', version: '1.6.0'
-    compile group: 'org.jetbrains.kotlin', name: 'kotlin-stdlib-jre8', version: '1.2.21'
+    compile group: 'org.apache.sshd', name: 'sshd-core', version: '1.7.0'
+    compile group: 'org.jetbrains.kotlin', name: 'kotlin-stdlib-jre8', version: '1.2.30'
     compile group: 'org.ocpsoft.prettytime', name: 'prettytime', version: '4.0.1.Final'
-    compile group: 'org.springframework.boot', name: 'spring-boot-starter-actuator', version: '1.5.9.RELEASE'
-    compile group: 'org.springframework.boot', name: 'spring-boot-starter-mail', version: '1.5.9.RELEASE'
-    compile group: 'org.springframework.boot', name: 'spring-boot-starter-security', version: '1.5.9.RELEASE'
-    compile group: 'org.springframework.boot', name: 'spring-boot-starter-web', version: '1.5.9.RELEASE'
-    testCompile group: 'org.jetbrains.kotlin', name: 'kotlin-test', version: '1.2.21'
-    testCompile(group: 'org.springframework.boot', name: 'spring-boot-starter-test', version: '1.5.9.RELEASE') {
+    compile group: 'org.springframework.boot', name: 'spring-boot-starter-actuator', version: '2.0.0.RELEASE'
+    compile group: 'org.springframework.boot', name: 'spring-boot-starter-mail', version: '2.0.0.RELEASE'
+    compile group: 'org.springframework.boot', name: 'spring-boot-starter-security', version: '2.0.0.RELEASE'
+    compile group: 'org.springframework.boot', name: 'spring-boot-starter-web', version: '2.0.0.RELEASE'
+    testCompile group: 'org.jetbrains.kotlin', name: 'kotlin-test', version: '1.2.30'
+    testCompile(group: 'org.springframework.boot', name: 'spring-boot-starter-test', version: '2.0.0.RELEASE') {
         exclude(module: 'commons-logging')
     }
 }

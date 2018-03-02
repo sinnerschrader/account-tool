@@ -38,7 +38,7 @@ class ProfileController {
     @Resource(name = "changeProfileFormValidator")
     private val changeProfileFormValidator: ChangeProfileFormValidator? = null
 
-    @RequestMapping(path = arrayOf("/profile"), method = arrayOf(RequestMethod.GET))
+    @RequestMapping("/profile", method = arrayOf(RequestMethod.GET))
     fun profile(request: HttpServletRequest, model: Model): ModelAndView {
         val connection = RequestUtils.getLdapConnection(request)
         val details = RequestUtils.getCurrentUserDetails()
@@ -46,16 +46,16 @@ class ProfileController {
         if (details != null) {
             val user = ldapService.getUserByUid(connection, details.username)
             mav.addAllObjects(model.asMap())
-            mav.addObject("user", user)
+            mav.addObject("user", user!!)
             mav.addObject("groups", ldapService.getGroupsByUser(connection, details.uid, details.dn))
             if (!model.containsAttribute(FORMNAME)) {
-                model.addAttribute(FORMNAME, ChangeProfile(user!!))
+                model.addAttribute(FORMNAME, ChangeProfile(user))
             }
         }
         return mav
     }
 
-    @RequestMapping(value = "/profile/change", method = arrayOf(RequestMethod.POST))
+    @RequestMapping("/profile/change", method = arrayOf(RequestMethod.POST))
     @Throws(BusinessException::class)
     fun changeCurrentUserAttributes(
             request: HttpServletRequest,
@@ -73,8 +73,7 @@ class ProfileController {
                 val ldapUser = ldapService.getUserByUid(connection, details!!.uid)
                 val updatedUser = form.createUserEntityFromForm(ldapUser!!)
                 if (form.isPasswordChange()) {
-                    val res = ldapService.changePassword(connection, details, form.password)
-                    val state = if (res) "sucess" else "failure"
+                    ldapService.changePassword(connection, details, form.password)
                     log.info("{} changed his/her password", details.uid)
                     mailService.sendMailForAccountChange(ldapUser, "passwordChanged")
                 } else {
