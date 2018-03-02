@@ -43,7 +43,7 @@ object PwnedPasswordService {
                 String::class.java)
 
         return when (template.statusCode) {
-            HttpStatus.OK -> template.body.lines()
+            HttpStatus.OK -> template.body?.lines() ?: emptyList()
             else -> {
                 LOG.warn("Failed to retrieve list of pwnedpasswords: $this")
                 emptyList()

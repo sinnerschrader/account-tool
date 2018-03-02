@@ -13,7 +13,7 @@ import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.core.env.Environment
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry
-import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter
+import org.springframework.web.servlet.config.annotation.WebMvcConfigurer
 import org.springframework.web.servlet.i18n.AcceptHeaderLocaleResolver
 import org.springframework.web.servlet.resource.ResourceUrlEncodingFilter
 import java.util.*
@@ -22,7 +22,7 @@ import java.util.*
 @Configuration
 @EnableAutoConfiguration
 @EnableCaching
-class ApplicationConfig : WebMvcConfigurerAdapter() {
+class ApplicationConfig : WebMvcConfigurer {
 
     @Autowired
     private lateinit var environment: Environment
