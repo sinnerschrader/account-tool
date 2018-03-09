@@ -49,8 +49,8 @@ class UserMapping {
                         szzStatus = User.State.fromString(str("szzStatus")),
                         szzMailStatus = User.State.fromString(str("szzMailStatus")),
                         sambaPwdLastSet = long("sambaPwdLastSet") ?: 0L,
-                        employeeEntryDate = parseDate(str("szzEntryDate")),
-                        employeeExitDate = parseDate(str("szzExitDate")),
+                        employeeEntryDate = parseDate(dn, str("szzEntryDate")),
+                        employeeExitDate = parseDate(dn, str("szzExitDate")),
                         ou = str("ou"),
                         description = str("description"),
                         telephoneNumber = str("telephoneNumber") ?: "",
@@ -81,13 +81,13 @@ class UserMapping {
             }
 
 
-    private fun parseDate(date: String?, required: Boolean = true): LocalDate? =
+    private fun parseDate(dn: String, date: String?, required: Boolean = true): LocalDate? =
             date?.let {
                 try {
                     LocalDate.parse(it)
                 } catch (e: Exception) {
                     if (required)
-                        LOG.warn("Could not parse date [date=$date]")
+                        LOG.warn("Could not parse date [dn=$dn, date=$date]")
                     null
                 }
             }
@@ -97,7 +97,7 @@ class UserMapping {
                 LocalDate.of(year!!, month!!, day!!)
             } catch (e: Exception) {
                 if (required)
-                    LOG.warn("Could not parse date [dn={},required={},year={},month={},day={}]", dn, required, year, month, day)
+                    LOG.warn("Could not parse date [dn=$dn, required=$required, year=$year, month=$month, day=$day]")
                 null
             }
 
