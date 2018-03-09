@@ -15,37 +15,6 @@ attributeTypes: ( 1.3.6.1.4.1.12415.2.1.2
   DESC 'Birth Month'
   EQUALITY integerMatch
   SYNTAX 1.3.6.1.4.1.1466.115.121.1.27 SINGLE-VALUE )
-attributeTypes: ( 1.3.6.1.4.1.12415.2.1.4
-  NAME 'szzEntryDay'
-  DESC 'Entry Day'
-  EQUALITY integerMatch
-  SYNTAX 1.3.6.1.4.1.1466.115.121.1.27 SINGLE-VALUE )
-attributeTypes: ( 1.3.6.1.4.1.12415.2.1.5
-  NAME 'szzEntryMonth'
-  DESC 'Entry Month'
-  EQUALITY integerMatch
-  SYNTAX 1.3.6.1.4.1.1466.115.121.1.27 SINGLE-VALUE )
-attributeTypes: ( 1.3.6.1.4.1.12415.2.1.6
-  NAME 'szzEntryYear'
-  DESC 'Entry Year'
-  EQUALITY integerMatch
-  SYNTAX 1.3.6.1.4.1.1466.115.121.1.27 SINGLE-VALUE )
-attributeTypes: ( 1.3.6.1.4.1.12415.2.1.7
-  NAME 'szzExitDay'
-  DESC 'ExitDay'
-  EQUALITY integerMatch
-  SYNTAX 1.3.6.1.4.1.1466.115.121.1.27 SINGLE-VALUE )
-attributeTypes: ( 1.3.6.1.4.1.12415.2.1.8
-  NAME 'szzExitMonth'
-  DESC 'Exit Month'
-  EQUALITY integerMatch
-  SYNTAX 1.3.6.1.4.1.1466.115.121.1.27 SINGLE-VALUE )
-attributeTypes: ( 1.3.6.1.4.1.12415.2.1.9
-  NAME 'szzExitYear'
-  DESC 'Exit Year'
-  EQUALITY integerMatch
-  SYNTAX 1.3.6.1.4.1.1466.115.121.1.27
-  SINGLE-VALUE )
 attributeTypes: ( 1.3.6.1.4.1.12415.2.1.16
   NAME 'szzStatus'
   DESC 'Status information for szzUser'
