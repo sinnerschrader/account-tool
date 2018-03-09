@@ -738,24 +738,12 @@ class LdapService {
             val entry = user.employeeEntryDate
             if (entry != null && isChanged(entry, employeeEntryDate)) {
                 changes.add(Modification(ModificationType.REPLACE,
-                        "szzEntryDay", entry.dayOfMonth.toString()))
-                changes.add(Modification(ModificationType.REPLACE,
-                        "szzEntryMonth", entry.monthValue.toString()))
-                changes.add(Modification(ModificationType.REPLACE,
-                        "szzEntryYear", entry.year.toString()))
-                changes.add(Modification(ModificationType.REPLACE,
                         "szzEntryDate", entry.format(DateTimeFormatter.ISO_DATE)))
             }
 
             // Exit Date
             val exit = user.employeeExitDate
             if (exit != null && isChanged(exit, employeeExitDate)) {
-                changes.add(Modification(ModificationType.REPLACE,
-                        "szzExitDay", exit.dayOfMonth.toString()))
-                changes.add(Modification(ModificationType.REPLACE,
-                        "szzExitMonth", exit.monthValue.toString()))
-                changes.add(Modification(ModificationType.REPLACE,
-                        "szzExitYear", exit.year.toString()))
                 changes.add(Modification(ModificationType.REPLACE,
                         "szzExitDate", exit.format(DateTimeFormatter.ISO_DATE)))
             }
