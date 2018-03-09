@@ -9,10 +9,12 @@ import com.sinnerschrader.s2b.accounttool.logic.component.encryption.Encrypt
 import com.sinnerschrader.s2b.accounttool.logic.component.mapping.GroupMapping
 import com.sinnerschrader.s2b.accounttool.logic.component.mapping.UserMapping
 import com.sinnerschrader.s2b.accounttool.logic.entity.Group
-import com.sinnerschrader.s2b.accounttool.logic.entity.UserInfo
 import com.sinnerschrader.s2b.accounttool.logic.entity.User
+import com.sinnerschrader.s2b.accounttool.logic.entity.UserInfo
 import com.sinnerschrader.s2b.accounttool.logic.exception.BusinessException
 import com.unboundid.ldap.sdk.*
+import com.unboundid.ldap.sdk.SearchRequest.ALL_OPERATIONAL_ATTRIBUTES
+import com.unboundid.ldap.sdk.SearchRequest.ALL_USER_ATTRIBUTES
 import org.apache.commons.lang3.RandomStringUtils
 import org.apache.commons.lang3.StringUtils
 import org.slf4j.LoggerFactory
@@ -20,17 +22,13 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.core.env.Environment
 import org.springframework.stereotype.Service
-
+import java.text.MessageFormat
 import java.text.Normalizer
 import java.time.LocalDate
-import java.util.*
-import java.util.concurrent.TimeUnit
-
-import com.unboundid.ldap.sdk.SearchRequest.ALL_OPERATIONAL_ATTRIBUTES
-import com.unboundid.ldap.sdk.SearchRequest.ALL_USER_ATTRIBUTES
-import java.text.MessageFormat
 import java.time.format.DateTimeFormatter
+import java.util.*
 import java.util.Arrays.asList
+import java.util.concurrent.TimeUnit
 
 @Service
 class LdapService {
@@ -527,16 +525,10 @@ class LdapService {
 
             // Entry Date
             val entry = user.employeeEntryDate ?: throw BusinessException("Entry could not be null", "user.entry.required")
-            attributes.add(Attribute("szzEntryDay", entry.dayOfMonth.toString()))
-            attributes.add(Attribute("szzEntryMonth", entry.monthValue.toString()))
-            attributes.add(Attribute("szzEntryYear", entry.year.toString()))
             attributes.add(Attribute("szzEntryDate", entry.format(DateTimeFormatter.ISO_DATE)))
 
             // Exit Date
             val exit = user.employeeExitDate ?: throw BusinessException("Exit could not be null", "user.exit.required")
-            attributes.add(Attribute("szzExitDay", exit.dayOfMonth.toString()))
-            attributes.add(Attribute("szzExitMonth", exit.monthValue.toString()))
-            attributes.add(Attribute("szzExitYear", exit.year.toString()))
             attributes.add(Attribute("szzExitDate", exit.format(DateTimeFormatter.ISO_DATE)))
 
             // States
