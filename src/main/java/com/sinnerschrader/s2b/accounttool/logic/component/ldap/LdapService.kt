@@ -20,6 +20,7 @@ import org.apache.commons.lang3.StringUtils
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Value
+import org.springframework.cache.annotation.CacheEvict
 import org.springframework.core.env.Environment
 import org.springframework.stereotype.Service
 import java.text.MessageFormat
@@ -361,6 +362,7 @@ class LdapService {
         return newPassword
     }
 
+    @CacheEvict("groupMembers", key = "#user.uid")
     fun activate(connection: LDAPConnection, user: User): Boolean {
         val (dn, uid, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, description, _, _, _, title) = getUserByUid(connection, user.uid) ?: return false
 
@@ -395,6 +397,7 @@ class LdapService {
         return true
     }
 
+    @CacheEvict("groupMembers", key = "#user.uid")
     fun deactivate(connection: LDAPConnection, user: User): Boolean {
         val (dn, uid) = getUserByUid(connection, user.uid) ?: return false
 
@@ -441,6 +444,7 @@ class LdapService {
     }
 
     @Throws(BusinessException::class)
+    @CacheEvict("groupMembers", key = "#user.uid")
     fun insert(connection: LDAPConnection, user: User): User? {
         try {
             var mailError = "alreadyUsed"
@@ -659,6 +663,8 @@ class LdapService {
     }
 
     @Throws(BusinessException::class)
+
+    @CacheEvict("groupMembers", key = "#user.uid")
     fun update(connection: LDAPConnection, user: User): User? {
         val (currentDN, uid, _, _, _, _, _, _, _, _, _, birthDate, _, _, _, _, szzStatus, szzMailStatus, _, employeeEntryDate, employeeExitDate, ou, description, telephoneNumber, mobile, employeeNumber1, title, l, szzPublicKey, _, companyKey) = getUserByUid(connection, user.uid) ?: throw BusinessException("The modification was called for a non existing user", "user.notExists")
         try {
