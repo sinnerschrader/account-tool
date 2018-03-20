@@ -5,11 +5,12 @@ import com.sinnerschrader.s2b.accounttool.config.authentication.LdapUserDetails;
 import com.sinnerschrader.s2b.accounttool.config.ldap.LdapConfiguration;
 import com.sinnerschrader.s2b.accounttool.config.ldap.LdapManagementConfiguration;
 import com.sinnerschrader.s2b.accounttool.logic.component.authorization.AuthorizationService;
+import com.sinnerschrader.s2b.accounttool.logic.component.ldap.CachedLdapService;
 import com.sinnerschrader.s2b.accounttool.logic.component.ldap.LdapService;
 import com.sinnerschrader.s2b.accounttool.logic.component.mail.MailService;
 import com.sinnerschrader.s2b.accounttool.logic.entity.Group;
-import com.sinnerschrader.s2b.accounttool.logic.entity.UserInfo;
 import com.sinnerschrader.s2b.accounttool.logic.entity.User;
+import com.sinnerschrader.s2b.accounttool.logic.entity.UserInfo;
 import com.sinnerschrader.s2b.accounttool.presentation.RequestUtils;
 import com.sinnerschrader.s2b.accounttool.presentation.messaging.GlobalMessageFactory;
 import com.unboundid.ldap.sdk.LDAPConnection;
@@ -40,6 +41,9 @@ public class GroupController {
 
     @Autowired
     private LdapService ldapService;
+
+    @Autowired
+    private CachedLdapService cachedLdapService;
 
     @Autowired
     private MailService mailService;
