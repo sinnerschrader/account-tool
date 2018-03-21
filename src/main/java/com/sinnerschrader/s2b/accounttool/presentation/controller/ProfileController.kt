@@ -1,17 +1,14 @@
 package com.sinnerschrader.s2b.accounttool.presentation.controller
 
 import com.sinnerschrader.s2b.accounttool.config.WebConstants
-import com.sinnerschrader.s2b.accounttool.config.authentication.LdapUserDetails
 import com.sinnerschrader.s2b.accounttool.logic.component.ldap.LdapService
 import com.sinnerschrader.s2b.accounttool.logic.component.mail.MailService
-import com.sinnerschrader.s2b.accounttool.logic.entity.User
 import com.sinnerschrader.s2b.accounttool.logic.exception.BusinessException
 import com.sinnerschrader.s2b.accounttool.presentation.RequestUtils
 import com.sinnerschrader.s2b.accounttool.presentation.model.ChangeProfile
 import com.sinnerschrader.s2b.accounttool.presentation.validation.ChangeProfileFormValidator
 import com.unboundid.ldap.sdk.LDAPConnection
 import org.apache.catalina.servlet4preview.http.HttpServletRequest
-import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Controller
@@ -20,10 +17,10 @@ import org.springframework.validation.BindingResult
 import org.springframework.web.bind.annotation.ModelAttribute
 import org.springframework.web.bind.annotation.RequestAttribute
 import org.springframework.web.bind.annotation.RequestMapping
-import org.springframework.web.bind.annotation.RequestMethod
+import org.springframework.web.bind.annotation.RequestMethod.GET
+import org.springframework.web.bind.annotation.RequestMethod.POST
 import org.springframework.web.servlet.ModelAndView
 import org.springframework.web.servlet.mvc.support.RedirectAttributes
-
 import javax.annotation.Resource
 
 @Controller
@@ -38,10 +35,10 @@ class ProfileController {
     @Resource(name = "changeProfileFormValidator")
     private val changeProfileFormValidator: ChangeProfileFormValidator? = null
 
-    @RequestMapping(path = arrayOf("/profile"), method = arrayOf(RequestMethod.GET))
+    @RequestMapping("/profile", method = [GET])
     fun profile(request: HttpServletRequest, model: Model): ModelAndView {
-        val connection = RequestUtils.getLdapConnection(request)
-        val details = RequestUtils.getCurrentUserDetails()
+        val connection = RequestUtils.getLdapConnection(request)!!
+        val details = RequestUtils.currentUserDetails
         val mav = ModelAndView("pages/profile/index.html")
         if (details != null) {
             val user = ldapService.getUserByUid(connection, details.username)
@@ -55,7 +52,7 @@ class ProfileController {
         return mav
     }
 
-    @RequestMapping(value = "/profile/change", method = arrayOf(RequestMethod.POST))
+    @RequestMapping("/profile/change", method = [POST])
     @Throws(BusinessException::class)
     fun changeCurrentUserAttributes(
             request: HttpServletRequest,
@@ -63,7 +60,7 @@ class ProfileController {
             @ModelAttribute(name = FORMNAME) form: ChangeProfile,
             attr: RedirectAttributes,
             bindingResult: BindingResult): String {
-        val details = RequestUtils.getCurrentUserDetails()
+        val details = RequestUtils.currentUserDetails
         changeProfileFormValidator!!.validate(form, bindingResult)
         if (bindingResult.hasErrors()) {
             attr.addFlashAttribute(BindingResult::class.java.name + "." + FORMNAME, bindingResult)

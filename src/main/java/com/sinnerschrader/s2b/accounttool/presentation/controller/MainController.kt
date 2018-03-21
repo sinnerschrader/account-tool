@@ -27,7 +27,7 @@ class MainController {
             @RequestParam(value = "error", required = false) error: String?,
             @RequestParam(value = "logout", required = false) logout: String?) =
             when {
-                RequestUtils.getCurrentUserDetails() != null -> ModelAndView("redirect:/profile")
+                RequestUtils.currentUserDetails != null -> ModelAndView("redirect:/profile")
                 else -> ModelAndView("pages/login.html").apply {
                     error?.let { addObject("error", getErrorCode(request)) }
                     logout?.let { addObject("msg", "logout.success") }
@@ -47,7 +47,7 @@ class MainController {
 
     @RequestMapping("/logout", method = [RequestMethod.GET])
     fun logout(request: HttpServletRequest): String {
-        RequestUtils.getCurrentUserDetails()?.let {
+        RequestUtils.currentUserDetails?.let {
             LOG.debug("{} has been successfully logged off", it.uid)
         }
         request.session.invalidate()

@@ -119,7 +119,7 @@ public class LdapBusinessService implements InitializingBean {
             userCache.put(ACTIVE_MAIL_ON_INACTIVE_USER, activeMailAccounts);
 
             log.info("Updated the informations about unmaintained accounts in {}",
-                DateTimeHelper.getDurationString(startTime, LocalDateTime.now(), ChronoUnit.MILLIS));
+                    DateTimeHelper.INSTANCE.getDurationString(startTime, LocalDateTime.now(), ChronoUnit.MILLIS));
         } catch (LDAPException | GeneralSecurityException e) {
             log.error("Could not update unmaintained users", e);
         }

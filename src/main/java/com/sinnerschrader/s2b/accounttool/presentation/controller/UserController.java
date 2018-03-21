@@ -69,7 +69,7 @@ public class UserController {
 
     @RequestMapping(value = "/user", method = RequestMethod.GET)
     public ModelAndView view() {
-        authorizationService.ensureUserAdministration(RequestUtils.getCurrentUserDetails());
+        authorizationService.ensureUserAdministration(RequestUtils.INSTANCE.getCurrentUserDetails());
 
         ModelAndView mav = new ModelAndView("pages/user/index.html");
         return mav;
@@ -77,7 +77,7 @@ public class UserController {
 
     @RequestMapping(value = "/user/maintenance", method = RequestMethod.GET)
     public ModelAndView maintenance() {
-        authorizationService.ensureUserAdministration(RequestUtils.getCurrentUserDetails());
+        authorizationService.ensureUserAdministration(RequestUtils.INSTANCE.getCurrentUserDetails());
 
         ModelAndView mav = new ModelAndView("pages/user/maintenance.html");
         mav.addObject("leavingUsers", ldapBusinessService.getLeavingUsers());
@@ -90,7 +90,7 @@ public class UserController {
     public ModelAndView searchUser(
         @RequestAttribute(name = WebConstants.ATTR_CONNECTION) LDAPConnection connection,
         @RequestParam(name = "searchTerm") String searchTerm) {
-        LdapUserDetails details = RequestUtils.getCurrentUserDetails();
+        LdapUserDetails details = RequestUtils.INSTANCE.getCurrentUserDetails();
         authorizationService.ensureUserAdministration(details);
 
         List<User> users = new LinkedList<>();
@@ -109,7 +109,7 @@ public class UserController {
         @RequestAttribute(name = WebConstants.ATTR_CONNECTION) LDAPConnection connection,
         @PathVariable(name = "userId") String userId,
         Model model) {
-        LdapUserDetails details = RequestUtils.getCurrentUserDetails();
+        LdapUserDetails details = RequestUtils.INSTANCE.getCurrentUserDetails();
         authorizationService.ensureUserAdministration(details);
 
         User user = ldapService.getUserByUid(connection, userId);
@@ -139,7 +139,7 @@ public class UserController {
         @ModelAttribute(FORMNAME_EDIT) @Valid UserForm userForm,
         RedirectAttributes attr,
         BindingResult bindingResult) {
-        LdapUserDetails details = RequestUtils.getCurrentUserDetails();
+        LdapUserDetails details = RequestUtils.INSTANCE.getCurrentUserDetails();
         authorizationService.ensureUserAdministration(details);
 
         // half security check, if readonly field was manipulated
@@ -201,7 +201,7 @@ public class UserController {
     public ModelAndView create(
         @RequestAttribute(name = WebConstants.ATTR_CONNECTION) LDAPConnection connection,
         Model model) {
-        LdapUserDetails details = RequestUtils.getCurrentUserDetails();
+        LdapUserDetails details = RequestUtils.INSTANCE.getCurrentUserDetails();
         authorizationService.ensureUserAdministration(details);
 
         if (!model.containsAttribute(FORMNAME_CREATE)) {
@@ -225,7 +225,7 @@ public class UserController {
         @RequestAttribute(name = WebConstants.ATTR_CONNECTION) LDAPConnection connection,
         @ModelAttribute(FORMNAME_CREATE) @Valid UserForm userForm,
         BindingResult bindingResult, RedirectAttributes attr) {
-        LdapUserDetails currentUser = RequestUtils.getCurrentUserDetails();
+        LdapUserDetails currentUser = RequestUtils.INSTANCE.getCurrentUserDetails();
         authorizationService.ensureUserAdministration(currentUser);
 
         userFormValidator.validate(userForm, bindingResult);

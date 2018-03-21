@@ -8,7 +8,7 @@ import com.sinnerschrader.s2b.accounttool.logic.component.ldap.LdapService
 import com.sinnerschrader.s2b.accounttool.logic.component.mail.MailService
 import com.sinnerschrader.s2b.accounttool.logic.component.mail.MailService.Companion.Change.ADD
 import com.sinnerschrader.s2b.accounttool.logic.component.mail.MailService.Companion.Change.REMOVE
-import com.sinnerschrader.s2b.accounttool.presentation.RequestUtils.getCurrentUserDetails
+import com.sinnerschrader.s2b.accounttool.presentation.RequestUtils.currentUserDetails
 import com.sinnerschrader.s2b.accounttool.presentation.messaging.GlobalMessageFactory
 import com.unboundid.ldap.sdk.LDAPConnection
 import org.slf4j.LoggerFactory
@@ -46,7 +46,7 @@ class GroupController {
     private lateinit var globalMessageFactory: GlobalMessageFactory
 
     private fun groups(connection: LDAPConnection, listAllGroups: Boolean) =
-            with(getCurrentUserDetails() ?: throw IllegalStateException("Invalid access on groups")) {
+            with(currentUserDetails ?: throw IllegalStateException("Invalid access on groups")) {
                 if (listAllGroups) ldapService.getGroups(connection) else ldapService.getGroupsByUser(connection, uid, dn)
             }
 
@@ -84,7 +84,7 @@ class GroupController {
             @PathVariable("groupCN") groupCN: String,
             @RequestParam("searchTerm") searchTerm: String,
             @RequestParam("all", defaultValue = "false", required = false) listAllGroups: Boolean): ModelAndView {
-        authorizationService.ensureGroupAdministration(getCurrentUserDetails()!!, groupCN)
+        authorizationService.ensureGroupAdministration(currentUserDetails!!, groupCN)
         val group = ldapService.getGroupByCN(connection, groupCN) ?: return ModelAndView("redirect:/group/$groupCN")
         val users = if (searchTerm.isNotBlank())
             ldapService.findUserBySearchTerm(connection, searchTerm).filter { !group.hasMember(it.uid, it.dn) }
@@ -105,18 +105,18 @@ class GroupController {
             @PathVariable("groupCN") groupCN: String,
             @PathVariable("uid") uid: String,
             @RequestParam("all", defaultValue = "false", required = false) listAllGroups: Boolean): String {
-        authorizationService.ensureGroupAdministration(getCurrentUserDetails()!!, groupCN)
+        authorizationService.ensureGroupAdministration(currentUserDetails!!, groupCN)
         val user = ldapService.getUserByUid(connection, uid)!!
         val group = with(ldapService.getGroupByCN(connection, groupCN)!!) {
             ldapService.addUserToGroup(connection, user, this)!!
         }
         if (group.hasMember(user.uid, user.dn)) {
-            LOG.info("User ${getCurrentUserDetails().uid} added user $uid into group $groupCN")
+            LOG.info("User ${currentUserDetails!!.uid} added user $uid into group $groupCN")
             globalMessageFactory.store(request, globalMessageFactory.createInfo("addUser.success", user.uid, group.cn))
 
             if (ldapManagementConfiguration.trackedGroups.contains(groupCN)) {
                 val recipients = ldapService.getGroupAdmins(connection, group)
-                mailService.sendMailForGroupChanged(recipients, getCurrentUserDetails(), group, user, ADD)
+                mailService.sendMailForGroupChanged(recipients, currentUserDetails!!, group, user, ADD)
             }
         } else {
             LOG.warn("Adding user $uid into group $groupCN failed")
@@ -132,7 +132,7 @@ class GroupController {
             @PathVariable("groupCN") groupCN: String,
             @PathVariable("uid") uid: String,
             @RequestParam("all", defaultValue = "false", required = false) listAllGroups: Boolean): String {
-        val details = getCurrentUserDetails()
+        val details = currentUserDetails
         authorizationService.ensureGroupAdministration(details!!, groupCN)
         val user = ldapService.getUserByUid(connection, uid)!!
         val group = with(ldapService.getGroupByCN(connection, groupCN)!!) {
@@ -160,7 +160,7 @@ class GroupController {
             @RequestAttribute(ATTR_CONNECTION) connection: LDAPConnection,
             @PathVariable("groupCN") groupCN: String,
             @RequestParam("all", defaultValue = "false", required = false) listAllGroups: Boolean): String {
-        val details = getCurrentUserDetails()!!
+        val details = currentUserDetails!!
         val group = ldapService.getGroupByCN(connection, groupCN) ?: return "redirect:/group?all=$listAllGroups"
         val adminGroup = ldapService.getAdminGroup(connection, group)!!
 
