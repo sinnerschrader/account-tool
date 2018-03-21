@@ -6,7 +6,6 @@ import com.sinnerschrader.s2b.accounttool.logic.component.authorization.Authoriz
 import com.sinnerschrader.s2b.accounttool.logic.component.ldap.LdapBusinessService
 import com.sinnerschrader.s2b.accounttool.logic.component.ldap.LdapService
 import com.sinnerschrader.s2b.accounttool.logic.component.mail.MailService
-import com.sinnerschrader.s2b.accounttool.logic.entity.User
 import com.sinnerschrader.s2b.accounttool.logic.exception.BusinessException
 import com.sinnerschrader.s2b.accounttool.presentation.RequestUtils
 import com.sinnerschrader.s2b.accounttool.presentation.messaging.GlobalMessageFactory
@@ -25,7 +24,6 @@ import org.springframework.web.bind.annotation.RequestMethod.GET
 import org.springframework.web.bind.annotation.RequestMethod.POST
 import org.springframework.web.servlet.ModelAndView
 import org.springframework.web.servlet.mvc.support.RedirectAttributes
-import java.util.*
 import javax.annotation.Resource
 import javax.servlet.http.HttpServletRequest
 import javax.validation.Valid
@@ -55,13 +53,6 @@ class UserController {
     @Autowired
     private lateinit var ldapBusinessService: LdapBusinessService
 
-    @RequestMapping("/user", method = [GET])
-    fun view(): ModelAndView {
-        authorizationService.ensureUserAdministration(RequestUtils.currentUserDetails!!)
-
-        return ModelAndView("pages/user/index.html")
-    }
-
     @RequestMapping("/user/maintenance", method = [GET])
     fun maintenance(): ModelAndView {
         authorizationService.ensureUserAdministration(RequestUtils.currentUserDetails!!)
@@ -73,22 +64,18 @@ class UserController {
         return mav
     }
 
-    @RequestMapping("/user/search", method = [GET])
+    @RequestMapping("/user", method = [GET])
     fun searchUser(
             @RequestAttribute(name = WebConstants.ATTR_CONNECTION) connection: LDAPConnection,
-            @RequestParam(name = "searchTerm") searchTerm: String): ModelAndView {
-        val details = RequestUtils.currentUserDetails
-        authorizationService!!.ensureUserAdministration(details!!)
+            @RequestParam(name = "searchTerm", required = false, defaultValue = "") searchTerm: String): ModelAndView {
+        authorizationService.ensureUserAdministration(RequestUtils.currentUserDetails!!)
 
-        val users = LinkedList<User>()
-        if (isNotBlank(searchTerm)) {
-            users.addAll(ldapService!!.findUserBySearchTerm(connection, searchTerm))
+        val users = if (searchTerm.isNotBlank()) ldapService.findUserBySearchTerm(connection, searchTerm) else emptyList()
+
+        return ModelAndView("pages/user/index.html").apply {
+            addObject("company", ldapConfiguration.companies)
+            addObject("users", users)
         }
-
-        val mav = ModelAndView("pages/user/userSearch.html")
-        mav.addObject("company", ldapConfiguration!!.companies)
-        mav.addObject("users", users)
-        return mav
     }
 
     @RequestMapping("/user/edit/{userId}", method = [GET])
