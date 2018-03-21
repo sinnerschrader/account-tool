@@ -76,17 +76,15 @@
                             <span class="mdl-textfield__error">Please enter you current password</span>
                         </div>
                         <div class="s2act-textfield mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
-                            <input class="js_passwordStrength mdl-textfield__input" type="password" name="password"
+                            <input class="mdl-textfield__input" type="password" name="password"
                                    id="password" value="{{ changeProfileForm.password }}">
                             <label class="mdl-textfield__label" for="password">Password</label>
-                            <span class="js_passwordStrengthMessage mdl-textfield__error">Password error</span>
                         </div>
                         <div class="s2act-textfield mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
-                            <input class="js_passwordMatch mdl-textfield__input" type="password" name="passwordRepeat"
+                            <input class="mdl-textfield__input" type="password" name="passwordRepeat"
                                    id="passwordRepeat" data-matchid="password"
                                    value="{{ changeProfileForm.passwordRepeat }}">
                             <label class="mdl-textfield__label" for="passwordRepeat">Password repeat</label>
-                            <span class="mdl-textfield__error">Passwords don't match</span>
                         </div>
                         <div class="s2act-buttonRow">
                             <input type="submit" name="changePassword" value="Save"
