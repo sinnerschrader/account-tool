@@ -13,9 +13,6 @@ description = """S2 Account Tool"""
 
 sourceCompatibility = 1.8
 targetCompatibility = 1.8
-tasks.withType(JavaCompile) {
-    options.encoding = 'UTF-8'
-}
 
 processResources.dependsOn npm_run_build
 
@@ -26,7 +23,6 @@ bootRun {
 repositories {
     jcenter()
 }
-
 
 dependencies {
     compile group: 'commons-codec', name: 'commons-codec', version: '1.11'
