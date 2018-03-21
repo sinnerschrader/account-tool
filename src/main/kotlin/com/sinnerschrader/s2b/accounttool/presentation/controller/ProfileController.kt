@@ -5,6 +5,7 @@ import com.sinnerschrader.s2b.accounttool.logic.component.ldap.LdapService
 import com.sinnerschrader.s2b.accounttool.logic.component.mail.MailService
 import com.sinnerschrader.s2b.accounttool.logic.exception.BusinessException
 import com.sinnerschrader.s2b.accounttool.presentation.RequestUtils
+import com.sinnerschrader.s2b.accounttool.presentation.controller.ProfileController.Edit.*
 import com.sinnerschrader.s2b.accounttool.presentation.model.ChangeProfile
 import com.sinnerschrader.s2b.accounttool.presentation.validation.ChangeProfileFormValidator
 import com.unboundid.ldap.sdk.LDAPConnection
@@ -75,8 +76,7 @@ class ProfileController {
                 val ldapUser = ldapService.getUserByUid(connection, details!!.uid)
                 val updatedUser = form.createUserEntityFromForm(ldapUser!!)
                 if (form.isPasswordChange()) {
-                    val res = ldapService.changePassword(connection, details, form.password)
-                    val state = if (res) "sucess" else "failure"
+                    ldapService.changePassword(connection, details, form.password)
                     log.info("{} changed his/her password", details.uid)
                     mailService.sendMailForAccountChange(ldapUser, "passwordChanged")
                 } else {
@@ -91,9 +91,17 @@ class ProfileController {
                 attr.addFlashAttribute(BindingResult::class.java.name + "." + FORMNAME, bindingResult)
                 attr.addFlashAttribute(FORMNAME, form)
             }
-
         }
-        return "redirect:/profile"
+
+        val edit = with(form) {
+            when {
+                !bindingResult.hasErrors() -> NONE
+                isPasswordChange() -> PASSWORD
+                isPhoneChange() -> PHONE
+                else -> SSH_KEY
+            }
+        }
+        return "redirect:/profile?edit=$edit"
     }
 
     companion object {

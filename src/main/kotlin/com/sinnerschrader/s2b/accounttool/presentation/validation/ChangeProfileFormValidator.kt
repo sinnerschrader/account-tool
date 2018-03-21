@@ -91,6 +91,13 @@ class ChangeProfileFormValidator : Validator {
 
         rejectIfEmptyOrWhitespace(errors, "passwordRepeat", "required",
                 "Please repeat the password")
+
+        if (form.password != form.passwordRepeat)
+            errors.reject("passwordRepeat", "Passwords don't match")
+
+        if (form.password.length < 10)
+            errors.reject("password", "The password required at least 10 characters")
+
         if (errors.hasErrors()) return
 
         val currentUser = RequestUtils.currentUserDetails!!
