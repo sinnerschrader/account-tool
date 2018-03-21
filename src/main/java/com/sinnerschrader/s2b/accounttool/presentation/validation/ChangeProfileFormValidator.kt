@@ -1,18 +1,16 @@
 package com.sinnerschrader.s2b.accounttool.presentation.validation
 
-import com.sinnerschrader.s2b.accounttool.logic.component.security.PwnedPasswordService
 import com.sinnerschrader.s2b.accounttool.logic.component.security.PasswordAnalyzeService
+import com.sinnerschrader.s2b.accounttool.logic.component.security.PwnedPasswordService
 import com.sinnerschrader.s2b.accounttool.presentation.RequestUtils
 import com.sinnerschrader.s2b.accounttool.presentation.model.ChangeProfile
 import org.apache.commons.codec.binary.Base64
 import org.apache.commons.lang3.StringUtils
-import org.apache.sshd.common.util.buffer.Buffer
 import org.apache.sshd.common.util.buffer.ByteArrayBuffer
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Component
 import org.springframework.validation.Errors
-import org.springframework.validation.ValidationUtils
 import org.springframework.validation.ValidationUtils.rejectIfEmptyOrWhitespace
 import org.springframework.validation.Validator
 import java.security.interfaces.DSAPublicKey
@@ -95,7 +93,7 @@ class ChangeProfileFormValidator : Validator {
                 "Please repeat the password")
         if (errors.hasErrors()) return
 
-        val currentUser = RequestUtils.getCurrentUserDetails()
+        val currentUser = RequestUtils.currentUserDetails!!
         if (currentUser.password != form.oldPassword) {
             errors.rejectValue("oldPassword", "password.previous.notMatch")
         }

@@ -2,13 +2,14 @@ package com.sinnerschrader.s2b.accounttool.presentation.interceptor
 
 import com.sinnerschrader.s2b.accounttool.config.WebConstants
 import com.sinnerschrader.s2b.accounttool.config.ldap.LdapConfiguration
-import com.sinnerschrader.s2b.accounttool.presentation.RequestUtils.*
+import com.sinnerschrader.s2b.accounttool.presentation.RequestUtils.currentUserDetails
+import com.sinnerschrader.s2b.accounttool.presentation.RequestUtils.getLdapConnection
+import com.sinnerschrader.s2b.accounttool.presentation.RequestUtils.setLdapConnection
 import com.unboundid.ldap.sdk.LDAPConnection
 import com.unboundid.ldap.sdk.LDAPException
 import com.unboundid.ldap.sdk.ResultCode.SUCCESS
 import org.springframework.web.servlet.ModelAndView
 import org.springframework.web.servlet.handler.HandlerInterceptorAdapter
-
 import javax.servlet.http.HttpServletRequest
 import javax.servlet.http.HttpServletResponse
 
@@ -17,7 +18,7 @@ class LdapConnectionInterceptor(private val ldapConfiguration: LdapConfiguration
 
     @Throws(Exception::class)
     override fun preHandle(request: HttpServletRequest, response: HttpServletResponse, handler: Any): Boolean {
-        getCurrentUserDetails()?.apply {
+        currentUserDetails?.apply {
             var connection: LDAPConnection? = null
             try {
                 connection = ldapConfiguration.createConnection()
@@ -38,7 +39,7 @@ class LdapConnectionInterceptor(private val ldapConfiguration: LdapConfiguration
                             handler: Any, modelAndView: ModelAndView?) {
         getLdapConnection(request)?.close()
         request.removeAttribute(WebConstants.ATTR_CONNECTION)
-        getCurrentUserDetails()?.let {
+        currentUserDetails?.let {
             modelAndView?.addObject("currentUser", it)
         }
     }

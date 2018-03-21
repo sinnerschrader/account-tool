@@ -4,7 +4,7 @@ import com.mitchellbosecke.pebble.extension.AbstractExtension
 import com.mitchellbosecke.pebble.extension.Function
 import com.sinnerschrader.s2b.accounttool.logic.component.authorization.AuthorizationService
 import com.sinnerschrader.s2b.accounttool.logic.entity.Group
-import com.sinnerschrader.s2b.accounttool.presentation.RequestUtils.getCurrentUserDetails
+import com.sinnerschrader.s2b.accounttool.presentation.RequestUtils.currentUserDetails
 import org.apache.commons.lang3.StringUtils
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Value
@@ -30,28 +30,28 @@ class AccountToolExtension : AbstractExtension() {
     override fun getFunctions() = mapOf(
         "isLoggedIn" to object : Function {
             override fun getArgumentNames() = emptyList<String>()
-            override fun execute(args: Map<String, Any>) = getCurrentUserDetails() != null
+            override fun execute(args: Map<String, Any>) = currentUserDetails != null
         },
         "isGroupAdmin" to object : Function {
             override fun getArgumentNames() = listOf("groupCn")
             override fun execute(args: Map<String, Any>) =
-                authorizationService.isGroupAdmin(getCurrentUserDetails(), args["groupCn"] as String)
-                    || authorizationService.isAdmin(getCurrentUserDetails())
+                    authorizationService.isGroupAdmin(currentUserDetails!!, args["groupCn"] as String)
+                            || authorizationService.isAdmin(currentUserDetails!!)
         },
         "isAdmin" to object : Function {
             override fun getArgumentNames() = emptyList<String>()
-            override fun execute(args: Map<String, Any>) = authorizationService.isAdmin(getCurrentUserDetails())
+            override fun execute(args: Map<String, Any>) = authorizationService.isAdmin(currentUserDetails!!)
         },
         "isUserAdmin" to object : Function {
             override fun getArgumentNames() = emptyList<String>()
             override fun execute(args: Map<String, Any>) =
-                authorizationService.isUserAdministration(getCurrentUserDetails())
-                    || authorizationService.isAdmin(getCurrentUserDetails())
+                    authorizationService.isUserAdministration(currentUserDetails!!)
+                            || authorizationService.isAdmin(currentUserDetails!!)
         },
         "isMemberOf" to object : Function {
             override fun getArgumentNames() = listOf("groupCn")
             override fun execute(args: Map<String, Any>): Any {
-                val userDetails = getCurrentUserDetails()
+                val userDetails = currentUserDetails
                 val groupArgument = args["groupCn"]
                 var group: Group? = null
                 val groupCn: String
@@ -79,7 +79,8 @@ class AccountToolExtension : AbstractExtension() {
             override fun getArgumentNames() = listOf("mail", "size")
             override fun execute(args: Map<String, Any>) =
                    with(DigestUtils.md5DigestAsHex((args["mail"] as String).toLowerCase().trim().toByteArray())) {
-                    "${gravatarDomain}${gravatarPath}/${this}?s=${args["size"]}" }
+                       "$gravatarDomain$gravatarPath/${this}?s=${args["size"]}"
+                   }
         }
     )
 }

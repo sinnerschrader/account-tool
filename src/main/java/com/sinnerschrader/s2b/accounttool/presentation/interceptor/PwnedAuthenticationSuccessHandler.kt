@@ -1,7 +1,7 @@
 package com.sinnerschrader.s2b.accounttool.presentation.interceptor
 
 import com.sinnerschrader.s2b.accounttool.logic.component.security.PwnedPasswordService
-import com.sinnerschrader.s2b.accounttool.presentation.RequestUtils.getCurrentUserDetails
+import com.sinnerschrader.s2b.accounttool.presentation.RequestUtils.currentUserDetails
 import org.springframework.security.core.Authentication
 import org.springframework.security.web.DefaultRedirectStrategy
 import org.springframework.security.web.authentication.SavedRequestAwareAuthenticationSuccessHandler
@@ -12,7 +12,7 @@ object PwnedAuthenticationSuccessHandler : SavedRequestAwareAuthenticationSucces
     override fun onAuthenticationSuccess(request: HttpServletRequest,
                                          response: HttpServletResponse,
                                          authentication: Authentication) =
-            if (PwnedPasswordService.isPwned(getCurrentUserDetails().password!!))
+            if (PwnedPasswordService.isPwned(currentUserDetails!!.password!!))
                 DefaultRedirectStrategy().sendRedirect(request, response, "/pwned")
             else super.onAuthenticationSuccess(request, response, authentication)
 }
