@@ -19,6 +19,7 @@ import org.springframework.web.bind.annotation.RequestAttribute
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RequestMethod.GET
 import org.springframework.web.bind.annotation.RequestMethod.POST
+import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.servlet.ModelAndView
 import org.springframework.web.servlet.mvc.support.RedirectAttributes
 import javax.annotation.Resource
@@ -35,8 +36,11 @@ class ProfileController {
     @Resource(name = "changeProfileFormValidator")
     private val changeProfileFormValidator: ChangeProfileFormValidator? = null
 
+    enum class Edit { PASSWORD, PHONE, SSH_KEY, NONE }
+
     @RequestMapping("/profile", method = [GET])
-    fun profile(request: HttpServletRequest, model: Model): ModelAndView {
+    fun profile(request: HttpServletRequest, model: Model,
+                @RequestParam("edit", required = false, defaultValue = "NONE") edit: Edit): ModelAndView {
         val connection = RequestUtils.getLdapConnection(request)!!
         val details = RequestUtils.currentUserDetails
         val mav = ModelAndView("pages/profile/index.html")
@@ -45,6 +49,7 @@ class ProfileController {
             mav.addAllObjects(model.asMap())
             mav.addObject("user", user)
             mav.addObject("groups", ldapService.getGroupsByUser(connection, details.uid, details.dn))
+            mav.addObject("edit", edit)
             if (!model.containsAttribute(FORMNAME)) {
                 model.addAttribute(FORMNAME, ChangeProfile(user!!))
             }

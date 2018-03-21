@@ -53,15 +53,15 @@
                 <td class="mdl-data-table__cell--non-numeric s2act-data-table__cell--value"><span>Changed {{ user.prettyLastPasswordChange }}</span>
                 </td>
                 <td class="mdl-data-table__cell--non-numeric s2act-data-table__cell--value">
-                    <button class="js_attributeButton mdl-button mdl-js-button mdl-button--icon"
-                            data-toggleid="changePasswordForm">
+                    <a href="/profile?edit={{edit == 'PASSWORD'? 'NONE' : 'PASSWORD'}}"
+                       class="mdl-button mdl-js-button mdl-button--icon">
                         <i class="material-icons">edit</i>
-                    </button>
+                    </a>
                 </td>
             </tr>
             <!-- Change Password -->
             <tr id="changePasswordForm"
-                class="s2act-attributeForm {{hasFieldErrors(formName, 'oldPassword') or hasFieldErrors(formName, 'password') or hasFieldErrors(formName, 'passwordRepeat') ? 'active' : ''}}">
+                class="s2act-attributeForm {{edit == 'PASSWORD' or hasFieldErrors(formName, 'oldPassword') or hasFieldErrors(formName, 'password') or hasFieldErrors(formName, 'passwordRepeat') ? 'active' : ''}}">
                 <td colspan="3" class="mdl-data-table__cell--non-numeric s2act-data-table__cell--value">
                     <form name="changeProfileForm" action="/profile/change" method="post">
                         <input type="hidden" name="{{request.getAttribute('_csrf').parameterName}}"
@@ -102,15 +102,15 @@
                     default("No telephone number") }} <br/> {{ user.mobile | default("No mobile number") }}
                 </td>
                 <td class="mdl-data-table__cell--non-numeric s2act-data-table__cell--value">
-                    <button class="js_attributeButton mdl-button mdl-js-button mdl-button--icon"
-                            data-toggleid="changePhoneForm">
+                    <a href="/profile?edit={{edit == 'PHONE'? 'NONE' : 'PHONE' }}"
+                       class="mdl-button mdl-js-button mdl-button--icon">
                         <i class="material-icons">edit</i>
-                    </button>
+                    </a>
                 </td>
             </tr>
             <!-- Change Phones -->
             <tr id="changePhoneForm"
-                class="s2act-attributeForm {{hasFieldErrors(formName, 'telephone') or hasFieldErrors(formName, 'mobile') ? 'active' : ''}}">
+                class="s2act-attributeForm {{edit == 'PHONE' or hasFieldErrors(formName, 'telephone') or hasFieldErrors(formName, 'mobile') ? 'active' : ''}}">
                 <td colspan="3" class="mdl-data-table__cell--non-numeric s2act-data-table__cell--value">
                     <form name="changeProfileForm" action="/profile/change" method="post">
                         <input type="hidden" name="{{request.getAttribute('_csrf').parameterName}}"
@@ -142,15 +142,15 @@
                     abbreviate(26) | default("No public key") }}
                 </td>
                 <td class="mdl-data-table__cell--non-numeric s2act-data-table__cell--value">
-                    <button class="js_attributeButton mdl-cell--hide-phone mdl-button mdl-js-button mdl-button--icon"
-                            data-toggleid="changePublicKeyForm">
+                    <a href="/profile?edit={{edit == 'SSH_KEY'? 'NONE' : 'SSH_KEY' }}"
+                       class="mdl-button mdl-js-button mdl-button--icon">
                         <i class="material-icons">edit</i>
-                    </button>
+                    </a>
                 </td>
             </tr>
             <!-- Change SSH Pubkey -->
             <tr id="changePublicKeyForm"
-                class="s2act-attributeForm {{hasFieldErrors(formName, 'publicKey') ? 'active' : ''}}">
+                class="s2act-attributeForm {{edit == 'SSH_KEY' or hasFieldErrors(formName, 'publicKey') ? 'active' : ''}}">
                 <td colspan="3" class="mdl-data-table__cell--non-numeric s2act-data-table__cell--value">
                     <form name="changeProfileForm" action="/profile/change" method="post">
                         <input type="hidden" name="{{request.getAttribute('_csrf').parameterName}}"

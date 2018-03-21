@@ -10,5 +10,4 @@ require('../../../../../../node_modules/mdl-selectfield/dist/mdl-selectfield.min
 require('./search.js');
 require('./switch.js');
 require('./passwordCheck.js');
-require('./toggle.js');
 require('./formSubmit.js');
