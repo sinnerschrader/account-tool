@@ -64,35 +64,25 @@ class GroupController {
             @RequestAttribute(ATTR_CONNECTION) connection: LDAPConnection,
             @PathVariable("groupCN") groupCN: String,
             @RequestParam("messageKey", defaultValue = "", required = false) messageKey: String,
+            @RequestParam("searchTerm", required = false, defaultValue = "") searchTerm: String,
             @RequestParam("all", defaultValue = "false", required = false) listAllGroups: Boolean): ModelAndView {
-        val selectedGroup = ldapService.getGroupByCN(connection, groupCN) ?: return ModelAndView("redirect:/group")
-        val users = ldapService.getGroupMembers(connection, selectedGroup)
 
-        return ModelAndView("pages/group/index.html").apply {
-            addObject("company", ldapConfiguration.companies)
-            addObject("messageKey", messageKey)
-            addObject("showAllGroups", listAllGroups)
-            addObject("groups", groups(connection, listAllGroups))
-            addObject("selectedGroup", selectedGroup)
-            addObject("usersByGroup", users)
-        }
-    }
-
-    @RequestMapping("/group/{groupCN}/search", method = [GET])
-    fun searchUserForGroup(
-            @RequestAttribute(ATTR_CONNECTION) connection: LDAPConnection,
-            @PathVariable("groupCN") groupCN: String,
-            @RequestParam("searchTerm") searchTerm: String,
-            @RequestParam("all", defaultValue = "false", required = false) listAllGroups: Boolean): ModelAndView {
         authorizationService.ensureGroupAdministration(currentUserDetails!!, groupCN)
         val group = ldapService.getGroupByCN(connection, groupCN) ?: return ModelAndView("redirect:/group/$groupCN")
         val users = if (searchTerm.isNotBlank())
             ldapService.findUserBySearchTerm(connection, searchTerm).filter { !group.hasMember(it.uid, it.dn) }
         else emptyList()
 
-        return ModelAndView("pages/group/userSearch.html").apply {
+        val selectedGroup = ldapService.getGroupByCN(connection, groupCN) ?: return ModelAndView("redirect:/group")
+        val usersByGroup = ldapService.getGroupMembers(connection, selectedGroup)
+
+        return ModelAndView("pages/group/index.html").apply {
             addObject("company", ldapConfiguration.companies)
+            addObject("messageKey", messageKey)
             addObject("group", group)
+            addObject("groups", groups(connection, listAllGroups))
+            addObject("selectedGroup", selectedGroup)
+            addObject("usersByGroup", usersByGroup)
             addObject("users", users)
             addObject("showAllGroups", listAllGroups)
         }

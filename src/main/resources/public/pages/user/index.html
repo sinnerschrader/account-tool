@@ -13,8 +13,7 @@
     </div>
     <div class="mdl-cell mdl-cell--12-col mdl-cell--8-col-tablet mdl-cell--4-col-phone mdl-cell--order-0-phone">
         <div class="s2act-card s2act-searchCard mdl-card">
-            <form class="js_searchForm s2act-searchForm" data-searchresultid="userSearchResultArea" action="#"
-                  data-action="/user/search" method="get">
+            <form class="s2act-searchForm" action="/user" method="get">
                 <div class="s2act-textfield mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
                     <input class="mdl-textfield__input" type="text" name="searchTerm" id="searchTerm">
                     <label class="mdl-textfield__label" for="searchTerm">Search User</label>
@@ -26,7 +25,36 @@
         </div>
     </div>
     <div class="mdl-cell mdl-cell--12-col mdl-cell--8-col-tablet mdl-cell--4-col-phone mdl-cell--order-0-phone">
-        <div id="userSearchResultArea" class="js_searchResultArea s2act-searchResultArea"></div>
+        {% if users is not empty %}
+        <h4 class="s2act-sectionSubHeadline">{{ message('searchResult.users', (users | length)) }}</h4>
+        <div class="mdl-list s2act-groupList">
+            {% for user in users %}
+            <div class="mdl-list__item mdl-list__item--two-line s2act-userList__item {{ user.szzStatus == 'active' ? '' : 'mdl-color--red' }}">
+			<span class="mdl-list__item-primary-content">
+                <img class="mdl-list__item-avatar" src="{{ gravatarUrl(user.mail, 50) }}"/>
+				<span>{{ user.givenName }} <strong>{{ user.sn }}</strong></span>
+				<span class="uid">({{ user.uid }})</span>
+				<span class="mdl-list__item-sub-title">{{ user.o }}</span>
+			</span>
+                <span class="mdl-list__item-secondary-action">
+				<a href="/user/edit/{{ user.uid }}"
+                   class="mdl-button mdl-js-button mdl-button--fab mdl-button--mini-fab mdl-button--raised s2act-action s2act-action--edit">
+					<i class="material-icons">edit</i>
+				</a>
+			</span>
+            </div>
+            {% endfor %}
+        </div>
+        {% else %}
+        <div class="mdl-list s2act-groupList">
+            <div class="mdl-list__item s2act-groupList__item">
+			<span class="mdl-list__item-primary-content">
+				<i class="material-icons mdl-list__item-avatar">info</i>
+				<span>No users found</span>
+			</span>
+            </div>
+        </div>
+        {% endif %}
     </div>
 </div>
 {% endblock %}
