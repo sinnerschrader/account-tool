@@ -13,20 +13,10 @@ addons:
 cache:
   directories:
     - $HOME/.gradle/
-    - node_modules
 
 notifications:
   email:
     on_success: never
-
-before_install:
-  - export NODE_VERSION="7.4.0"
-
-install:
-  - nvm install $NODE_VERSION
-
-before_script:
-  - nvm use $NODE_VERSION
 
 script:
   - gradle --no-daemon clean build dependencyUpdates

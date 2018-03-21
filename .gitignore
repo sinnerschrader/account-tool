@@ -2,15 +2,12 @@ out
 *~
 *.bak
 .classpath
-*.deb
 .DS_Store
 .env
 .externalToolBuilders
 .idea/
 *.iml
 *.jar
-node_modules
-npm-debug.log
 pom.xml.releaseBackup
 .project
 release.properties
@@ -22,4 +19,3 @@ target/
 docker-compose.override.yml
 build
 .gradle
-package-lock.json
