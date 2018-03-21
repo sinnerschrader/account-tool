@@ -8,4 +8,3 @@ require('../../../../../../node_modules/mdl-selectfield/dist/mdl-selectfield.min
 
 // Custom JS for UI
 require('./search.js');
-require('./switch.js');

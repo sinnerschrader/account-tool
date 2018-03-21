@@ -33,8 +33,6 @@
 {% macro switch(label, fieldName, checked=false, checkedValue, uncheckedValue) %}
 <label for="{{fieldName}}" class="js_switch mdl-switch mdl-js-switch mdl-js-ripple-effect"
        data-checkedValue="{{checkedValue}}" data-uncheckValue="{{uncheckedValue}}">
-    <input type="hidden" id="{{fieldName}}Hidden" name="{{fieldName}}"
-           value="{{ checked ? checkedValue : uncheckedValue}}">
     <input type="checkbox" id="{{fieldName}}" name="{{fieldName}}_checkBox" {{ checked ? 'checked' : ''}}
     class="mdl-switch__input">
     <span class="mdl-switch__label">{{label}}</span>
