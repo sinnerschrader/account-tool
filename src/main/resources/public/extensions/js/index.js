@@ -5,6 +5,3 @@ require('../../../../../../node_modules/material-design-lite/dist/material.min.j
 
 // MDL Selectfield JS
 require('../../../../../../node_modules/mdl-selectfield/dist/mdl-selectfield.min.js');
-
-// Custom JS for UI
-require('./search.js');
