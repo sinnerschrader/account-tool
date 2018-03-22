@@ -32,8 +32,8 @@ class GlobalMessageFactory {
         if (session.getAttribute(SESSION_KEY) == null) {
             session.setAttribute(SESSION_KEY, LinkedList<GlobalMessage>())
         }
-        val messages = session.getAttribute(SESSION_KEY) as List<GlobalMessage>
-        messages + message
+        val messages = session.getAttribute(SESSION_KEY) as MutableList<GlobalMessage>
+        messages.add(message)
     }
 
     fun pop(request: HttpServletRequest): List<GlobalMessage> {
