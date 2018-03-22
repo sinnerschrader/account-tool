@@ -2,6 +2,7 @@ package com.sinnerschrader.s2b.accounttool.presentation.controller
 
 import com.sinnerschrader.s2b.accounttool.config.WebConstants
 import com.sinnerschrader.s2b.accounttool.logic.component.ldap.LdapService
+import com.sinnerschrader.s2b.accounttool.logic.component.mail.AccountChangeMail
 import com.sinnerschrader.s2b.accounttool.logic.component.mail.MailService
 import com.sinnerschrader.s2b.accounttool.logic.exception.BusinessException
 import com.sinnerschrader.s2b.accounttool.presentation.RequestUtils
@@ -78,12 +79,12 @@ class ProfileController {
                 if (form.isPasswordChange()) {
                     ldapService.changePassword(connection, details, form.password)
                     log.info("{} changed his/her password", details.uid)
-                    mailService.sendMailForAccountChange(ldapUser, "passwordChanged")
+                    mailService.sendMail(listOf(ldapUser), AccountChangeMail(ldapUser, AccountChangeMail.Action.PASSWORD_CHANGED))
                 } else {
                     ldapService.update(connection, updatedUser)
                     log.info("{} updated his/her account informations", details.uid)
                     if (form.isPublicKeyChange()) {
-                        mailService.sendMailForAccountChange(ldapUser, "sshKeyUpdated")
+                        mailService.sendMail(listOf(ldapUser), AccountChangeMail(ldapUser, AccountChangeMail.Action.SSH_KEY_CHANGED))
                     }
                 }
             } catch (be: BusinessException) {

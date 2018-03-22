@@ -1,1 +1,0 @@
-[Account Tool]: User {{ user.uid }} was {{ 'ADD' equals change ? "added to" : "removed from" }} group {{ group.cn }}

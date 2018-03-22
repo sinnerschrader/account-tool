@@ -5,7 +5,9 @@ import com.google.common.cache.CacheBuilder
 import com.sinnerschrader.s2b.accounttool.config.ldap.LdapConfiguration
 import com.sinnerschrader.s2b.accounttool.config.ldap.LdapManagementConfiguration
 import com.sinnerschrader.s2b.accounttool.logic.DateTimeHelper
+import com.sinnerschrader.s2b.accounttool.logic.component.mail.AccountExpirationMail
 import com.sinnerschrader.s2b.accounttool.logic.component.mail.MailService
+import com.sinnerschrader.s2b.accounttool.logic.component.mail.UnmaintainedUsersMail
 import com.sinnerschrader.s2b.accounttool.logic.entity.User
 import com.unboundid.ldap.sdk.LDAPException
 import org.apache.commons.lang3.ObjectUtils.defaultIfNull
@@ -133,7 +135,11 @@ class LdapBusinessService : InitializingBean {
 
         if (userCache!!.size() > 0) {
             val to = managementConfiguration.notifyReceipients.toTypedArray()
-            mailService!!.sendNotificationOnUnmaintainedAccounts(to, userCache!!.asMap())
+            mailService.sendMail(to, UnmaintainedUsersMail(
+                    leavingUsers = getUsersByCacheType(NEAR_FUTURE_EXITING),
+                    unmaintainedMailUsers = getUsersByCacheType(ACTIVE_MAIL_ON_INACTIVE_USER),
+                    unmaintainedUsers = getUsersByCacheType(EXITED_ACTIVE_USERS),
+                    publicDomain = mailService.publicDomain))
         }
     }
 
@@ -143,7 +149,9 @@ class LdapBusinessService : InitializingBean {
         val expiringAccounts = leavingUsers.filter {
             threshold.isAfter(it.employeeExitDate!!)
         }
-        mailService.sendMailForAccountExpiration(expiringAccounts)
+        expiringAccounts.forEach {
+            mailService.sendMail(listOf(it), AccountExpirationMail(it))
+        }
     }
 
     private fun getUsersByCacheType(type: String): List<User> {
@@ -206,8 +214,8 @@ class LdapBusinessService : InitializingBean {
 
     companion object {
         private val log = LoggerFactory.getLogger(LdapBusinessService::class.java)
-        private val NEAR_FUTURE_EXITING = "leavingUsers"
-        private val EXITED_ACTIVE_USERS = "unmaintainedUsers"
-        private val ACTIVE_MAIL_ON_INACTIVE_USER = "unmaintainedMailUsers"
+        private const val NEAR_FUTURE_EXITING = "leavingUsers"
+        private const val EXITED_ACTIVE_USERS = "unmaintainedUsers"
+        private const val ACTIVE_MAIL_ON_INACTIVE_USER = "unmaintainedMailUsers"
     }
 }
