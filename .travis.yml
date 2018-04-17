@@ -26,8 +26,8 @@ script:
 
 after_success:
   - if [ "$TRAVIS_BRANCH" == "master" -o -n "$TRAVIS_TAG" ]; then
-    curl https://s3.amazonaws.com/amazon-ecs-cli/ecs-cli-linux-amd64-latest > /usr/local/bin/ecs-cli;
-    chmod +x /usr/local/bin/ecs-cli;
-    ecs-cli push account-tool:${TRAVIS_TAG:-latest};
+    curl https://s3.amazonaws.com/amazon-ecs-cli/ecs-cli-linux-amd64-latest > ecs-cli;
+    chmod +x ecs-cli;
+    ./ecs-cli push account-tool:${TRAVIS_TAG:-latest};
     [ -z "$TRAVIS_TAG" ] && curl -X POST -F token=$TRIGGER_TOKEN -F ref=master $TRIGGER_URL 1>/dev/null 2>/dev/null;
     fi
