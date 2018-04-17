@@ -22,11 +22,12 @@ script:
   - gradle --no-daemon clean build dependencyUpdates
   - echo "ENV GIT_COMMIT $TRAVIS_COMMIT" >> Dockerfile.prod
   - echo "ENV GIT_BRANCH $TRAVIS_BRANCH" >> Dockerfile.prod
-  - docker build -f Dockerfile.prod -t "$DOCKER_REPO"/account-tool:${TRAVIS_TAG:-latest} .
+  - docker build -f Dockerfile.prod -t account-tool:${TRAVIS_TAG:-latest} .
 
 after_success:
   - if [ "$TRAVIS_BRANCH" == "master" -o -n "$TRAVIS_TAG" ]; then
-    docker login -u="$DOCKER_USERNAME" -p="$DOCKER_PASSWORD";
-    docker push "$DOCKER_REPO"/account-tool:${TRAVIS_TAG:-latest};
+    curl https://s3.amazonaws.com/amazon-ecs-cli/ecs-cli-linux-amd64-latest > /usr/local/bin/ecs-cli'
+    chmod +x /usr/local/bin/ecs-cli
+    ecs-cli push account-tool:${TRAVIS_TAG:-latest};
     [ -z "$TRAVIS_TAG" ] && curl -X POST -F token=$TRIGGER_TOKEN -F ref=master $TRIGGER_URL 1>/dev/null 2>/dev/null;
     fi
