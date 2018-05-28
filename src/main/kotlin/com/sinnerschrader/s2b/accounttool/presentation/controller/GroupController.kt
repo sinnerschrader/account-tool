@@ -67,7 +67,6 @@ class GroupController {
             @RequestParam("searchTerm", required = false, defaultValue = "") searchTerm: String,
             @RequestParam("all", defaultValue = "false", required = false) listAllGroups: Boolean): ModelAndView {
 
-        authorizationService.ensureGroupAdministration(currentUserDetails!!, groupCN)
         val group = ldapService.getGroupByCN(connection, groupCN) ?: return ModelAndView("redirect:/group/$groupCN")
         val users = if (searchTerm.isNotBlank())
             ldapService.findUserBySearchTerm(connection, searchTerm).filter { !group.hasMember(it.uid, it.dn) }
