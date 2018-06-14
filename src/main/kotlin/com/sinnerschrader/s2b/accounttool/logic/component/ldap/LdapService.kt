@@ -10,10 +10,12 @@ import com.sinnerschrader.s2b.accounttool.logic.component.encryption.Encrypt
 import com.sinnerschrader.s2b.accounttool.logic.component.mapping.GroupMapping
 import com.sinnerschrader.s2b.accounttool.logic.component.mapping.UserMapping
 import com.sinnerschrader.s2b.accounttool.logic.entity.Group
+import com.sinnerschrader.s2b.accounttool.logic.entity.Group.GroupType.*
 import com.sinnerschrader.s2b.accounttool.logic.entity.User
 import com.sinnerschrader.s2b.accounttool.logic.entity.UserInfo
 import com.sinnerschrader.s2b.accounttool.logic.exception.BusinessException
 import com.unboundid.ldap.sdk.*
+import com.unboundid.ldap.sdk.ModificationType.*
 import com.unboundid.ldap.sdk.SearchRequest.ALL_OPERATIONAL_ATTRIBUTES
 import com.unboundid.ldap.sdk.SearchRequest.ALL_USER_ATTRIBUTES
 import org.apache.commons.lang3.RandomStringUtils
@@ -276,9 +278,9 @@ class LdapService {
             return ldapGroup
         try {
             val groupType = ldapGroup.groupType
-            val memberValue = if (groupType === Group.GroupType.Posix) user.uid else user.dn
+            val memberValue = if (groupType === Posix) user.uid else user.dn
             val memberAttribute = groupType.memberAttritube
-            val modification = Modification(ModificationType.ADD, memberAttribute, memberValue)
+            val modification = Modification(ADD, memberAttribute, memberValue)
             connection.modify(ldapGroup.dn, modification)
         } catch (le: LDAPException) {
             log.error("Could not add user {} to group {}", user.uid, group.cn)
@@ -297,9 +299,9 @@ class LdapService {
             return ldapGroup
         try {
             val groupType = ldapGroup.groupType
-            val memberValue = if (groupType === Group.GroupType.Posix) user.uid else user.dn
+            val memberValue = if (groupType === Posix) user.uid else user.dn
             val memberAttribute = groupType.memberAttritube
-            val modification = Modification(ModificationType.DELETE, memberAttribute, memberValue)
+            val modification = Modification(DELETE, memberAttribute, memberValue)
             connection.modify(ldapGroup.dn, modification)
         } catch (le: LDAPException) {
             log.error("Could not add user {} to group {}", user.uid, group.cn)
@@ -344,12 +346,12 @@ class LdapService {
         val changes = ArrayList<Modification>()
         if (asList(*environment.activeProfiles).contains("development")) {
             log.warn("Plaintext crypter - dont use this on production")
-            changes.add(Modification(ModificationType.REPLACE, "userPassword", StringUtils.trim(newPassword)))
+            changes.add(Modification(REPLACE, "userPassword", StringUtils.trim(newPassword)))
         } else {
-            changes.add(Modification(ModificationType.REPLACE, "userPassword", Encrypt.salt(newPassword)))
+            changes.add(Modification(REPLACE, "userPassword", Encrypt.salt(newPassword)))
         }
-        changes.add(Modification(ModificationType.REPLACE, "sambaNTPassword", Encrypt.samba(newPassword)))
-        changes.add(Modification(ModificationType.REPLACE, "sambaPwdLastSet", timestamp))
+        changes.add(Modification(REPLACE, "sambaNTPassword", Encrypt.samba(newPassword)))
+        changes.add(Modification(REPLACE, "sambaPwdLastSet", timestamp))
         try {
             val result = connection.modify(ldapUser.dn, changes)
             if (result.resultCode !== ResultCode.SUCCESS) {
@@ -374,11 +376,11 @@ class LdapService {
         val freelancerValues = arrayOf("Freelancer", "Feelancer")
         val changes = ArrayList<Modification>()
 
-        changes.add(Modification(ModificationType.REPLACE, "szzStatus", "active"))
-        changes.add(Modification(ModificationType.REPLACE, "szzMailStatus", "active"))
+        changes.add(Modification(REPLACE, "szzStatus", "active"))
+        changes.add(Modification(REPLACE, "szzMailStatus", "active"))
         if (StringUtils.equalsAny(title, *freelancerValues) || StringUtils.equalsAny(description, *freelancerValues)) {
             val exitDate = LocalDate.now().plusWeeks(4).plusDays(1)
-            changes.add(Modification(ModificationType.REPLACE,"szzExitDate", exitDate.format(DateTimeFormatter.ISO_DATE)))
+            changes.add(Modification(REPLACE,"szzExitDate", exitDate.format(DateTimeFormatter.ISO_DATE)))
         }
         try {
             val result = connection.modify(dn, changes)
@@ -402,8 +404,8 @@ class LdapService {
         val (dn, uid) = getUserByUid(connection, user.uid) ?: return false
 
         val changes = ArrayList<Modification>()
-        changes.add(Modification(ModificationType.REPLACE, "szzStatus", "inactive"))
-        changes.add(Modification(ModificationType.REPLACE, "szzMailStatus", "inactive"))
+        changes.add(Modification(REPLACE, "szzStatus", "inactive"))
+        changes.add(Modification(REPLACE, "szzMailStatus", "inactive"))
         try {
             val result = connection.modify(dn, changes)
             if (result.resultCode !== ResultCode.SUCCESS) {
@@ -679,7 +681,7 @@ class LdapService {
                 log.warn("Move user to other company. From: {} To: {} + {}", currentDN, newRDN, superiorDN)
                 modifyDNRequest = ModifyDNRequest(currentDN, newRDN, delete, superiorDN)
 
-                changes.add(Modification(ModificationType.REPLACE, "o", user.o))
+                changes.add(Modification(REPLACE, "o", user.o))
             }
 
             // Default Values and LDAP specific entries
@@ -691,76 +693,76 @@ class LdapService {
                     throw BusinessException("Entered Employeenumber already used",
                             "user.modify.employeeNumber.alreadyUsed")
                 }
-                changes.add(Modification(ModificationType.REPLACE, "employeeNumber", employeeNumber))
+                changes.add(Modification(REPLACE, "employeeNumber", employeeNumber))
             }
             if (isChanged(user.szzPublicKey, szzPublicKey)) {
-                changes.add(Modification(ModificationType.REPLACE, "szzPublicKey", user.szzPublicKey!!))
+                changes.add(Modification(REPLACE, "szzPublicKey", user.szzPublicKey!!))
             }
 
             // Organisational Entries
             if (isChanged(user.ou, ou)) {
-                changes.add(Modification(ModificationType.REPLACE, "ou", user.ou))
+                changes.add(Modification(REPLACE, "ou", user.ou))
             }
             if (isChanged(user.title, title)) {
-                changes.add(Modification(ModificationType.REPLACE, "title", user.title))
+                changes.add(Modification(REPLACE, "title", user.title))
             }
             if (isChanged(user.l, l)) {
-                changes.add(Modification(ModificationType.REPLACE, "l", user.l))
+                changes.add(Modification(REPLACE, "l", user.l))
             }
             if (isChanged(user.description, description)) {
-                changes.add(Modification(ModificationType.REPLACE, "description", user.description))
+                changes.add(Modification(REPLACE, "description", user.description))
             }
 
             // Contact informations
             if (isChanged(user.telephoneNumber, telephoneNumber, true)) {
                 if (StringUtils.isBlank(user.telephoneNumber)) {
-                    changes.add(Modification(ModificationType.DELETE, "telephoneNumber"))
+                    changes.add(Modification(DELETE, "telephoneNumber"))
                 } else {
-                    changes.add(Modification(ModificationType.REPLACE,
+                    changes.add(Modification(REPLACE,
                             "telephoneNumber", user.telephoneNumber))
                 }
             }
             if (isChanged(user.mobile, mobile, true)) {
                 if (StringUtils.isBlank(user.mobile)) {
-                    changes.add(Modification(ModificationType.DELETE, "mobile"))
+                    changes.add(Modification(DELETE, "mobile"))
                 } else {
-                    changes.add(Modification(ModificationType.REPLACE, "mobile", user.mobile))
+                    changes.add(Modification(REPLACE, "mobile", user.mobile))
                 }
             }
 
             // Birthday with Day and Month
             val birth = user.birthDate
             if (birth != null && isChanged(birth, birthDate)) {
-                changes.add(Modification(ModificationType.REPLACE,
+                changes.add(Modification(REPLACE,
                         "szzBirthDay", birth.dayOfMonth.toString()))
-                changes.add(Modification(ModificationType.REPLACE,
+                changes.add(Modification(REPLACE,
                         "szzBirthMonth", birth.monthValue.toString()))
             } else if (birth == null && birthDate != null) {
-                changes.add(Modification(ModificationType.DELETE, "szzBirthDay"))
-                changes.add(Modification(ModificationType.DELETE, "szzBirthMonth"))
+                changes.add(Modification(DELETE, "szzBirthDay"))
+                changes.add(Modification(DELETE, "szzBirthMonth"))
             }
 
             // Entry Date
             val entry = user.employeeEntryDate
             if (entry != null && isChanged(entry, employeeEntryDate)) {
-                changes.add(Modification(ModificationType.REPLACE,
+                changes.add(Modification(REPLACE,
                         "szzEntryDate", entry.format(DateTimeFormatter.ISO_DATE)))
             }
 
             // Exit Date
             val exit = user.employeeExitDate
             if (exit != null && isChanged(exit, employeeExitDate)) {
-                changes.add(Modification(ModificationType.REPLACE,
+                changes.add(Modification(REPLACE,
                         "szzExitDate", exit.format(DateTimeFormatter.ISO_DATE)))
             }
 
             // States
             if (isChanged(user.szzStatus, szzStatus) && user.szzStatus !== User.State.undefined) {
-                changes.add(Modification(ModificationType.REPLACE,
+                changes.add(Modification(REPLACE,
                         "szzStatus", user.szzStatus.name))
             }
             if (isChanged(user.szzMailStatus, szzMailStatus) && user.szzMailStatus !== User.State.undefined) {
-                changes.add(Modification(ModificationType.REPLACE,
+                changes.add(Modification(REPLACE,
                         "szzMailStatus", user.szzMailStatus.name))
             }
 
@@ -789,7 +791,7 @@ class LdapService {
             }
 
             if(isChanged(user.description, description)){
-                delDefaulGroups(user)
+                clearGroups(user)
                 addDefaultGroups(user)
             }
         } catch (le: LDAPException) {
@@ -832,31 +834,22 @@ class LdapService {
 
     }
 
-    fun delDefaulGroups(user: User) {
-        val allDefaultGroups = ldapConfiguration.permissions.defaultGroups.values.flatten().toSet()
-        if (allDefaultGroups.isEmpty()) {
-            log.debug("No default groups defined, skipped removing user from default groups")
-            return
-        }
+    fun clearGroups(user: User) {
         try {
             ldapConfiguration.createConnection().use { connection ->
                 connection.bind(managementConfiguration.user.bindDN,
                         managementConfiguration.user.password)
 
-                for (groupCn in allDefaultGroups) {
-                    val group = getGroupByCN(connection, groupCn)
-                    if (group != null) {
-                        removeUserFromGroup(connection, user, group)
-                    }
+                val groupsByUser = getGroupsByUser(connection, user.uid, user.dn).map {
+                    removeUserFromGroup(connection, user, it)
                 }
-                log.debug("Removed user from {} default groups", allDefaultGroups.size)
+                log.debug("Removed user from ${groupsByUser.size} groups")
             }
         } catch (e: LDAPException) {
-            log.error("Could not remove user from default groups", e)
+            log.error("Could not clear groups for user ${user.uid}", e)
         } catch (e: GeneralSecurityException) {
-            log.error("Could not remove user from default groups", e)
+            log.error("Could not clear groups for user ${user.uid}", e)
         }
-
     }
 
     private fun fetchMaxUserIDNumber(connection: LDAPConnection): Int? {
