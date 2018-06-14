@@ -35,7 +35,7 @@ class AuthorizationTests {
     @Before
     fun initialize() {
         val adminAuthorities = ArrayList<GrantedAuthority>()
-        adminAuthorities.add(SimpleGrantedAuthority(ldapConfiguration!!.permissions.ldapAdminGroup))
+        adminAuthorities.add(SimpleGrantedAuthority(ldapConfiguration.permissions.ldapAdminGroup))
 
         admin = LdapUserDetails("uid=tesadm,ou=users,ou=e1c1,dc=example,dc=org",
                 "tesadm", "Test Admin", "testuser", "e1c1", adminAuthorities, false, true)
@@ -60,7 +60,7 @@ class AuthorizationTests {
 
     @Test
     fun testPermissions() {
-        authorizationService!!.ensureUserAdministration(admin!!)
+        authorizationService.ensureUserAdministration(admin!!)
         authorizationService.ensureGroupAdministration(admin!!, "company-users")
 
         Assert.assertTrue(authorizationService.isAdmin(admin!!))

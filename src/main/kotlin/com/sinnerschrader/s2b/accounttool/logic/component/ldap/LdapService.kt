@@ -4,6 +4,7 @@ import com.google.common.cache.Cache
 import com.google.common.cache.CacheBuilder
 import com.sinnerschrader.s2b.accounttool.config.authentication.LdapUserDetails
 import com.sinnerschrader.s2b.accounttool.config.ldap.LdapConfiguration
+import com.sinnerschrader.s2b.accounttool.config.ldap.LdapManagementConfiguration
 import com.sinnerschrader.s2b.accounttool.config.ldap.LdapQueries
 import com.sinnerschrader.s2b.accounttool.logic.component.encryption.Encrypt
 import com.sinnerschrader.s2b.accounttool.logic.component.mapping.GroupMapping
@@ -23,6 +24,7 @@ import org.springframework.beans.factory.annotation.Value
 import org.springframework.cache.annotation.CacheEvict
 import org.springframework.core.env.Environment
 import org.springframework.stereotype.Service
+import java.security.GeneralSecurityException
 import java.text.MessageFormat
 import java.text.Normalizer
 import java.time.LocalDate
@@ -73,6 +75,9 @@ class LdapService {
     private lateinit var cachedLdapService : CachedLdapService
 
     @Transient private var lastUserNumber: Int? = null
+
+    @Autowired
+    private lateinit var managementConfiguration: LdapManagementConfiguration
 
     init {
         this.listingsCache = CacheBuilder.newBuilder().expireAfterWrite(6L, TimeUnit.HOURS).build()
@@ -373,12 +378,7 @@ class LdapService {
         changes.add(Modification(ModificationType.REPLACE, "szzMailStatus", "active"))
         if (StringUtils.equalsAny(title, *freelancerValues) || StringUtils.equalsAny(description, *freelancerValues)) {
             val exitDate = LocalDate.now().plusWeeks(4).plusDays(1)
-            changes.add(Modification(ModificationType.REPLACE,
-                    "szzExitDay", exitDate.dayOfMonth.toString()))
-            changes.add(Modification(ModificationType.REPLACE,
-                    "szzExitMonth", exitDate.monthValue.toString()))
-            changes.add(Modification(ModificationType.REPLACE,
-                    "szzExitYear", exitDate.year.toString()))
+            changes.add(Modification(ModificationType.REPLACE,"szzExitDate", exitDate.format(DateTimeFormatter.ISO_DATE)))
         }
         try {
             val result = connection.modify(dn, changes)
@@ -407,7 +407,7 @@ class LdapService {
         try {
             val result = connection.modify(dn, changes)
             if (result.resultCode !== ResultCode.SUCCESS) {
-                log.warn("Could not properly activate user {}. Reason: {} Status: {}",
+                log.warn("Could not properly deactivate user {}. Reason: {} Status: {}",
                         uid, result.diagnosticMessage, result.resultCode)
                 return false
             }
@@ -419,7 +419,7 @@ class LdapService {
             return false
         }
 
-        return false
+        return true
     }
 
     private fun createMail(firstName: String, surname: String, domain: String?, shortFirstname: Boolean): String {
@@ -787,6 +787,11 @@ class LdapService {
                     throw BusinessException("LDAP rejected update of user", "user.modify.failed", args)
                 }
             }
+
+            if(isChanged(user.description, description)){
+                delDefaulGroups(user)
+                addDefaultGroups(user)
+            }
         } catch (le: LDAPException) {
             val msg = "Could not change user"
             log.error(msg)
@@ -798,6 +803,60 @@ class LdapService {
         }
 
         return getUserByUid(connection, user.uid)
+    }
+
+    fun addDefaultGroups(user: User) {
+        val defaultGroups = ldapConfiguration.permissions.defaultGroups[user.description] ?: emptyList()
+        if (defaultGroups.isEmpty()) {
+            log.debug("No default groups defined, skipped adding user to default groups")
+            return
+        }
+        try {
+            ldapConfiguration.createConnection().use { connection ->
+                connection.bind(managementConfiguration.user.bindDN,
+                        managementConfiguration.user.password)
+
+                for (groupCn in defaultGroups) {
+                    val group = getGroupByCN(connection, groupCn)
+                    if (group != null) {
+                        addUserToGroup(connection, user, group)
+                    }
+                }
+                log.debug("Added user to {} default groups", defaultGroups.size)
+            }
+        } catch (e: LDAPException) {
+            log.error("Could not add user to default groups", e)
+        } catch (e: GeneralSecurityException) {
+            log.error("Could not add user to default groups", e)
+        }
+
+    }
+
+    fun delDefaulGroups(user: User) {
+        val allDefaultGroups = ldapConfiguration.permissions.defaultGroups.values.flatten().toSet()
+        if (allDefaultGroups.isEmpty()) {
+            log.debug("No default groups defined, skipped removing user from default groups")
+            return
+        }
+        try {
+            ldapConfiguration.createConnection().use { connection ->
+                connection.bind(managementConfiguration.user.bindDN,
+                        managementConfiguration.user.password)
+
+                for (groupCn in allDefaultGroups) {
+                    val group = getGroupByCN(connection, groupCn)
+                    if (group != null) {
+                        removeUserFromGroup(connection, user, group)
+                    }
+                }
+                log.debug("Removed user from {} default groups", allDefaultGroups.size)
+            }
+        } catch (e: LDAPException) {
+            log.error("Could not remove user from default groups", e)
+        } catch (e: GeneralSecurityException) {
+            log.error("Could not remove user from default groups", e)
+        }
+
     }
 
     private fun fetchMaxUserIDNumber(connection: LDAPConnection): Int? {

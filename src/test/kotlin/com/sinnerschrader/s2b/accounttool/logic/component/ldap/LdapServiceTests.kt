@@ -178,7 +178,7 @@ class LdapServiceTests {
         val connection = create(true)
 
         val newUser = createUser("Guy", "Inçögnítò")
-        val pUser = ldapService!!.insert(connection, newUser)
+        val pUser = ldapService.insert(connection, newUser)
 
         assertFalse(StringUtils.containsAny(pUser!!.gecos, 'ç', 'ö', 'í', 'ò'))
 
@@ -211,7 +211,7 @@ class LdapServiceTests {
         var i = 0
         try {
             for (user in users) {
-                ldapService!!.insert(connection, user)
+                ldapService.insert(connection, user)
                 i++
             }
         } catch (be: BusinessException) {
@@ -236,7 +236,7 @@ class LdapServiceTests {
         val lastName = rnd()
 
         val newUser = createUser(firstName, lastName)
-        val pUser = ldapService!!.insert(connection, newUser)
+        val pUser = ldapService.insert(connection, newUser)
 
         try {
             ldapService.insert(connection, createUser(rnd(), rnd(), pUser!!.uid, rnd() + emailCom, rnd()))
@@ -269,7 +269,7 @@ class LdapServiceTests {
         val connection = create(true)
 
         val newUser = createUser(rnd(), rnd())
-        val pUser = ldapService!!.insert(connection, newUser)
+        val pUser = ldapService.insert(connection, newUser)
         val initialPassword = ldapService.resetPassword(connection, pUser!!)
 
         assertTrue(StringUtils.isNotBlank(initialPassword))
