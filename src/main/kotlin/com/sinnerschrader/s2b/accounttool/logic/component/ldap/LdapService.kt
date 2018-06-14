@@ -10,8 +10,9 @@ import com.sinnerschrader.s2b.accounttool.logic.component.encryption.Encrypt
 import com.sinnerschrader.s2b.accounttool.logic.component.mapping.GroupMapping
 import com.sinnerschrader.s2b.accounttool.logic.component.mapping.UserMapping
 import com.sinnerschrader.s2b.accounttool.logic.entity.Group
-import com.sinnerschrader.s2b.accounttool.logic.entity.Group.GroupType.*
+import com.sinnerschrader.s2b.accounttool.logic.entity.Group.GroupType.Posix
 import com.sinnerschrader.s2b.accounttool.logic.entity.User
+import com.sinnerschrader.s2b.accounttool.logic.entity.User.State.active
 import com.sinnerschrader.s2b.accounttool.logic.entity.UserInfo
 import com.sinnerschrader.s2b.accounttool.logic.exception.BusinessException
 import com.unboundid.ldap.sdk.*
@@ -74,9 +75,10 @@ class LdapService {
     private lateinit var environment: Environment
 
     @Autowired
-    private lateinit var cachedLdapService : CachedLdapService
+    private lateinit var cachedLdapService: CachedLdapService
 
-    @Transient private var lastUserNumber: Int? = null
+    @Transient
+    private var lastUserNumber: Int? = null
 
     @Autowired
     private lateinit var managementConfiguration: LdapManagementConfiguration
@@ -88,7 +90,7 @@ class LdapService {
     fun getUserCount(connection: LDAPConnection): Int {
         try {
             val searchResult = connection.search(ldapConfiguration.config.baseDN, SearchScope.SUB,
-                LdapQueries.listAllUsers)
+                    LdapQueries.listAllUsers)
             return searchResult.entryCount
         } catch (e: Exception) {
             log.error("Could not fetch count of all users", e)
@@ -100,7 +102,7 @@ class LdapService {
     fun getUsers(connection: LDAPConnection, firstResult: Int, maxResults: Int): List<User> {
         try {
             val request = SearchRequest(ldapConfiguration.config.baseDN, SearchScope.SUB,
-                LdapQueries.listAllUsers, ALL_USER_ATTRIBUTES, ALL_OPERATIONAL_ATTRIBUTES)
+                    LdapQueries.listAllUsers, ALL_USER_ATTRIBUTES, ALL_OPERATIONAL_ATTRIBUTES)
             val searchResult = connection.search(request)
             val count = searchResult.entryCount
             val fr = Math.min(Math.max(0, firstResult), count)
@@ -160,7 +162,7 @@ class LdapService {
     fun getUserByUid(connection: LDAPConnection, uid: String): User? {
         try {
             val searchResult = connection.search(ldapConfiguration.config.baseDN, SearchScope.SUB,
-                MessageFormat.format(LdapQueries.findUserByUid,uid), ALL_USER_ATTRIBUTES, ALL_OPERATIONAL_ATTRIBUTES)
+                    MessageFormat.format(LdapQueries.findUserByUid, uid), ALL_USER_ATTRIBUTES, ALL_OPERATIONAL_ATTRIBUTES)
             if (searchResult.entryCount > 1) {
                 val msg = "Found multiple entries for uid \"" + uid + "\""
                 log.warn(msg)
@@ -225,7 +227,7 @@ class LdapService {
         val result = LinkedList<Group>()
         try {
             val searchResult = connection.search(ldapConfiguration.config.groupDN, SearchScope.SUB,
-                LdapQueries.listAllGroups)
+                    LdapQueries.listAllGroups)
             result.addAll(groupMapping.map(searchResult.searchEntries))
             Collections.sort(result)
         } catch (e: Exception) {
@@ -239,9 +241,9 @@ class LdapService {
         val result = LinkedList<Group>()
         try {
             val searchResult = connection.search(ldapConfiguration.config.groupDN, SearchScope.SUB,
-                MessageFormat.format(LdapQueries.findGroupsByUser, uid, userDN))
+                    MessageFormat.format(LdapQueries.findGroupsByUser, uid, userDN))
             result.addAll(groupMapping.map(searchResult.searchEntries))
-            Collections.sort(result)
+            result.sort()
         } catch (e: Exception) {
             log.error("Could not retrieve groups by user " + uid, e)
         }
@@ -371,7 +373,8 @@ class LdapService {
 
     @CacheEvict("groupMembers", key = "#user.uid")
     fun activate(connection: LDAPConnection, user: User): Boolean {
-        val (dn, uid, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, description, _, _, _, title) = getUserByUid(connection, user.uid) ?: return false
+        val (dn, uid, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, description, _, _, _, title) = getUserByUid(connection, user.uid)
+                ?: return false
 
         val freelancerValues = arrayOf("Freelancer", "Feelancer")
         val changes = ArrayList<Modification>()
@@ -380,7 +383,7 @@ class LdapService {
         changes.add(Modification(REPLACE, "szzMailStatus", "active"))
         if (StringUtils.equalsAny(title, *freelancerValues) || StringUtils.equalsAny(description, *freelancerValues)) {
             val exitDate = LocalDate.now().plusWeeks(4).plusDays(1)
-            changes.add(Modification(REPLACE,"szzExitDate", exitDate.format(DateTimeFormatter.ISO_DATE)))
+            changes.add(Modification(REPLACE, "szzExitDate", exitDate.format(DateTimeFormatter.ISO_DATE)))
         }
         try {
             val result = connection.modify(dn, changes)
@@ -530,7 +533,8 @@ class LdapService {
             }
 
             // Entry Date
-            val entry = user.employeeEntryDate ?: throw BusinessException("Entry could not be null", "user.entry.required")
+            val entry = user.employeeEntryDate
+                    ?: throw BusinessException("Entry could not be null", "user.entry.required")
             attributes.add(Attribute("szzEntryDate", entry.format(DateTimeFormatter.ISO_DATE)))
 
             // Exit Date
@@ -668,7 +672,8 @@ class LdapService {
 
     @CacheEvict("groupMembers", key = "#user.uid")
     fun update(connection: LDAPConnection, user: User): User? {
-        val (currentDN, uid, _, _, _, _, _, _, _, _, _, birthDate, _, _, _, _, szzStatus, szzMailStatus, _, employeeEntryDate, employeeExitDate, ou, description, telephoneNumber, mobile, employeeNumber1, title, l, szzPublicKey, _, companyKey) = getUserByUid(connection, user.uid) ?: throw BusinessException("The modification was called for a non existing user", "user.notExists")
+        val (currentDN, uid, _, _, _, _, _, _, _, _, _, birthDate, _, _, _, _, szzStatus, szzMailStatus, _, employeeEntryDate, employeeExitDate, ou, description, telephoneNumber, mobile, employeeNumber1, title, l, szzPublicKey, _, companyKey) = getUserByUid(connection, user.uid)
+                ?: throw BusinessException("The modification was called for a non existing user", "user.notExists")
         try {
             var modifyDNRequest: ModifyDNRequest? = null
             val changes = ArrayList<Modification>()
@@ -790,9 +795,9 @@ class LdapService {
                 }
             }
 
-            if(isChanged(user.description, description)){
-                clearGroups(user)
-                addDefaultGroups(user)
+            if (isChanged(user.description, description)) {
+                clearGroups(user, onlyDefaultGroups = user.szzStatus == active)
+                if (user.szzStatus == active) addDefaultGroups(user)
             }
         } catch (le: LDAPException) {
             val msg = "Could not change user"
@@ -823,7 +828,7 @@ class LdapService {
                         addUserToGroup(connection, user, it)
                     }
                 }
-                log.debug("Added user to ${defaultGroups.size} default groups")
+                log.debug("Added ${user.uid} to $defaultGroups")
             }
         } catch (e: LDAPException) {
             log.error("Could not add user to default groups", e)
@@ -833,16 +838,17 @@ class LdapService {
 
     }
 
-    fun clearGroups(user: User) {
+    fun clearGroups(user: User, onlyDefaultGroups: Boolean = false) {
         try {
             ldapConfiguration.createConnection().use { connection ->
                 connection.bind(managementConfiguration.user.bindDN,
                         managementConfiguration.user.password)
 
-                val groupsByUser = getGroupsByUser(connection, user.uid, user.dn).map {
-                    removeUserFromGroup(connection, user, it)
-                }
-                log.debug("Removed user from ${groupsByUser.size} groups")
+                val defaultGroups = ldapConfiguration.permissions.defaultGroups.values.flatten().toSet()
+                val removedGroups = getGroupsByUser(connection, user.uid, user.dn)
+                        .filter { !onlyDefaultGroups || defaultGroups.contains(it.cn) }
+                        .mapNotNull { removeUserFromGroup(connection, user, it) }
+                log.debug("Removed ${user.uid} from ${removedGroups.map { it.cn }}")
             }
         } catch (e: LDAPException) {
             log.error("Could not clear groups for user ${user.uid}", e)
@@ -856,7 +862,7 @@ class LdapService {
         var result: Int = 1000
         try {
             val searchResult = connection.search(ldapConfiguration.config.baseDN, SearchScope.SUB,
-                LdapQueries.listAllUsers, attribute)
+                    LdapQueries.listAllUsers, attribute)
 
             var uidNumber: Int?
             for (entry in searchResult.searchEntries) {
@@ -883,7 +889,7 @@ class LdapService {
         for (uidNumber in lastUserNumber!! + 1..maxUserNumber - 1) {
             try {
                 val searchResult = connection.search(ldapConfiguration.config.baseDN, SearchScope.SUB,
-                    MessageFormat.format(LdapQueries.findUserByUidNumber, uidNumber.toString()))
+                        MessageFormat.format(LdapQueries.findUserByUidNumber, uidNumber.toString()))
                 if (searchResult.entryCount == 0) {
                     lastUserNumber = uidNumber
                     return uidNumber
@@ -908,7 +914,7 @@ class LdapService {
     private fun isUserAttributeAlreadyUsed(connection: LDAPConnection, attribute: String, value: String): Boolean {
         try {
             val result = connection.search(ldapConfiguration.config.baseDN, SearchScope.SUB,
-                MessageFormat.format(LdapQueries.checkUniqAttribute, attribute, value), attribute)
+                    MessageFormat.format(LdapQueries.checkUniqAttribute, attribute, value), attribute)
             if (result.resultCode === ResultCode.SUCCESS) {
                 return result.entryCount != 0
             }
