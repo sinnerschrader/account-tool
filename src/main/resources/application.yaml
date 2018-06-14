@@ -73,7 +73,12 @@ ldap:
   permissions:
     ldapAdminGroup: "ldap-admins"
     userAdminGroups: "ldap-user-management"
-    defaultGroups: "company-users"
+    defaultGroups:
+      Administrator: [company-users]
+      Freelancer: [company-users]
+      Mitarbeiter: [company-users]
+      Testuser: [company-users]
+      User-Management: [company-users]
 
 # =============================================================
 # = LDAP Management Configuration for Background Jobs

@@ -33,7 +33,7 @@ class LdapConfiguration {
     class LdapPermissions {
         var ldapAdminGroup = ""
         var userAdminGroups = mutableListOf<String>()
-        var defaultGroups = mutableListOf<String>()
+        var defaultGroups = mutableMapOf<String, List<String>>()
     }
 
     class LdapGroupPrefixes {

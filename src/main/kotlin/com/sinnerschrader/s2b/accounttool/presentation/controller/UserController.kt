@@ -96,7 +96,7 @@ class UserController {
         val mav = ModelAndView()
         mav.addAllObjects(model.asMap())
         mav.addObject("user", user)
-        mav.addObject("companies", ldapConfiguration!!.companies)
+        mav.addObject("companies", ldapConfiguration.companies)
         mav.addObject("types", ldapService.getEmployeeType(connection))
         mav.addObject("departments", ldapService.getDepartments(connection))
         mav.addObject("locations", ldapService.getLocations(connection))
@@ -114,14 +114,14 @@ class UserController {
             attr: RedirectAttributes,
             bindingResult: BindingResult): String {
         val details = RequestUtils.currentUserDetails
-        authorizationService!!.ensureUserAdministration(details!!)
+        authorizationService.ensureUserAdministration(details!!)
 
         // half security check, if readonly field was manipulated
         if (!StringUtils.equals(userForm.uid, userId)) {
             throw IllegalArgumentException("Form submit was modified")
         }
 
-        userFormValidator!!.validate(userForm, bindingResult)
+        userFormValidator.validate(userForm, bindingResult)
         if (bindingResult.hasErrors()) {
             attr.addFlashAttribute(BindingResult::class.java.name + "." + FORMNAME_EDIT, bindingResult)
             attr.addFlashAttribute(FORMNAME_EDIT, userForm)
@@ -130,7 +130,7 @@ class UserController {
         try {
             if (isNotBlank(userForm.save)) {
                 val currentUser = ldapService.getUserByUid(connection, userId)
-                val changedUser = ldapService.update(connection, userForm.createUserEntityFromForm(ldapConfiguration!!))
+                val changedUser = ldapService.update(connection, userForm.createUserEntityFromForm(ldapConfiguration))
 
                 globalMessageFactory.store(request,
                         globalMessageFactory.createInfo("user.edit.success", changedUser!!.uid))
@@ -142,7 +142,7 @@ class UserController {
                 val password = ldapService.resetPassword(connection, user!!)!!
                 // update current user details for correct bind on next request
                 if (StringUtils.equals(details.uid, user.uid)) {
-                    details.setPassword(password!!)
+                    details.setPassword(password)
                 }
                 if (isNotBlank(userForm.resetPassword)) {
                     log.info("{} reseted the password of user {}", details.uid, user.uid)
@@ -150,12 +150,12 @@ class UserController {
                 var message = if (hidePassword) "user.passwordReset.simple" else "user.passwordReset.full"
                 if (isNotBlank(userForm.activateUser)) {
                     message = "user.activated"
-                    if (ldapService.activate(connection, user)) ldapBusinessService!!.addDefaultGroups(user)
+                    if (ldapService.activate(connection, user)) ldapService.addDefaultGroups(user)
                     log.info("{} activated the user {} right now", details.uid, user.uid)
                 }
                 if (isNotBlank(userForm.deactivateUser)) {
                     message = "user.deactivated"
-                    if (ldapService.deactivate(connection, user)) ldapBusinessService!!.delDefaulGroups(user)
+                    if (ldapService.deactivate(connection, user)) ldapService.delDefaulGroups(user)
                     log.info("{} deactivated the user {} right now", details.uid, user.uid)
                 }
                 globalMessageFactory.store(request,
@@ -177,14 +177,14 @@ class UserController {
             @RequestAttribute(name = WebConstants.ATTR_CONNECTION) connection: LDAPConnection,
             model: Model): ModelAndView {
         val details = RequestUtils.currentUserDetails
-        authorizationService!!.ensureUserAdministration(details!!)
+        authorizationService.ensureUserAdministration(details!!)
 
         if (!model.containsAttribute(FORMNAME_CREATE)) {
             model.addAttribute(FORMNAME_CREATE, UserForm(details))
         }
         val mav = ModelAndView()
         mav.addAllObjects(model.asMap())
-        mav.addObject("primaryDomain", userFormValidator!!.primaryDomain)
+        mav.addObject("primaryDomain", userFormValidator.primaryDomain)
         mav.addObject("secondaryDomain", userFormValidator.secondaryDomain)
         mav.addObject("companies", ldapConfiguration.companies)
         mav.addObject("types", ldapService.getEmployeeType(connection))
@@ -203,7 +203,7 @@ class UserController {
         val currentUser = RequestUtils.currentUserDetails
         authorizationService.ensureUserAdministration(currentUser!!)
 
-        userFormValidator!!.validate(userForm, bindingResult)
+        userFormValidator.validate(userForm, bindingResult)
         if (bindingResult.hasErrors()) {
             attr.addFlashAttribute(BindingResult::class.java.name + "." + FORMNAME_CREATE, bindingResult)
             attr.addFlashAttribute(FORMNAME_CREATE, userForm)
@@ -212,7 +212,7 @@ class UserController {
         try {
             val newUser = ldapService.insert(connection, userForm.createUserEntityFromForm(ldapConfiguration))
             val password = ldapService.resetPassword(connection, newUser!!)!!
-            ldapBusinessService.addDefaultGroups(newUser)
+            ldapService.addDefaultGroups(newUser)
             globalMessageFactory.store(request,
                     globalMessageFactory.createInfo("user.create.success", newUser.uid, password))
             log.info("{} created a new account with uid {}", currentUser.uid, newUser.uid)

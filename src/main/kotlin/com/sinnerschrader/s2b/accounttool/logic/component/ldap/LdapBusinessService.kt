@@ -158,59 +158,6 @@ class LdapBusinessService : InitializingBean {
         return defaultIfNull<List<User>>(userCache!!.getIfPresent(type), emptyList())
     }
 
-    fun addDefaultGroups(user: User) {
-        val defaultGroups = ldapConfiguration.permissions.defaultGroups
-        if (defaultGroups.isEmpty()) {
-            log.debug("No default groups defined, skipped adding user to default groups")
-            return
-        }
-        try {
-            ldapConfiguration.createConnection().use { connection ->
-                connection.bind(managementConfiguration.user.bindDN,
-                        managementConfiguration.user.password)
-
-                for (groupCn in defaultGroups) {
-                    val group = ldapService.getGroupByCN(connection, groupCn)
-                    if (group != null) {
-                        ldapService.addUserToGroup(connection, user, group)
-                    }
-                }
-                log.debug("Added user to {} default groups", defaultGroups.size)
-            }
-        } catch (e: LDAPException) {
-            log.error("Could not add user to default groups", e)
-        } catch (e: GeneralSecurityException) {
-            log.error("Could not add user to default groups", e)
-        }
-
-    }
-
-    fun delDefaulGroups(user: User) {
-        val defaultGroups = ldapConfiguration.permissions.defaultGroups
-        if (defaultGroups.isEmpty()) {
-            log.debug("No default groups defined, skipped removing user from default groups")
-            return
-        }
-        try {
-            ldapConfiguration.createConnection().use { connection ->
-                connection.bind(managementConfiguration.user.bindDN,
-                        managementConfiguration.user.password)
-
-                for (groupCn in defaultGroups) {
-                    val group = ldapService.getGroupByCN(connection, groupCn)
-                    if (group != null) {
-                        ldapService.removeUserFromGroup(connection, user, group)
-                    }
-                }
-                log.debug("Removed user from {} default groups", defaultGroups.size)
-            }
-        } catch (e: LDAPException) {
-            log.error("Could not remove user from default groups", e)
-        } catch (e: GeneralSecurityException) {
-            log.error("Could not remove user from default groups", e)
-        }
-
-    }
 
     companion object {
         private val log = LoggerFactory.getLogger(LdapBusinessService::class.java)

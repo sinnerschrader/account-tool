@@ -23,7 +23,7 @@ class ApplicationTests {
 
     @Test
     fun contextLoads() {
-        Assert.isTrue(applicationContext!!.environment.acceptsProfiles("test"), "\"test\" profile was not loaded")
+        Assert.isTrue(applicationContext.environment.acceptsProfiles("test"), "\"test\" profile was not loaded")
         Assert.notNull(applicationContext.getBean(AuthorizationService::class.java), "Missing AuthorizationService")
         Assert.notNull(applicationContext.getBean(LDAPServer::class.java), "Missing embedded LDAPServer")
         Assert.notNull(applicationContext.getBean(LdapService::class.java), "Missing LdapService")
