@@ -818,13 +818,12 @@ class LdapService {
                 connection.bind(managementConfiguration.user.bindDN,
                         managementConfiguration.user.password)
 
-                for (groupCn in defaultGroups) {
-                    val group = getGroupByCN(connection, groupCn)
-                    if (group != null) {
-                        addUserToGroup(connection, user, group)
+                defaultGroups.forEach { groupCn ->
+                    getGroupByCN(connection, groupCn)?.let {
+                        addUserToGroup(connection, user, it)
                     }
                 }
-                log.debug("Added user to {} default groups", defaultGroups.size)
+                log.debug("Added user to ${defaultGroups.size} default groups")
             }
         } catch (e: LDAPException) {
             log.error("Could not add user to default groups", e)
