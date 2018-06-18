@@ -30,11 +30,10 @@
 <a href="/login" class="s2act-logo-image">{% include "static/logo.svg" %}</a>
 {% endmacro %}
 
-{% macro switch(label, fieldName, checked=false, checkedValue, uncheckedValue) %}
-<label for="{{fieldName}}" class="js_switch mdl-switch mdl-js-switch mdl-js-ripple-effect"
-       data-checkedValue="{{checkedValue}}" data-uncheckValue="{{uncheckedValue}}">
-    <input type="checkbox" id="{{fieldName}}" name="{{fieldName}}_checkBox" {{ checked ? 'checked' : ''}}
-    class="mdl-switch__input">
+{% macro switch(label, fieldName, checked) %}
+<label for="{{fieldName}}" class="js_switch mdl-switch mdl-js-switch mdl-js-ripple-effect">
+    <input type="checkbox" id="{{fieldName}}" name="{{fieldName}}" class="mdl-switch__input" {{checked ? 'checked' : ''}} />
+    <input type="hidden" value="on" name="_{{fieldName}}"/>
     <span class="mdl-switch__label">{{label}}</span>
 </label>
 {% endmacro %}

@@ -165,14 +165,13 @@
         <div class="mdl-cell mdl-cell--4-col mdl-cell--4-col-tablet mdl-cell--4-col-phone">
             <div
                 class="s2act-textfield s2act-textfield__switch mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
-                {{switch('Status', 'status', createUserForm.status equals 'active', 'active', 'inactive')}}
+                {{switch('Status', 'status', createUserForm.status)}}
             </div>
         </div>
         <div class="mdl-cell mdl-cell--4-col mdl-cell--4-col-tablet mdl-cell--4-col-phone">
             <div
                 class="s2act-textfield s2act-textfield__switch mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
-                {{switch('E-Mail Status', 'mailStatus', createUserForm.mailStatus equals 'active', 'active',
-                'inactive')}}
+                {{switch('E-Mail Status', 'mailStatus', createUserForm.mailStatus)}}
             </div>
         </div>
         <div class="mdl-cell mdl-cell--12-col mdl-cell--8-col-tablet mdl-cell--4-col-phone">

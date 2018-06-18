@@ -28,8 +28,8 @@ class UserForm(
     var team: String = "",
     var telephoneNumber: String = "",
     var mobileNumber: String = "",
-    var status: String = "active",
-    var mailStatus: String = "active",
+    var status: Boolean = true,
+    var mailStatus: Boolean = true,
     var birthDate: String = "",
     var entryDate: String =  LocalDate.now().plusMonths(1).withDayOfMonth(1).format(DATE_PATTERN),
     var exitDate: String = LocalDate.now().plusMonths(1).withDayOfMonth(1).plusYears(50L).minusDays(1).format(DATE_PATTERN)
@@ -54,8 +54,8 @@ class UserForm(
         team = user.ou,
         telephoneNumber = user.telephoneNumber,
         mobileNumber = user.mobile,
-        status = user.szzStatus.name,
-        mailStatus = user.szzMailStatus.name,
+        status = user.szzStatus == User.State.active,
+        mailStatus = user.szzMailStatus == User.State.active,
         email = user.mail
         ) {
         user.birthDate?.let { this.birthDate = it.format(BIRTHDAY_PATTERN) }
@@ -76,8 +76,8 @@ class UserForm(
         sn = lastName,
         birthDate = birthAsDate(),
         mail = email,
-        szzStatus = User.State.fromString(status),
-        szzMailStatus = User.State.fromString(mailStatus),
+        szzStatus = if(status) User.State.active else User.State.inactive,
+        szzMailStatus = if(mailStatus) User.State.active else User.State.inactive,
         sambaPwdLastSet = Long.MAX_VALUE,
         employeeEntryDate = entryAsDate(),
         employeeExitDate = exitAsDate(),
