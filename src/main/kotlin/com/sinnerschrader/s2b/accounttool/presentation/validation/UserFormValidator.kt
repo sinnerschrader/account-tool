@@ -59,15 +59,6 @@ class UserFormValidator : Validator {
             }
         }
 
-        if (User.State.fromString(form.status) === User.State.undefined) {
-            errors.rejectValue("status", "invalid.status", arrayOf(),
-                "Status has an invalid value")
-        }
-        if (User.State.fromString(form.mailStatus) === User.State.undefined) {
-            errors.rejectValue("mailStatus", "invalid.status", arrayOf(),
-                "E-Mail Status has an invalid value")
-        }
-
         if (form.birthDate.isNotBlank()) {
             try {
                 form.birthAsDate()!!.year
