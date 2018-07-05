@@ -1,9 +1,11 @@
 package com.sinnerschrader.s2b.accounttool.presentation.validation
 
+import com.sinnerschrader.s2b.accounttool.config.DomainConfiguration
 import com.sinnerschrader.s2b.accounttool.logic.entity.User
 import com.sinnerschrader.s2b.accounttool.presentation.model.UserForm
 import org.apache.commons.lang3.StringUtils
 import org.hibernate.validator.internal.constraintvalidators.hv.EmailValidator
+import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Component
 import org.springframework.validation.Errors
@@ -16,11 +18,8 @@ class UserFormValidator : Validator {
 
     private val emailValidator = EmailValidator()
 
-    @Value("\${domain.primary}")
-    lateinit var primaryDomain: String
-
-    @Value("\${domain.secondary}")
-    lateinit var secondaryDomain: String
+    @Autowired
+    private lateinit var domainConfiguration: DomainConfiguration
 
     override fun supports(clazz: Class<*>) = UserForm::class.java.isAssignableFrom(clazz)
 
@@ -47,15 +46,11 @@ class UserFormValidator : Validator {
             }
         }
 
-        if (form.email.isNotBlank()) {
-            val email = form.email.trim()
-            if (!emailValidator.isValid(email, null)) {
-                errors.rejectValue("email", "email", arrayOf<Any>(form.email),
+        if (form.emailPrefix.isNotBlank()) {
+            val email = form.emailPrefix.trim()
+            if (!emailValidator.isValid("$email@${domainConfiguration.mailDomain(form.type)}", null)) {
+                errors.rejectValue("emailPrefix", "email", arrayOf<Any>(form.emailPrefix),
                     "Entered E-Mail is not valid")
-            }
-            if (!email.endsWith("@$primaryDomain") && !email.endsWith("@$secondaryDomain")) {
-                errors.rejectValue("email", "domain", arrayOf<Any>(form.email),
-                        "E-Mail has to be part of $primaryDomain Domain")
             }
         }
 

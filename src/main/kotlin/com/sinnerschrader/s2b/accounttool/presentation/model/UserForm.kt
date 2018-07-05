@@ -1,16 +1,15 @@
 package com.sinnerschrader.s2b.accounttool.presentation.model
 
+import com.sinnerschrader.s2b.accounttool.config.DomainConfiguration
 import com.sinnerschrader.s2b.accounttool.config.authentication.LdapUserDetails
 import com.sinnerschrader.s2b.accounttool.config.ldap.LdapConfiguration
 import com.sinnerschrader.s2b.accounttool.logic.DateTimeHelper
 import com.sinnerschrader.s2b.accounttool.logic.entity.User
 
-import java.io.Serializable
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 
-class UserForm(
-
+data class UserForm(
     var save: String = "",
     var deactivateUser: String = "",
     var activateUser: String = "",
@@ -20,7 +19,8 @@ class UserForm(
     var employeeNumber: String = "",
     var firstName: String = "",
     var lastName: String = "",
-    var email: String = "",
+    var emailPrefix: String = "",
+    val emailDomain: String = "",
     var company: String = "",
     var location: String = "",
     var title: String = "",
@@ -33,11 +33,11 @@ class UserForm(
     var birthDate: String = "",
     var entryDate: String =  LocalDate.now().plusMonths(1).withDayOfMonth(1).format(DATE_PATTERN),
     var exitDate: String = LocalDate.now().plusMonths(1).withDayOfMonth(1).plusYears(50L).minusDays(1).format(DATE_PATTERN)
-) : Serializable {
+) {
 
     companion object {
-        val BIRTHDAY_PATTERN = "dd.MM"
-        val DATE_PATTERN = "dd.MM.yyyy"
+        const val BIRTHDAY_PATTERN = "dd.MM"
+        const val DATE_PATTERN = "dd.MM.yyyy"
     }
 
     constructor(details: LdapUserDetails) : this(company = details.company)
@@ -47,6 +47,8 @@ class UserForm(
         employeeNumber = user.employeeNumber,
         firstName = user.givenName,
         lastName = user.sn,
+        emailPrefix = user.mail.substringBefore('@'),
+        emailDomain = user.mail.substringAfter('@'),
         company = user.companyKey,
         location = user.l,
         title = user.title,
@@ -55,8 +57,7 @@ class UserForm(
         telephoneNumber = user.telephoneNumber,
         mobileNumber = user.mobile,
         status = user.szzStatus == User.State.active,
-        mailStatus = user.szzMailStatus == User.State.active,
-        email = user.mail
+        mailStatus = user.szzMailStatus == User.State.active
         ) {
         user.birthDate?.let { this.birthDate = it.format(BIRTHDAY_PATTERN) }
         user.employeeEntryDate?.let { this.entryDate = it.format(DATE_PATTERN)}
@@ -67,15 +68,18 @@ class UserForm(
     fun entryAsDate() = entryDate.parseLocalDate(DATE_PATTERN)
     fun exitAsDate() = exitDate.parseLocalDate(DATE_PATTERN)
 
-    fun createUserEntityFromForm(ldapConfiguration: LdapConfiguration) = User(
+    fun createUserEntityFromForm(ldapConfiguration: LdapConfiguration, domainConfiguration: DomainConfiguration) = User(
         uid = uid,
-        displayName = firstName + " " + lastName,
-        gecos = firstName + " " + lastName,
-        cn = firstName + " " + lastName,
+        displayName = "$firstName $lastName",
+        gecos = "$firstName $lastName",
+        cn = "$firstName $lastName",
         givenName = firstName,
         sn = lastName,
         birthDate = birthAsDate(),
-        mail = email,
+        mail = when {
+            emailPrefix.isNotBlank() ->  domainConfiguration.mailDomain(type)
+            else ->  ""
+        },
         szzStatus = if(status) User.State.active else User.State.inactive,
         szzMailStatus = if(mailStatus) User.State.active else User.State.inactive,
         sambaPwdLastSet = Long.MAX_VALUE,

@@ -106,8 +106,10 @@ ldap-management:
 # =============================================================
 domain:
   primary: "example.com"
-  secondary: "example.de"
   public: "myaccount.${domain.primary}"
+  subdomains:
+    Freelancer: freelancer
+    Testuser: test
 
 # =============================================================
 # = Configurable Default Values for new Users

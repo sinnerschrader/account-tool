@@ -1,34 +1,5 @@
 {% extends "pages/template/authenticated.html" %}
-
-
-{% macro inputText(label, fieldName, value, pattern=".*", errorMsg="", halfWidth=true, readonly=false) %}
-<div class="s2act-textfield {{ halfWidth ? 's2act-textfield__halfWidth' : '' }} mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
-    <input class="mdl-textfield__input" type="text" name="{{ fieldName }}" id="{{ fieldName }}"
-           value="{{ value }}" pattern="{{ pattern }}" {{ readonly ? 'readonly' : '' }}>
-    <label class="mdl-textfield__label" for="{{ fieldName }}">{{ label }}</label>
-    <span class="mdl-textfield__error">{{ errorMsg }}</span>
-</div>
-{% endmacro %}
-
-
-{% macro inputSelect(label, fieldName, options, value, optionsAsMap=false) %}
-<div class="s2act-selectfield mdl-selectfield mdl-js-selectfield mdl-selectfield--floating-label">
-    <select id="{{ fieldName }}" name="{{ fieldName }}" class="mdl-selectfield__select">
-        <option value=""></option>
-        {% for option in options %}
-        <option value="{{ optionsAsMap ? option.key : option }}" {{ isSelected(value, optionsAsMap ? option.key : option) }}>{{ optionsAsMap ? option.value : option }}</option>
-        {% endfor %}
-    </select>
-    <div class="mdl-selectfield__icon"><i class="material-icons">arrow_drop_down</i></div>
-    <label class="mdl-selectfield__label" for="{{ fieldName }}">{{ label }}</label>
-</div>
-{% endmacro %}
-
-{% macro inputButton(label, fieldName, color="mdl-button--primary") %}
-<input class="s2act-button--right mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect {{ color }}"
-    type="submit" name="{{ fieldName }}" value="{{ label }}"/>
-{% endmacro %}
-
+{% import "pages/template/inputMacros.html" %}
 
 {% block content %}
 
@@ -53,21 +24,19 @@
         </div>
         {% endif %}
         <div class="mdl-cell mdl-cell--6-col mdl-cell--4-col-tablet mdl-cell--4-col-phone mdl-cell--order-0-phone">
-
             {{ inputSelect("Company", "company", companies, editUserForm.company, optionsAsMap=true) }}
             {{ inputText("FirstName *", "firstName", editUserForm.firstName, readonly=true) }}
             {{ inputText("Lastname *", "lastName", editUserForm.lastName, readonly=true) }}
             {{ inputText("Username", "uid", editUserForm.uid, pattern="\D\D\D\D\D\D\D?\D?", errorMsg="Please enter the uid with six, seven or eight characters", readonly=true) }}
             {{ inputText("Birthdate", "birthDate", editUserForm.birthDate, pattern="\d\d\.\d\d", errorMsg="Please enter the Birthdate in pattern dd.MM") }}
-            {{ inputText("E-Mail *", "email", editUserForm.email, readonly=true, halfWidth=false, readonly=true) }}
+            {{ inputText("E-Mail Prefix *", "emailPrefix", editUserForm.emailPrefix, readonly=true, halfWidth=true, readonly=true) }}
+            {{ inputText("E-Mail Domain", "emailDomain", editUserForm.emailDomain, readonly=true, halfWidth=true, readonly=true) }}
             {{ inputText("Telephone", "telephoneNumber", editUserForm.telephoneNumber, pattern="\+?[0-9 ()]+") }}
             {{ inputText("Mobile", "mobileNumber", editUserForm.mobileNumber, pattern="\+?[0-9 ()]+", errorMsg="Please define a valid mobile number") }}
             {{ inputText("Last password change", "passwordChange", user.prettyLastPasswordChange, readonly=true) }}
             {{ inputText("Last modified", "modified", user.prettyModifytimestamp + " by " + user.prettyModifiersName, readonly=true) }}
-
         </div>
         <div class="mdl-cell mdl-cell--6-col mdl-cell--4-col-tablet mdl-cell--4-col-phone">
-
             {{ inputText("Employee number", "employeeNumber", editUserForm.employeeNumber, errorMsg="Please define a valid mobile number", halfWidth=false, readonly=true) }}
             {{ inputSelect("Team *", "team", departments, editUserForm.team) }}
             {{ inputText("Title *", "title", editUserForm.title, halfWidth=false) }}

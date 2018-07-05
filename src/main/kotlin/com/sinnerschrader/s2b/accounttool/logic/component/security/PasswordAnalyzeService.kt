@@ -14,8 +14,8 @@ object PasswordAnalyzeService {
         val errorCodes = feedback.suggestions + listOfNotNull(feedback.warning).filter { it.isNotBlank() }
     }
 
-    fun analyze(password: String): PasswordValidationResult {
-        val strength = Zxcvbn().measure(password)
+    fun analyze(password: String, vararg inputs: String): PasswordValidationResult {
+        val strength = Zxcvbn().measure(password, inputs.toList())
         val feedback = strength.feedback.withResourceBundle(object : ResourceBundle() {
             override fun handleGetObject(key: String): Any = key
             override fun getKeys(): Enumeration<String>? = null

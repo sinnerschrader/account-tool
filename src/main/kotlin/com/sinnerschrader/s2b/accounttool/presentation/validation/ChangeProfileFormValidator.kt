@@ -108,7 +108,7 @@ class ChangeProfileFormValidator : Validator {
             errors.rejectValue("password", "password.noChange")
         }
 
-        val result = passwordAnalyzeService.analyze(form.password)
+        val result = passwordAnalyzeService.analyze(form.password, currentUser.uid, currentUser.username)
         if (!result.isValid) {
             val codes = result.errorCodes
             if (codes.isEmpty()) {
