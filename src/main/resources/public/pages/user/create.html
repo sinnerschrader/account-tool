@@ -1,33 +1,14 @@
 {% extends "pages/template/authenticated.html" %}
+{% import "pages/template/inputMacros.html" %}
 
 {% block content %}
 <form action="/user/create" method="post">
     <input type="hidden" name="{{request.getAttribute('_csrf').parameterName}}"
            value="{{request.getAttribute('_csrf').token}}"/>
+
     <div class="mdl-grid">
         <div class="mdl-cell mdl-cell--12-col mdl-cell--8-col-tablet mdl-cell--4-col-phone">
-            <h2 class="s2act-sectionHeadline">
-                <span>Create new user</span>
-            </h2>
-            <div id="helpText-createUser" class="s2act-helpArea">
-                <p>
-                    To create a new user, you don't have to define all values.
-                    All required values are marked with an <b>*</b> sign on the label.
-                    <br>
-                    Some required fiedls are not marked, because they are autofilled over conventions. Leave following
-                    fields empty for auto fill. <br/>
-                    <b>Important</b>: Even the autofilled fields can't be changed afterwards.
-                </p>
-                <ul>
-                    <li><b>Username</b> - based on first letters of firstname and lastname</li>
-                    <li><b>E-Mail & E-Mail alias</b> - based on full name of the person</li>
-                    <li><b>Employee Number</b> - unique identifier</li>
-                </ul>
-                <p>
-                    Sometimes the autofill can fail, in this situation you will get an information, which field can't
-                    be autofilled. In this case you have to enter this field manually.
-                </p>
-            </div>
+            <h2 class="s2act-sectionHeadline">Create new user</h2>
         </div>
         {% set formName = 'createUserForm' %}
         {% set noSpacing = true %}
@@ -42,125 +23,26 @@
         </div>
         {% endif %}
         <div class="mdl-cell mdl-cell--6-col mdl-cell--4-col-tablet mdl-cell--4-col-phone mdl-cell--order-0-phone">
-            <div class="s2act-selectfield mdl-selectfield mdl-js-selectfield mdl-selectfield--floating-label">
-                <select id="company" name="company" class="mdl-selectfield__select">
-                    <option value=""></option>
-                    {% for company in companies %}
-                    <option value="{{company.key}}" {{isSelected(createUserForm.company,company.key)}}>
-                        {{company.value}}
-                    </option>
-                    {% endfor %}
-                </select>
-                <div class="mdl-selectfield__icon"><i class="material-icons">arrow_drop_down</i></div>
-                <label class="mdl-selectfield__label" for="company">Company *</label>
-            </div>
-            <div
-                class="s2act-textfield s2act-textfield__halfWidth mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
-                <input class="mdl-textfield__input" type="text" name="firstName" id="firstName"
-                       value="{{ createUserForm.firstName }}" pattern="\D\D+">
-                <label class="mdl-textfield__label" for="firstName">Firstname *</label>
-                <span class="mdl-textfield__error">Please enter a firstname</span>
-            </div>
-            <div
-                class="s2act-textfield s2act-textfield__halfWidth mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
-                <input class="mdl-textfield__input" type="text" name="lastName" id="lastName"
-                       value="{{ createUserForm.lastName }}" pattern="\D\D+">
-                <label class="mdl-textfield__label" for="lastName">Surname *</label>
-                <span class="mdl-textfield__error">Please enter a surname</span>
-            </div>
-            <div
-                class="s2act-textfield s2act-textfield__halfWidth mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
-                <input class="mdl-textfield__input" type="text" name="uid" id="uid"
-                       value="{{ createUserForm.uid }}" pattern="\D\D\D\D\D\D\D?\D?">
-                <label class="mdl-textfield__label" for="uid">Username</label>
-                <span class="mdl-textfield__error">Please enter the uid with six, seven or eight characters</span>
-            </div>
-            <div
-                class="s2act-textfield s2act-textfield__halfWidth mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
-                <input class="mdl-textfield__input" type="text" name="birthDate" id="birthDate"
-                       value="{{ createUserForm.birthDate }}" pattern="\d\d\.\d\d">
-                <label class="mdl-textfield__label" for="birthDate">Birthdate</label>
-                <span class="mdl-textfield__error">Please enter the Birthdate in pattern dd.MM</span>
-            </div>
-            <div class="s2act-textfield mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
-                <input class="mdl-textfield__input" type="email" name="email" id="email"
-                       value="{{ createUserForm.email }}">
-                <label class="mdl-textfield__label" for="email">E-Mail</label>
-                <span class="mdl-textfield__error">Please enter an email address (@{{primaryDomain}})</span>
-            </div>
-            <div
-                class="s2act-textfield s2act-textfield__halfWidth mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
-                <input class="mdl-textfield__input" type="tel" name="telephoneNumber" id="telephoneNumber"
-                       value="{{ createUserForm.telephoneNumber }}" pattern="\+?[0-9 ()]+"/>
-                <label class="mdl-textfield__label" for="telephoneNumber">(Business) Telephone</label>
-                <span class="mdl-textfield__error">Please enter a valid telephone number</span>
-            </div>
-            <div
-                class="s2act-textfield s2act-textfield__halfWidth mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
-                <input class="mdl-textfield__input" type="tel" name="mobileNumber" id="mobileNumber"
-                       value="{{ createUserForm.mobileNumber }}" pattern="\+?[0-9 ()]+"/>
-                <label class="mdl-textfield__label" for="mobileNumber">(Business) Mobile</label>
-                <span class="mdl-textfield__error">Please enter a valid mobile number</span>
-            </div>
+            {{ inputSelect("Company", "company", companies, createUserForm.company, optionsAsMap=true) }}
+            {{ inputText("FirstName *", "firstName", createUserForm.firstName) }}
+            {{ inputText("Lastname *", "lastName", createUserForm.lastName) }}
+            {{ inputText("Username", "uid", createUserForm.uid, pattern="\D\D\D\D\D\D\D?\D?", errorMsg="Please enter the uid with six, seven or eight characters") }}
+            {{ inputText("Birthdate", "birthDate", createUserForm.birthDate, pattern="\d\d\.\d\d", errorMsg="Please enter the Birthdate in pattern dd.MM") }}
+            {{ inputText("E-Mail Prefix", "emailPrefix", createUserForm.emailPrefix, halfWidth=true) }}
+            {{ inputText("E-Mail Domain", "emailDomain", createUserForm.emailDomain, readonly=true, halfWidth=true, readonly=true) }}
+            {{ inputText("Telephone", "telephoneNumber", createUserForm.telephoneNumber, pattern="\+?[0-9 ()]+") }}
+            {{ inputText("Mobile", "mobileNumber", createUserForm.mobileNumber, pattern="\+?[0-9 ()]+", errorMsg="Please define a valid mobile number") }}
+            {{ inputText("Last password change", "passwordChange", user.prettyLastPasswordChange, readonly=true) }}
+            {{ inputText("Last modified", "modified", user.prettyLastModified, readonly=true) }}
         </div>
         <div class="mdl-cell mdl-cell--6-col mdl-cell--4-col-tablet mdl-cell--4-col-phone">
-            <div class="s2act-textfield mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
-                <input class="mdl-textfield__input" type="tel" name="employeeNumber" id="employeeNumber"
-                       value="{{ createUserForm.employeeNumber }}">
-                <label class="mdl-textfield__label" for="employeeNumber">Employee number</label>
-            </div>
-            <div class="s2act-selectfield mdl-selectfield mdl-js-selectfield mdl-selectfield--floating-label">
-                <select id="team" name="team" class="mdl-selectfield__select">
-                    <option value=""></option>
-                    {% for department in departments %}
-                    <option {{isSelected(createUserForm.team,department)}} value="{{department}}">{{department}}
-                    </option>
-                    {% endfor %}
-                </select>
-                <div class="mdl-selectfield__icon"><i class="material-icons">arrow_drop_down</i></div>
-                <label class="mdl-selectfield__label" for="team">Team *</label>
-            </div>
-            <div class="s2act-textfield mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
-                <input class="mdl-textfield__input" type="text" name="title" id="title"
-                       value="{{ createUserForm.title }}">
-                <label class="mdl-textfield__label" for="title">Title *</label>
-            </div>
-            <div class="s2act-selectfield mdl-selectfield mdl-js-selectfield mdl-selectfield--floating-label">
-                <select id="location" name="location" class="mdl-selectfield__select">
-                    <option value=""></option>
-                    {% for location in locations %}
-                    <option value="{{location}}" {{isSelected(createUserForm.location,location)}}>{{location}}</option>
-                    {% endfor %}
-                </select>
-                <div class="mdl-selectfield__icon"><i class="material-icons">arrow_drop_down</i></div>
-                <label class="mdl-selectfield__label" for="location">Location *</label>
-            </div>
-            <div class="s2act-selectfield mdl-selectfield mdl-js-selectfield mdl-selectfield--floating-label">
-                <select id="type" name="type" class="mdl-selectfield__select">
-                    <option value=""></option>
-                    {% for type in types %}
-                    <option value="{{type}}" {{isSelected(createUserForm.type,type)}}>{{type}}</option>
-                    {% endfor %}
-                </select>
-                <div class="mdl-selectfield__icon"><i class="material-icons">arrow_drop_down</i></div>
-                <label class="mdl-selectfield__label" for="type">Type *</label>
-            </div>
-            <div
-                class="s2act-textfield s2act-textfield__halfWidth mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
-                <input class="mdl-textfield__input" type="text" name="entryDate" id="entryDate"
-                       value="{{ createUserForm.entryDate }}"
-                       pattern="[0-9][0-9]\.[0-9][0-9]\.[0-9][0-9][0-9][0-9]">
-                <label class="mdl-textfield__label" for="entryDate">Entry date *</label>
-                <span class="mdl-textfield__error">Please enter the entry date in pattern dd.MM.yyyy</span>
-            </div>
-            <div
-                class="s2act-textfield s2act-textfield__halfWidth mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
-                <input class="mdl-textfield__input" type="text" name="exitDate" id="exitDate"
-                       value="{{ createUserForm.exitDate }}"
-                       pattern="[0-9][0-9]\.[0-9][0-9]\.[0-9][0-9][0-9][0-9]">
-                <label class="mdl-textfield__label" for="exitDate">Exit date *</label>
-                <span class="mdl-textfield__error">Please enter the exitdate in pattern dd.MM.yyyy</span>
-            </div>
+            {{ inputText("Employee number", "employeeNumber", createUserForm.employeeNumber, errorMsg="Please define a valid mobile number", halfWidth=false) }}
+            {{ inputSelect("Team *", "team", departments, createUserForm.team) }}
+            {{ inputText("Title *", "title", createUserForm.title, halfWidth=false) }}
+            {{ inputSelect("Location *", "location", locations, createUserForm.location) }}
+            {{ inputSelect("Type *", "type", types, createUserForm.type) }}
+            {{ inputText("Entry date *", "entryDate", createUserForm.entryDate, "[0-9][0-9]\.[0-9][0-9]\.[0-9][0-9][0-9][0-9]", errorMsg="Please enter the entry date in pattern dd.MM.yyyy") }}
+            {{ inputText("Exit date *", "exitDate", createUserForm.exitDate, "[0-9][0-9]\.[0-9][0-9]\.[0-9][0-9][0-9][0-9]", errorMsg="Please enter the exit date in pattern dd.MM.yyyy") }}
         </div>
         <div class="mdl-cell mdl-cell--4-col mdl-cell--4-col-tablet mdl-cell--4-col-phone">
             <div
@@ -176,9 +58,25 @@
         </div>
         <div class="mdl-cell mdl-cell--12-col mdl-cell--8-col-tablet mdl-cell--4-col-phone">
             <div class="s2act-buttonRow">
-                <input
-                    class="s2act-button--right mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--primary"
-                    type="submit" value="Save"/>
+                {{ inputButton("Save", "save") }}
+                {{ createUserForm.status ? inputButton("Deactivate", "deactivateUser", "mdl-color--red", disabled=true) : inputButton("Activate", "activateUser", "mdl-button--accent", disabled=true) }}
+                {{ inputButton("Reset Password", "resetPassword", "mdl-button--accent", disabled=true) }}
+            </div>
+        </div>
+        <div class="mdl-cell mdl-cell--12-col mdl-cell--8-col-tablet mdl-cell--4-col-phone">
+            <h2 class="s2act-sectionHeadline">
+                <span>Groups</span>
+            </h2>
+            <div class="s2act-groupContainer">
+                {% for group in groups %}
+                <a href="/group/{{ group.cn }}" class="mdl-chip mdl-chip--contact s2act-groupChip">
+				    <span
+                        class="mdl-chip__contact mdl-color-text--white s2act-groupChip__contact {{group.adminGroup or group.technicalGroup ? 's2act-groupChip__contact--admin' : ''}}">
+					    <i class="material-icons">{{group.adminGroup ? 'settings' : 'group'}}</i>
+				    </span>
+                    <span class="mdl-chip__text s2act-groupChip__text">{{group.cn}}</span>
+                </a>
+                {% endfor %}
             </div>
         </div>
     </div>

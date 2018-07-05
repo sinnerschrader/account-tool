@@ -68,7 +68,7 @@ class UserFormTest {
         val userForm = UserForm(user)
         Assert.assertTrue(userForm.entryAsDate() == user.employeeEntryDate)
         Assert.assertTrue(userForm.exitAsDate() == user.employeeExitDate)
-        Assert.assertEquals(userForm.email, user.mail)
+        Assert.assertEquals(userForm.emailPrefix, user.mail.substringBefore("@") )
         Assert.assertEquals(userForm.status, true)
         Assert.assertEquals(userForm.mailStatus, true)
         Assert.assertEquals(userForm.uid, user.uid)

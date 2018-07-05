@@ -75,6 +75,7 @@ data class User(
     }
 
     fun getPrettyLastPasswordChange() = PrettyTime().format(getLastPasswordChange())
+    fun getPrettyLastModified() = if (modifytimestamp.isNotBlank()) "${getPrettyModifytimestamp()} by ${getPrettyModifiersName()}" else ""
 
     fun getPrettyModifiersName() = Regex("^uid=([^,]+)").find(modifiersName)?.groupValues?.get(1) ?: modifiersName
 

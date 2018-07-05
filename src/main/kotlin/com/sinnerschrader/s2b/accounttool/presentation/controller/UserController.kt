@@ -1,5 +1,6 @@
 package com.sinnerschrader.s2b.accounttool.presentation.controller
 
+import com.sinnerschrader.s2b.accounttool.config.DomainConfiguration
 import com.sinnerschrader.s2b.accounttool.config.WebConstants
 import com.sinnerschrader.s2b.accounttool.config.ldap.LdapConfiguration
 import com.sinnerschrader.s2b.accounttool.logic.component.authorization.AuthorizationService
@@ -46,6 +47,9 @@ class UserController {
 
     @Autowired
     private lateinit var ldapConfiguration: LdapConfiguration
+
+    @Autowired
+    private lateinit var domainConfiguration: DomainConfiguration
 
     @Autowired
     private lateinit var globalMessageFactory: GlobalMessageFactory
@@ -130,7 +134,7 @@ class UserController {
         try {
             if (isNotBlank(userForm.save)) {
                 val currentUser = ldapService.getUserByUid(connection, userId)
-                val changedUser = ldapService.update(connection, userForm.createUserEntityFromForm(ldapConfiguration))
+                val changedUser = ldapService.update(connection, userForm.createUserEntityFromForm(ldapConfiguration, domainConfiguration))
 
                 globalMessageFactory.store(request,
                         globalMessageFactory.createInfo("user.edit.success", changedUser!!.uid))
@@ -150,7 +154,7 @@ class UserController {
                 var message = if (hidePassword) "user.passwordReset.simple" else "user.passwordReset.full"
                 if (isNotBlank(userForm.activateUser)) {
                     message = "user.activated"
-                    if (ldapService.activate(connection, user)) ldapService.addDefaultGroups(user)
+                    if (ldapService.activate(connection, user.uid)) ldapService.addDefaultGroups(user)
                     log.info("{} activated the user {} right now", details.uid, user.uid)
                 }
                 if (isNotBlank(userForm.deactivateUser)) {
@@ -184,8 +188,6 @@ class UserController {
         }
         val mav = ModelAndView()
         mav.addAllObjects(model.asMap())
-        mav.addObject("primaryDomain", userFormValidator.primaryDomain)
-        mav.addObject("secondaryDomain", userFormValidator.secondaryDomain)
         mav.addObject("companies", ldapConfiguration.companies)
         mav.addObject("types", ldapService.getEmployeeType(connection))
         mav.addObject("departments", ldapService.getDepartments(connection))
@@ -209,8 +211,9 @@ class UserController {
             attr.addFlashAttribute(FORMNAME_CREATE, userForm)
             return "redirect:/user/create"
         }
+
         try {
-            val newUser = ldapService.insert(connection, userForm.createUserEntityFromForm(ldapConfiguration))
+            val newUser = ldapService.insert(connection, userForm.createUserEntityFromForm(ldapConfiguration, domainConfiguration))
             val password = ldapService.resetPassword(connection, newUser!!)!!
             ldapService.addDefaultGroups(newUser)
             globalMessageFactory.store(request,

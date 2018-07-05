@@ -2,6 +2,7 @@ package com.sinnerschrader.s2b.accounttool.logic.component.ldap
 
 import com.google.common.cache.Cache
 import com.google.common.cache.CacheBuilder
+import com.sinnerschrader.s2b.accounttool.config.DomainConfiguration
 import com.sinnerschrader.s2b.accounttool.config.authentication.LdapUserDetails
 import com.sinnerschrader.s2b.accounttool.config.ldap.LdapConfiguration
 import com.sinnerschrader.s2b.accounttool.config.ldap.LdapManagementConfiguration
@@ -30,7 +31,6 @@ import org.springframework.stereotype.Service
 import java.security.GeneralSecurityException
 import java.text.MessageFormat
 import java.text.Normalizer
-import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 import java.util.*
 import java.util.Arrays.asList
@@ -38,17 +38,13 @@ import java.util.concurrent.TimeUnit
 
 @Service
 class LdapService {
-
-    private val listingsCache: Cache<String, List<String>>
+    private val listingsCache: Cache<String, List<String>> = CacheBuilder.newBuilder().expireAfterWrite(6L, TimeUnit.HOURS).build()
 
     @Autowired
     private lateinit var ldapConfiguration: LdapConfiguration
 
-    @Value("\${domain.primary}")
-    private lateinit var primaryDomain: String
-
-    @Value("\${domain.secondary}")
-    private lateinit var secondaryDomain: String
+    @Autowired
+    private lateinit var domainConfiguration: DomainConfiguration
 
     @Value("\${user.smbIdPrefix}")
     private lateinit var smbIdPrefix: String
@@ -82,10 +78,6 @@ class LdapService {
 
     @Autowired
     private lateinit var managementConfiguration: LdapManagementConfiguration
-
-    init {
-        this.listingsCache = CacheBuilder.newBuilder().expireAfterWrite(6L, TimeUnit.HOURS).build()
-    }
 
     fun getUserCount(connection: LDAPConnection): Int {
         try {
@@ -147,24 +139,18 @@ class LdapService {
         return result
     }
 
-    fun getEmployeeType(connection: LDAPConnection): List<String>? {
-        return getListingFromCacheOrLdap(connection, "employeeTypes", "description")
-    }
+    fun getEmployeeType(connection: LDAPConnection) = getListingFromCacheOrLdap(connection, "employeeTypes", "description")
 
-    fun getLocations(connection: LDAPConnection): List<String>? {
-        return getListingFromCacheOrLdap(connection, "locations", "l")
-    }
+    fun getLocations(connection: LDAPConnection) = getListingFromCacheOrLdap(connection, "locations", "l")
 
-    fun getDepartments(connection: LDAPConnection): List<String>? {
-        return getListingFromCacheOrLdap(connection, "departments", "ou")
-    }
+    fun getDepartments(connection: LDAPConnection) = getListingFromCacheOrLdap(connection, "departments", "ou")
 
     fun getUserByUid(connection: LDAPConnection, uid: String): User? {
         try {
             val searchResult = connection.search(ldapConfiguration.config.baseDN, SearchScope.SUB,
                     MessageFormat.format(LdapQueries.findUserByUid, uid), ALL_USER_ATTRIBUTES, ALL_OPERATIONAL_ATTRIBUTES)
             if (searchResult.entryCount > 1) {
-                val msg = "Found multiple entries for uid \"" + uid + "\""
+                val msg = "Found multiple entries for uid \"$uid\""
                 log.warn(msg)
                 throw IllegalStateException(msg)
             }
@@ -175,7 +161,7 @@ class LdapService {
             val entry = searchResult.searchEntries[0]
             return userMapping.map(entry)
         } catch (e: Exception) {
-            log.error("Could not retrieve user from user with uid " + uid, e)
+            log.error("Could not retrieve user from user with uid $uid", e)
         }
 
         return null
@@ -190,7 +176,7 @@ class LdapService {
             val searchResult = connection.search(ldapConfiguration.config.groupDN, SearchScope.SUB,
                     MessageFormat.format(LdapQueries.findGroupByCn, groupCn))
             if (searchResult.entryCount > 1) {
-                val msg = "Found multiple entries for group cn \"" + groupCn + "\""
+                val msg = "Found multiple entries for group cn \"$groupCn\""
                 log.warn(msg)
                 throw IllegalStateException(msg)
             }
@@ -203,7 +189,7 @@ class LdapService {
                 return groupMapping.map(entry)
             }
         } catch (e: Exception) {
-            log.error("Could not retrieve group from ldap with cn " + groupCn, e)
+            log.error("Could not retrieve group from ldap with cn $groupCn", e)
         }
 
         return null
@@ -218,7 +204,7 @@ class LdapService {
                 userMapping.map(it)
             }.sorted()
         } catch (e: Exception) {
-            log.error("Could not find user by searchTermn " + searchTerm, e)
+            log.error("Could not find user by searchTermn $searchTerm", e)
         }
         return emptyList()
     }
@@ -229,7 +215,7 @@ class LdapService {
             val searchResult = connection.search(ldapConfiguration.config.groupDN, SearchScope.SUB,
                     LdapQueries.listAllGroups)
             result.addAll(groupMapping.map(searchResult.searchEntries))
-            Collections.sort(result)
+            result.sort()
         } catch (e: Exception) {
             log.error("Could not retrieve groups from ldap ", e)
         }
@@ -245,7 +231,7 @@ class LdapService {
             result.addAll(groupMapping.map(searchResult.searchEntries))
             result.sort()
         } catch (e: Exception) {
-            log.error("Could not retrieve groups by user " + uid, e)
+            log.error("Could not retrieve groups by user $uid", e)
         }
 
         return result
@@ -266,7 +252,7 @@ class LdapService {
                     users.add(user)
                 }
             }
-            Collections.sort(users)
+            users.sort()
         } catch (e: Exception) {
             log.error("Could not retrieve users by group " + group!!.cn, e)
         }
@@ -334,16 +320,7 @@ class LdapService {
     @Throws(BusinessException::class)
     private fun changePassword(connection: LDAPConnection, user: User?, newPassword: String): String? {
         val timestamp = (System.currentTimeMillis() / 1000L).toString()
-        val ldapUser = getUserByUid(connection, user!!.uid)
-
-        val ldapNameGecos = ldapUser!!.gecos!!.toLowerCase().split("\\s+".toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray()
-
-        if (StringUtils.containsIgnoreCase(newPassword, ldapUser.uid)
-                || StringUtils.containsIgnoreCase(newPassword, ldapUser.sn)
-                || StringUtils.containsIgnoreCase(newPassword, ldapUser.givenName)
-                || StringUtils.containsAny(newPassword.toLowerCase(), *ldapNameGecos)) {
-            throw BusinessException("Password can't contain user data.", "user.changePassword.failed")
-        }
+        val ldapUser = getUserByUid(connection, user!!.uid)!!
 
         val changes = ArrayList<Modification>()
         if (asList(*environment.activeProfiles).contains("development")) {
@@ -371,34 +348,24 @@ class LdapService {
         return newPassword
     }
 
-    @CacheEvict("groupMembers", key = "#user.uid")
-    fun activate(connection: LDAPConnection, user: User): Boolean {
-        val (dn, uid, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, description, _, _, _, title) = getUserByUid(connection, user.uid)
-                ?: return false
+    @CacheEvict("groupMembers", key = "#uid")
+    fun activate(connection: LDAPConnection, uid: String): Boolean {
+        val user= getUserByUid(connection, uid) ?: return false
 
-        val freelancerValues = arrayOf("Freelancer", "Feelancer")
-        val changes = ArrayList<Modification>()
+        val changes = listOf(
+            Modification(REPLACE, "szzStatus", "active"),
+            Modification(REPLACE, "szzMailStatus", "active"))
 
-        changes.add(Modification(REPLACE, "szzStatus", "active"))
-        changes.add(Modification(REPLACE, "szzMailStatus", "active"))
-        if (StringUtils.equalsAny(title, *freelancerValues) || StringUtils.equalsAny(description, *freelancerValues)) {
-            val exitDate = LocalDate.now().plusWeeks(4).plusDays(1)
-            changes.add(Modification(REPLACE, "szzExitDate", exitDate.format(DateTimeFormatter.ISO_DATE)))
-        }
         try {
-            val result = connection.modify(dn, changes)
+            val result = connection.modify(user.dn, changes)
             if (result.resultCode !== ResultCode.SUCCESS) {
                 log.warn("Could not properly activate user {}. Reason: {} Status: {}",
-                        uid, result.diagnosticMessage, result.resultCode)
+                        user.uid, result.diagnosticMessage, result.resultCode)
             }
         } catch (le: LDAPException) {
-            log.error("Could not activate user {}. Reason: {}", uid, le.resultString)
-            if (log.isDebugEnabled) {
-                log.error("Could not activate user", le)
-            }
+            log.error("Could not activate user {}. Reason: {}", user.uid, le.resultString)
             return false
         }
-
         return true
     }
 
@@ -427,6 +394,7 @@ class LdapService {
         return true
     }
 
+
     private fun createMail(firstName: String, surname: String, domain: String?, shortFirstname: Boolean): String {
         val fn = mailify(firstName)
         val sn = mailify(surname)
@@ -452,17 +420,14 @@ class LdapService {
     @CacheEvict("groupMembers", key = "#user.uid")
     fun insert(connection: LDAPConnection, user: User): User? {
         try {
-            var mailError = "alreadyUsed"
-            var mail = user.mail
-            if (StringUtils.isBlank(mail)) {
-                mail = createMail(user.givenName, user.sn, primaryDomain, false)
-                mailError = "autofillFailed"
-            }
-            if (isUserAttributeAlreadyUsed(connection, "mail", mail)) {
-                throw BusinessException("E-Mail Address already used.", "user.mail." + mailError)
-            }
+            val mail =
+                    if(user.mail.isNotBlank()) user.mail
+                    else createMail(user.givenName, user.sn, domainConfiguration.mailDomain(user.description), false)
+
+            if (isEmailPrefixAlreadyUsed(connection, mail)) throw BusinessException("Email prefix is already used.", "user.mail.alreadyUsed", arrayOf<Any>(mail.substringBefore("@")))
+
             var tmpEmployeeNumber = user.employeeNumber
-            if (StringUtils.isBlank(tmpEmployeeNumber)) {
+            if (tmpEmployeeNumber.isBlank()) {
                 tmpEmployeeNumber = generateEmployeeID(connection)
             } else {
                 if (isUserAttributeAlreadyUsed(connection, "employeeNumber", tmpEmployeeNumber)) {
@@ -567,6 +532,9 @@ class LdapService {
 
     }
 
+    private fun isEmailPrefixAlreadyUsed(connection: LDAPConnection, mail: String) =
+            isUserAttributeAlreadyUsed(connection, "mail", "${mail.substringBefore("@")}@*")
+
     private fun asciify(value: String): String {
         val searchList = arrayOf("ä", "Ä", "ü", "Ü", "ö", "Ö", "ß")
         val replacementList = arrayOf("ae", "Ae", "ue", "Ue", "oe", "Oe", "ss")
@@ -622,7 +590,7 @@ class LdapService {
 
         val res = LinkedHashSet<String>()
         var name = StringUtils.substring(fn + sn, 0, 3)
-        name = name + sn
+        name += sn
         name = StringUtils.substring(name, 0, 6)
 
         val fnBeginPart = StringUtils.substring(name, 0, 3)
@@ -630,7 +598,7 @@ class LdapService {
 
         val pos = Math.max(Math.min(3, fn.length - 3), 0)
         name = StringUtils.substring(fn + sn, pos, pos + 3)
-        name = name + StringUtils.reverse(StringUtils.substring(StringUtils.reverse(sn), 0, 3))
+        name += StringUtils.reverse(StringUtils.substring(StringUtils.reverse(sn), 0, 3))
 
         val fnEndPart = StringUtils.substring(name, 0, 3)
         val snEndPart = StringUtils.substring(name, 3)
@@ -681,7 +649,7 @@ class LdapService {
                 val delete = true
                 val newDN = ldapConfiguration.getUserBind(user.uid, user.companyKey)
                 val newRDN = StringUtils.split(newDN, ",")[0]
-                val superiorDN = newDN.replace(newRDN + ",", StringUtils.EMPTY)
+                val superiorDN = newDN.replace("$newRDN,", StringUtils.EMPTY)
 
                 log.warn("Move user to other company. From: {} To: {} + {}", currentDN, newRDN, superiorDN)
                 modifyDNRequest = ModifyDNRequest(currentDN, newRDN, delete, superiorDN)
@@ -886,7 +854,7 @@ class LdapService {
         }
         val maxTriesForNextUidNumber = 1000
         val maxUserNumber = lastUserNumber!! + maxTriesForNextUidNumber
-        for (uidNumber in lastUserNumber!! + 1..maxUserNumber - 1) {
+        for (uidNumber in lastUserNumber!! + 1 until maxUserNumber) {
             try {
                 val searchResult = connection.search(ldapConfiguration.config.baseDN, SearchScope.SUB,
                         MessageFormat.format(LdapQueries.findUserByUidNumber, uidNumber.toString()))

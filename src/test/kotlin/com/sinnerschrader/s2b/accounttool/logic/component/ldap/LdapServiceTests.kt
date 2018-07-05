@@ -143,7 +143,7 @@ class LdapServiceTests {
         connection.close()
     }
 
-    private fun createUser(firstName: String, lastName: String, uid: String = "", email: String = "", employeeNumber: String = ""): User {
+    private fun createUser(firstName: String = rnd(), lastName: String = rnd(), uid: String = "", email: String = "", employeeNumber: String = ""): User {
         return User("",
                 uid,
                 null, null, null, null,
@@ -261,6 +261,13 @@ class LdapServiceTests {
         }
 
         connection.close()
+    }
+
+    @Test(expected = Exception::class)
+    fun testEmailPrefixAlreadyUsed() {
+        listOf("duplicate.prefix@domain", "duplicate.prefix@subdomain.domain").forEach {
+            ldapService.insert(create(true), createUser(email =  it))
+        }
     }
 
     @Test
