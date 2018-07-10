@@ -59,7 +59,7 @@ data class UserForm(
         status = user.szzStatus == User.State.active,
         mailStatus = user.szzMailStatus == User.State.active
         ) {
-        this.birthDate = "${user.szzBirthDay}.${user.szzBirthMonth}"
+        this.birthDate = if(user.szzBirthDay != -1 && user.szzBirthMonth != -1) "${user.szzBirthDay}.${user.szzBirthMonth}" else ""
         user.szzEntryDate?.let { this.entryDate = it.format(DATE_PATTERN)}
         user.szzExitDate?.let { this.exitDate = it.format(DATE_PATTERN) }
     }
@@ -74,11 +74,8 @@ data class UserForm(
             displayName = "$firstName $lastName",
             gecos = "$firstName $lastName",
             cn = "$firstName $lastName",
-
-            // TODO will fail
             szzBirthDay = birthDate.split(".").getOrNull(0)?.toIntOrNull() ?: -1,
             szzBirthMonth = birthDate.split(".").getOrNull(1)?.toIntOrNull() ?: -1,
-
             mail = when {
                 emailPrefix.isNotBlank() ->  domainConfiguration.mailDomain(type)
                 else ->  ""
