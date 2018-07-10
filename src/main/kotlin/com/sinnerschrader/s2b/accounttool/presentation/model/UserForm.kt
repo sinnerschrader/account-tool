@@ -69,31 +69,31 @@ data class UserForm(
     fun exitAsDate() = exitDate.parseLocalDate(DATE_PATTERN)
 
     fun createUserEntityFromForm(ldapConfiguration: LdapConfiguration, domainConfiguration: DomainConfiguration) = User(
-        uid = uid,
-        displayName = "$firstName $lastName",
-        gecos = "$firstName $lastName",
-        cn = "$firstName $lastName",
-        givenName = firstName,
-        sn = lastName,
-        birthDate = birthAsDate(),
-        mail = when {
-            emailPrefix.isNotBlank() ->  domainConfiguration.mailDomain(type)
-            else ->  ""
-        },
-        szzStatus = if(status) User.State.active else User.State.inactive,
-        szzMailStatus = if(mailStatus) User.State.active else User.State.inactive,
-        sambaPwdLastSet = Long.MAX_VALUE,
-        employeeEntryDate = entryAsDate(),
-        employeeExitDate = exitAsDate(),
-        ou = team,
-        description = type,
-        telephoneNumber = telephoneNumber,
-        mobile = mobileNumber,
-        employeeNumber = employeeNumber,
-        title = title,
-        l = location,
-        o = ldapConfiguration.companies[company]!!,
-        companyKey = company)
+            uid = uid,
+            givenName = firstName,
+            sn = lastName,
+            displayName = "$firstName $lastName",
+            gecos = "$firstName $lastName",
+            cn = "$firstName $lastName",
+            birthDate = birthAsDate(),
+            mail = when {
+                emailPrefix.isNotBlank() ->  domainConfiguration.mailDomain(type)
+                else ->  ""
+            },
+            szzStatus = if(status) User.State.active else User.State.inactive,
+            szzMailStatus = if(mailStatus) User.State.active else User.State.inactive,
+            sambaPwdLastSet = Long.MAX_VALUE,
+            employeeEntryDate = entryAsDate(),
+            employeeExitDate = exitAsDate(),
+            ou = team,
+            description = type,
+            telephoneNumber = telephoneNumber,
+            mobile = mobileNumber,
+            employeeNumber = employeeNumber,
+            title = title,
+            l = location,
+            o = ldapConfiguration.companies[company]!!,
+            companyKey = company)
 }
 
 private fun LocalDate.format(pattern: String) = DateTimeHelper.toDateString(this, pattern)

@@ -2,7 +2,6 @@ package com.sinnerschrader.s2b.accounttool.logic.component.ldap
 
 import com.sinnerschrader.s2b.accounttool.config.ldap.LdapConfiguration
 import com.sinnerschrader.s2b.accounttool.logic.entity.User
-import com.sinnerschrader.s2b.accounttool.logic.entity.User.State.undefined
 import com.sinnerschrader.s2b.accounttool.logic.entity.UserInfo
 import com.unboundid.ldap.sdk.Filter.createANDFilter
 import com.unboundid.ldap.sdk.Filter.createEqualityFilter
@@ -50,7 +49,7 @@ class CachedLdapServiceImpl : CachedLdapService {
             )
 
             return when (searchResult.searchEntries.size) {
-                0 -> UserInfo("UNKNOWN", uid, "UNKNOWN", "UNKNOWN", "UNKNOWN", "UNKNOWN", undefined)
+                0 -> UserInfo("UNKNOWN", uid, "UNKNOWN", "UNKNOWN", "UNKNOWN", "UNKNOWN", User.State.inactive)
                 1 -> with(searchResult.searchEntries.first()) {
                     UserInfo(
                             dn = dn,

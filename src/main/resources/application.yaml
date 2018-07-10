@@ -115,11 +115,9 @@ domain:
 # = Configurable Default Values for new Users
 # =============================================================
 user:
-  appendCompanyOnDisplayName: "false"
   smbIdPrefix: "S-1-5-21-1519197630-1730194083-1312870134-"
   sambaFlags: "[U          ]"
   homeDirPrefix: "/export/home/"
-  loginShell: "/bin/false"
 
 # =============================================================
 # = Management and Endpoints
