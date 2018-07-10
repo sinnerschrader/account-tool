@@ -560,25 +560,25 @@ class LdapService {
 
     @CacheEvict("groupMembers", key = "#user.uid")
     fun update(connection: LDAPConnection, user: User): User? {
-        val (currentDN, uid, _, _, _, _, _, _, _, _, _, birthDate, _, _, _, _, szzStatus, szzMailStatus, _, employeeEntryDate, employeeExitDate, ou, description, telephoneNumber, mobile, employeeNumber1, title, l, szzPublicKey, _, companyKey) = getUserByUid(connection, user.uid)
+        val pUser = getUserByUid(connection, user.uid)
                 ?: throw BusinessException("The modification was called for a non existing user", "user.notExists")
         try {
             var modifyDNRequest: ModifyDNRequest? = null
             val changes = ArrayList<Modification>()
-            if (!StringUtils.equals(companyKey, user.companyKey)) {
+            if (!StringUtils.equals(pUser.companyKey, user.companyKey)) {
                 val delete = true
                 val newDN = ldapConfiguration.getUserBind(user.uid, user.companyKey)
                 val newRDN = StringUtils.split(newDN, ",")[0]
                 val superiorDN = newDN.replace("$newRDN,", StringUtils.EMPTY)
 
-                log.warn("Move user to other company. From: {} To: {} + {}", currentDN, newRDN, superiorDN)
-                modifyDNRequest = ModifyDNRequest(currentDN, newRDN, delete, superiorDN)
+                log.warn("Move user to other company. From: {} To: {} + {}", pUser.dn, newRDN, superiorDN)
+                modifyDNRequest = ModifyDNRequest(pUser.dn, newRDN, delete, superiorDN)
 
                 changes.add(Modification(REPLACE, "o", user.o))
             }
 
             // Default Values and LDAP specific entries
-            if (isChanged(user.employeeNumber, employeeNumber1, true)) {
+            if (isChanged(user.employeeNumber, pUser.employeeNumber, true)) {
                 var employeeNumber = user.employeeNumber
                 if (StringUtils.isBlank(employeeNumber)) {
                     employeeNumber = generateEmployeeID(connection)
@@ -588,26 +588,26 @@ class LdapService {
                 }
                 changes.add(Modification(REPLACE, "employeeNumber", employeeNumber))
             }
-            if (isChanged(user.szzPublicKey, szzPublicKey)) {
+            if (isChanged(user.szzPublicKey, pUser.szzPublicKey)) {
                 changes.add(Modification(REPLACE, "szzPublicKey", user.szzPublicKey!!))
             }
 
             // Organisational Entries
-            if (isChanged(user.ou, ou)) {
+            if (isChanged(user.ou, pUser.ou)) {
                 changes.add(Modification(REPLACE, "ou", user.ou))
             }
-            if (isChanged(user.title, title)) {
+            if (isChanged(user.title, pUser.title)) {
                 changes.add(Modification(REPLACE, "title", user.title))
             }
-            if (isChanged(user.l, l)) {
+            if (isChanged(user.l, pUser.l)) {
                 changes.add(Modification(REPLACE, "l", user.l))
             }
-            if (isChanged(user.description, description)) {
+            if (isChanged(user.description, pUser.description)) {
                 changes.add(Modification(REPLACE, "description", user.description))
             }
 
             // Contact informations
-            if (isChanged(user.telephoneNumber, telephoneNumber, true)) {
+            if (isChanged(user.telephoneNumber, pUser.telephoneNumber, true)) {
                 if (StringUtils.isBlank(user.telephoneNumber)) {
                     changes.add(Modification(DELETE, "telephoneNumber"))
                 } else {
@@ -615,7 +615,7 @@ class LdapService {
                             "telephoneNumber", user.telephoneNumber))
                 }
             }
-            if (isChanged(user.mobile, mobile, true)) {
+            if (isChanged(user.mobile, pUser.mobile, true)) {
                 if (StringUtils.isBlank(user.mobile)) {
                     changes.add(Modification(DELETE, "mobile"))
                 } else {
@@ -625,36 +625,37 @@ class LdapService {
 
             // Birthday with Day and Month
             val birth = "${user.szzBirthDay}.${user.szzBirthMonth}"
-            if (birth != null && isChanged(birth, birthDate)) {
+            val pbirth = "${pUser.szzBirthDay}.${pUser.szzBirthMonth}"
+            if (birth != null && isChanged(birth, pbirth)) {
                 changes.add(Modification(REPLACE,
                         "szzBirthDay", user.szzBirthDay.toString()))
                 changes.add(Modification(REPLACE,
                         "szzBirthMonth", user.szzBirthMonth.toString()))
-            } else if (birth == null && birthDate != null) {
+            } else if (birth == null && pUser.szzBirthDay != null && pUser.szzBirthMonth != null) {
                 changes.add(Modification(DELETE, "szzBirthDay"))
                 changes.add(Modification(DELETE, "szzBirthMonth"))
             }
 
             // Entry Date
             val entry = user.szzEntryDate
-            if (entry != null && isChanged(entry, employeeEntryDate)) {
+            if (entry != null && isChanged(entry, pUser.szzEntryDate)) {
                 changes.add(Modification(REPLACE,
                         "szzEntryDate", entry.format(DateTimeFormatter.ISO_DATE)))
             }
 
             // Exit Date
             val exit = user.szzExitDate
-            if (exit != null && isChanged(exit, employeeExitDate)) {
+            if (exit != null && isChanged(exit, pUser.szzExitDate)) {
                 changes.add(Modification(REPLACE,
                         "szzExitDate", exit.format(DateTimeFormatter.ISO_DATE)))
             }
 
             // States
-            if (isChanged(user.szzStatus, szzStatus)) {
+            if (isChanged(user.szzStatus, pUser.szzStatus)) {
                 changes.add(Modification(REPLACE,
                         "szzStatus", user.szzStatus.name))
             }
-            if (isChanged(user.szzMailStatus, szzMailStatus)) {
+            if (isChanged(user.szzMailStatus, pUser.szzMailStatus)) {
                 changes.add(Modification(REPLACE,
                         "szzMailStatus", user.szzMailStatus.name))
             }
@@ -662,10 +663,10 @@ class LdapService {
             var result: LDAPResult?
             // save modifications
             if (!changes.isEmpty()) {
-                result = connection.modify(currentDN, changes)
+                result = connection.modify(pUser.dn, changes)
                 if (result!!.resultCode !== ResultCode.SUCCESS) {
                     log.warn("Could not modify user with dn '{}' username '{}'. Reason: {} Status: {}",
-                            currentDN, uid, result!!.diagnosticMessage, result.resultCode)
+                            pUser.dn, pUser.uid, result!!.diagnosticMessage, result.resultCode)
 
                     val args = arrayOf(result.resultString, result.resultCode.name, result.resultCode.intValue())
                     throw BusinessException("LDAP rejected update of user", "user.modify.failed", args)
@@ -676,14 +677,14 @@ class LdapService {
                 result = connection.modifyDN(modifyDNRequest)
                 if (result!!.resultCode !== ResultCode.SUCCESS) {
                     log.warn("Could move user to other Company '{}' username '{}'. Reason: {} Status: {}",
-                            currentDN, uid, result!!.diagnosticMessage, result.resultCode)
+                            pUser.dn, pUser.uid, result!!.diagnosticMessage, result.resultCode)
 
                     val args = arrayOf(result.resultString, result.resultCode.name, result.resultCode.intValue())
                     throw BusinessException("LDAP rejected update of user", "user.modify.failed", args)
                 }
             }
 
-            if (isChanged(user.description, description)) {
+            if (isChanged(user.description, pUser.description)) {
                 clearGroups(user, onlyDefaultGroups = user.szzStatus == active)
                 if (user.szzStatus == active) addDefaultGroups(user)
             }
