@@ -14,6 +14,7 @@ import com.sinnerschrader.s2b.accounttool.logic.entity.Group
 import com.sinnerschrader.s2b.accounttool.logic.entity.Group.GroupType.Posix
 import com.sinnerschrader.s2b.accounttool.logic.entity.User
 import com.sinnerschrader.s2b.accounttool.logic.entity.User.State.active
+import com.sinnerschrader.s2b.accounttool.logic.entity.User.State.inactive
 import com.sinnerschrader.s2b.accounttool.logic.entity.UserInfo
 import com.sinnerschrader.s2b.accounttool.logic.exception.BusinessException
 import com.unboundid.ldap.sdk.*
@@ -342,51 +343,30 @@ class LdapService {
         return newPassword
     }
 
-    @CacheEvict("groupMembers", key = "#uid")
-    fun activate(connection: LDAPConnection, uid: String): Boolean {
+    fun changeUserState(connection: LDAPConnection, uid: String, state: User.State): Boolean {
         val user = getUserByUid(connection, uid) ?: return false
-
-        val changes = listOf(
-                Modification(REPLACE, "szzStatus", "active"),
-                Modification(REPLACE, "szzMailStatus", "active"))
-
         try {
-            val result = connection.modify(user.dn, changes)
-            if (result.resultCode !== ResultCode.SUCCESS) {
-                log.warn("Could not properly activate user {}. Reason: {} Status: {}",
-                        user.uid, result.diagnosticMessage, result.resultCode)
-            }
-        } catch (le: LDAPException) {
-            log.error("Could not activate user {}. Reason: {}", user.uid, le.resultString)
-            return false
-        }
-        return true
-    }
+            val result = connection.modify(user.dn, mapOf(
+                    "szzStatus" to state.name,
+                    "szzMailStatus" to state.name
+            ).toModification())
 
-    @CacheEvict("groupMembers", key = "#user.uid")
-    fun deactivate(connection: LDAPConnection, user: User): Boolean {
-        val (dn, uid) = getUserByUid(connection, user.uid) ?: return false
-
-        val changes = ArrayList<Modification>()
-        changes.add(Modification(REPLACE, "szzStatus", "inactive"))
-        changes.add(Modification(REPLACE, "szzMailStatus", "inactive"))
-        try {
-            val result = connection.modify(dn, changes)
             if (result.resultCode !== ResultCode.SUCCESS) {
-                log.warn("Could not properly deactivate user {}. Reason: {} Status: {}",
-                        uid, result.diagnosticMessage, result.resultCode)
+                log.warn("Could not change user $uid to $state. Reason: ${result.diagnosticMessage} Status: ${result.resultCode}")
                 return false
             }
         } catch (le: LDAPException) {
-            log.error("Could not activate user {}. Reason: {}", uid, le.resultString)
-            if (log.isDebugEnabled) {
-                log.error("Could not activate user", le)
-            }
+            log.error("Could not activate user $uid. Reason: ${le.resultString}")
             return false
         }
-
         return true
     }
+
+    @CacheEvict("groupMembers", key = "#uid")
+    fun activate(connection: LDAPConnection, uid: String) = changeUserState(connection, uid, active)
+
+    @CacheEvict("groupMembers", key = "#uid")
+    fun deactivate(connection: LDAPConnection, uid: String) = changeUserState(connection, uid, inactive)
 
 
     private fun createMail(firstName: String, surname: String, domain: String?, shortFirstname: Boolean): String {
@@ -414,11 +394,11 @@ class LdapService {
     @CacheEvict("groupMembers", key = "#user.uid")
     fun insert(connection: LDAPConnection, user: User): User? {
         try {
-            // TODO force shadowed
             val nextUserID = getNextUserID(connection)
-            val user = user.copy(
-                    dn = ldapConfiguration.getUserBind(user.uid, user.companyKey),
-                    uid = getUidSuggestion(connection, user.uid, user.givenName, user.sn),
+            val uidSuggestion = getUidSuggestion(connection, user.uid, user.givenName, user.sn)
+            val userWithDefaults = user.copy(
+                    dn = ldapConfiguration.getUserBind(uidSuggestion, user.companyKey),
+                    uid = uidSuggestion,
                     uidNumber = nextUserID,
                     mail = if (user.mail.isNotBlank()) user.mail else createMail(user.givenName, user.sn, domainConfiguration.mailDomain(user.description), false),
                     homeDirectory = homeDirPrefix + user.uid,
@@ -427,28 +407,21 @@ class LdapService {
                     displayName = "${user.givenName} ${user.sn} (${user.companyKey.toLowerCase()})"
             )
 
-            if (isEmailPrefixAlreadyUsed(connection, user.mail))
-                throw BusinessException("Email prefix is already used.", "user.mail.alreadyUsed", arrayOf<Any>(user.mail.substringBefore("@")))
-            if (isUserAttributeAlreadyUsed(connection, "employeeNumber", user.employeeNumber))
+            if (isEmailPrefixAlreadyUsed(connection, userWithDefaults.mail))
+                throw BusinessException("Email prefix is already used.", "user.mail.alreadyUsed", arrayOf<Any>(userWithDefaults.mail.substringBefore("@")))
+            if (isUserAttributeAlreadyUsed(connection, "employeeNumber", userWithDefaults.employeeNumber))
                 throw BusinessException("The entered employeenumber is already in use", "user.employeeNumber.alreadyUsed")
-            user.employeeEntryDate ?: throw BusinessException("Entry could not be null", "user.entry.required")
-            user.employeeExitDate ?: throw BusinessException("Exit could not be null", "user.exit.required")
+            userWithDefaults.employeeEntryDate ?: throw BusinessException("Entry could not be null", "user.entry.required")
+            userWithDefaults.employeeExitDate ?: throw BusinessException("Exit could not be null", "user.exit.required")
 
 
-            val password = RandomStringUtils.randomAlphanumeric(16, 33)
-            val attributes =
-                    user.toAttributes() + mapOf(
-                    "sambaNTPassword" to Encrypt.samba(password),
-                    "userPassword" to Encrypt.salt(password)
-            ).map { Attribute(it.key, it.value) }
-
-
-            val result = connection.add(user.dn, attributes)
+            val result = connection.add(userWithDefaults.dn, userWithDefaults.toAttributes())
             if (result.resultCode !== ResultCode.SUCCESS) {
-                log.warn("Could not create new user with dn '${user.dn}' username '${user.uid}' and uidNumber '${user.uidNumber}'. Reason: ${result.diagnosticMessage} Status: ${result.resultCode}")
+                log.warn("Could not create new user with dn '${userWithDefaults.dn}' username '${userWithDefaults.uid}' and uidNumber '${userWithDefaults.uidNumber}'. Reason: ${result.diagnosticMessage} Status: ${result.resultCode}")
                 throw BusinessException("LDAP rejected creation of user", "user.create.failed", arrayOf(result.resultString, result.resultCode.name, result.resultCode.intValue()))
             }
-            return getUserByUid(connection, user.uid)
+            resetPassword(connection, userWithDefaults)
+            return getUserByUid(connection, userWithDefaults.uid)
         } catch (le: LDAPException) {
             log.error("Could not create user: ${le.message}")
             throw BusinessException("Could not create user", "user.create.failed", arrayOf(le.resultString, le.resultCode.name, le.resultCode.intValue()), le)
@@ -458,6 +431,15 @@ class LdapService {
 
     private fun isEmailPrefixAlreadyUsed(connection: LDAPConnection, mail: String) =
             isUserAttributeAlreadyUsed(connection, "mail", "${mail.substringBefore("@")}@*")
+
+    fun Map<String, *>.toModification(modificationType: ModificationType = REPLACE) = this.map { entry ->
+        entry.value.let {
+            when (it) {
+                is String -> Modification(modificationType, entry.key, it)
+                else -> throw UnsupportedOperationException()
+            }
+        }
+    }
 
     fun User.toAttributes() = mapOf(
             "objectClass" to User.objectClasses,

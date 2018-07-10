@@ -159,7 +159,7 @@ class UserController {
                 }
                 if (isNotBlank(userForm.deactivateUser)) {
                     message = "user.deactivated"
-                    if (ldapService.deactivate(connection, user)) ldapService.clearGroups(user)
+                    if (ldapService.deactivate(connection, user.uid)) ldapService.clearGroups(user)
                     log.info("{} deactivated the user {} right now", details.uid, user.uid)
                 }
                 globalMessageFactory.store(request,
