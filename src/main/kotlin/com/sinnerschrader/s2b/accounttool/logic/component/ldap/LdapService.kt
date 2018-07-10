@@ -55,12 +55,6 @@ class LdapService {
     @Value("\${user.homeDirPrefix}")
     private lateinit var homeDirPrefix: String
 
-    @Value("\${user.loginShell}")
-    private lateinit var loginShell: String
-
-    @Value("\${user.appendCompanyOnDisplayName}")
-    private var appendCompanyOnDisplayName = true
-
     @Autowired
     private lateinit var userMapping: UserMapping
 
@@ -350,11 +344,11 @@ class LdapService {
 
     @CacheEvict("groupMembers", key = "#uid")
     fun activate(connection: LDAPConnection, uid: String): Boolean {
-        val user= getUserByUid(connection, uid) ?: return false
+        val user = getUserByUid(connection, uid) ?: return false
 
         val changes = listOf(
-            Modification(REPLACE, "szzStatus", "active"),
-            Modification(REPLACE, "szzMailStatus", "active"))
+                Modification(REPLACE, "szzStatus", "active"),
+                Modification(REPLACE, "szzMailStatus", "active"))
 
         try {
             val result = connection.modify(user.dn, changes)
@@ -420,120 +414,90 @@ class LdapService {
     @CacheEvict("groupMembers", key = "#user.uid")
     fun insert(connection: LDAPConnection, user: User): User? {
         try {
-            val mail =
-                    if(user.mail.isNotBlank()) user.mail
-                    else createMail(user.givenName, user.sn, domainConfiguration.mailDomain(user.description), false)
+            // TODO force shadowed
+            val nextUserID = getNextUserID(connection)
+            val user = user.copy(
+                    dn = ldapConfiguration.getUserBind(user.uid, user.companyKey),
+                    uid = getUidSuggestion(connection, user.uid, user.givenName, user.sn),
+                    uidNumber = nextUserID,
+                    mail = if (user.mail.isNotBlank()) user.mail else createMail(user.givenName, user.sn, domainConfiguration.mailDomain(user.description), false),
+                    homeDirectory = homeDirPrefix + user.uid,
+                    sambaSID = smbIdPrefix + (nextUserID * 2 + 1000),
+                    employeeNumber = if (user.employeeNumber.isNotBlank()) user.employeeNumber else generateEmployeeID(connection),
+                    displayName = "${user.givenName} ${user.sn} (${user.companyKey.toLowerCase()})"
+            )
 
-            if (isEmailPrefixAlreadyUsed(connection, mail)) throw BusinessException("Email prefix is already used.", "user.mail.alreadyUsed", arrayOf<Any>(mail.substringBefore("@")))
+            if (isEmailPrefixAlreadyUsed(connection, user.mail))
+                throw BusinessException("Email prefix is already used.", "user.mail.alreadyUsed", arrayOf<Any>(user.mail.substringBefore("@")))
+            if (isUserAttributeAlreadyUsed(connection, "employeeNumber", user.employeeNumber))
+                throw BusinessException("The entered employeenumber is already in use", "user.employeeNumber.alreadyUsed")
+            user.employeeEntryDate ?: throw BusinessException("Entry could not be null", "user.entry.required")
+            user.employeeExitDate ?: throw BusinessException("Exit could not be null", "user.exit.required")
 
-            var tmpEmployeeNumber = user.employeeNumber
-            if (tmpEmployeeNumber.isBlank()) {
-                tmpEmployeeNumber = generateEmployeeID(connection)
-            } else {
-                if (isUserAttributeAlreadyUsed(connection, "employeeNumber", tmpEmployeeNumber)) {
-                    throw BusinessException("The entered employeenumber is already in use",
-                            "user.employeeNumber.alreadyUsed")
-                }
-            }
 
-            val username = getUidSuggestion(connection, user.uid, user.givenName, user.sn)
-            val dn = ldapConfiguration.getUserBind(username, user.companyKey)
-            val fullName = user.givenName + " " + user.sn
-            val displayName = fullName + " (" + user.companyKey.toLowerCase() + ")"
-            val uidNumber = getNextUserID(connection)
             val password = RandomStringUtils.randomAlphanumeric(16, 33)
-            val gidNumber = 100
-            val homeDirectory = homeDirPrefix + username
-            val employeeNumber = tmpEmployeeNumber
-            val sambaTimestamp = System.currentTimeMillis() / 1000L
-            val sambaSID = smbIdPrefix + (uidNumber * 2 + 1000)
-            val sambaPWHistory = "0000000000000000000000000000000000000000000000000000000000000000"
+            val attributes =
+                    user.toAttributes() + mapOf(
+                    "sambaNTPassword" to Encrypt.samba(password),
+                    "userPassword" to Encrypt.salt(password)
+            ).map { Attribute(it.key, it.value) }
 
-            val attributes = ArrayList<Attribute>()
 
-            // Default Values and LDAP specific entries
-            attributes.add(Attribute("objectClass", User.objectClasses))
-            attributes.add(Attribute("employeeNumber", employeeNumber))
-            attributes.add(Attribute("uidNumber", uidNumber.toString()))
-            attributes.add(Attribute("gidNumber", gidNumber.toString()))
-            attributes.add(Attribute("loginShell", loginShell))
-            attributes.add(Attribute("homeDirectory", homeDirectory))
-            attributes.add(Attribute("sambaSID", sambaSID))
-            attributes.add(Attribute("sambaAcctFlags", sambaFlags))
-            attributes.add(Attribute("sambaPasswordHistory", sambaPWHistory))
-            attributes.add(Attribute("sambaPwdLastSet", sambaTimestamp.toString()))
-            attributes.add(Attribute("sambaNTPassword", Encrypt.samba(password)))
-            attributes.add(Attribute("userPassword", Encrypt.salt(password)))
-            //attributes.add(new Attribute("szzPublicKey", ""));
-
-            // Person informations
-            attributes.add(Attribute("uid", username))
-            attributes.add(Attribute("givenName", user.givenName))
-            attributes.add(Attribute("sn", user.sn))
-            attributes.add(Attribute("cn", fullName))
-            attributes.add(Attribute("displayName", if (appendCompanyOnDisplayName) displayName else fullName))
-            attributes.add(Attribute("gecos", asciify(fullName)))
-
-            // Organisational Entries
-            attributes.add(Attribute("o", user.o))
-            attributes.add(Attribute("ou", user.ou))
-            attributes.add(Attribute("title", user.title))
-            attributes.add(Attribute("l", user.l))
-            attributes.add(Attribute("description", user.description))
-
-            // Contact informations
-            attributes.add(Attribute("mail", mail))
-            if (StringUtils.isNotBlank(user.telephoneNumber)) {
-                attributes.add(Attribute("telephoneNumber", user.telephoneNumber))
-            }
-            if (StringUtils.isNotBlank(user.mobile)) {
-                attributes.add(Attribute("mobile", user.mobile))
-            }
-
-            // Birthday with Day and Month
-            if (user.birthDate != null) {
-                val birth = user.birthDate
-                attributes.add(Attribute("szzBirthDay", birth.dayOfMonth.toString()))
-                attributes.add(Attribute("szzBirthMonth", birth.monthValue.toString()))
-            }
-
-            // Entry Date
-            val entry = user.employeeEntryDate
-                    ?: throw BusinessException("Entry could not be null", "user.entry.required")
-            attributes.add(Attribute("szzEntryDate", entry.format(DateTimeFormatter.ISO_DATE)))
-
-            // Exit Date
-            val exit = user.employeeExitDate ?: throw BusinessException("Exit could not be null", "user.exit.required")
-            attributes.add(Attribute("szzExitDate", exit.format(DateTimeFormatter.ISO_DATE)))
-
-            // States
-            attributes.add(Attribute("szzStatus", user.szzStatus.name))
-            attributes.add(Attribute("szzMailStatus", user.szzMailStatus.name))
-
-            val result = connection.add(dn, attributes)
+            val result = connection.add(user.dn, attributes)
             if (result.resultCode !== ResultCode.SUCCESS) {
-                log.warn(
-                        "Could not create new user with dn '{}' username '{}' and uidNumber '{}'. Reason: {} Status: {}",
-                        dn, username, uidNumber, result.diagnosticMessage, result.resultCode)
-
-                val args = arrayOf(result.resultString, result.resultCode.name, result.resultCode.intValue())
-                throw BusinessException("LDAP rejected creation of user", "user.create.failed", args)
+                log.warn("Could not create new user with dn '${user.dn}' username '${user.uid}' and uidNumber '${user.uidNumber}'. Reason: ${result.diagnosticMessage} Status: ${result.resultCode}")
+                throw BusinessException("LDAP rejected creation of user", "user.create.failed", arrayOf(result.resultString, result.resultCode.name, result.resultCode.intValue()))
             }
-            return getUserByUid(connection, username)
+            return getUserByUid(connection, user.uid)
         } catch (le: LDAPException) {
-            val msg = "Could not create user"
-            log.error(msg)
-            if (log.isDebugEnabled) {
-                log.error(msg, le)
-            }
-            val args = arrayOf(le.resultString, le.resultCode.name, le.resultCode.intValue())
-            throw BusinessException(msg, "user.create.failed", args, le)
+            log.error("Could not create user: ${le.message}")
+            throw BusinessException("Could not create user", "user.create.failed", arrayOf(le.resultString, le.resultCode.name, le.resultCode.intValue()), le)
         }
 
     }
 
     private fun isEmailPrefixAlreadyUsed(connection: LDAPConnection, mail: String) =
             isUserAttributeAlreadyUsed(connection, "mail", "${mail.substringBefore("@")}@*")
+
+    fun User.toAttributes() = mapOf(
+            "objectClass" to User.objectClasses,
+            "employeeNumber" to employeeNumber,
+            "uidNumber" to uidNumber,
+            "gidNumber" to gidNumber,
+            "loginShell" to loginShell,
+            "homeDirectory" to homeDirectory,
+            "sambaSID" to sambaSID,
+            "sambaPasswordHistory" to sambaPasswordHistory,
+            "sambaPwdLastSet" to sambaPwdLastSet,
+            "uid" to uid,
+            "givenName" to givenName,
+            "sn" to sn,
+            "cn" to cn,
+            "displayName" to displayName,
+            "gecos" to gecos,
+            "o" to o,
+            "ou" to ou,
+            "title" to title,
+            "l" to l,
+            "description" to description,
+            "mail" to mail,
+            "telephoneNumber" to telephoneNumber,
+            "mobile" to mobile,
+            "szzBirthDay" to (birthDate?.dayOfMonth ?: -1),
+            "szzBirthMonth" to (birthDate?.monthValue ?: -1),
+            "szzEntryDate" to employeeEntryDate?.format(DateTimeFormatter.ISO_DATE),
+            "szzExitDate" to employeeExitDate?.format(DateTimeFormatter.ISO_DATE),
+            "szzStatus" to szzStatus.name,
+            "szzMailStatus" to szzMailStatus.name
+    ).map {
+        val v = it.value
+        when (v) {
+            is Number -> Attribute(it.key, v.toString())
+            is String -> Attribute(it.key, v)
+            is Collection<*> -> Attribute(it.key, v as Collection<String>)
+            else -> throw UnsupportedOperationException()
+        }
+    }
 
     private fun asciify(value: String): String {
         val searchList = arrayOf("ä", "Ä", "ü", "Ü", "ö", "Ö", "ß")
@@ -730,11 +694,11 @@ class LdapService {
             }
 
             // States
-            if (isChanged(user.szzStatus, szzStatus) && user.szzStatus !== User.State.undefined) {
+            if (isChanged(user.szzStatus, szzStatus)) {
                 changes.add(Modification(REPLACE,
                         "szzStatus", user.szzStatus.name))
             }
-            if (isChanged(user.szzMailStatus, szzMailStatus) && user.szzMailStatus !== User.State.undefined) {
+            if (isChanged(user.szzMailStatus, szzMailStatus)) {
                 changes.add(Modification(REPLACE,
                         "szzMailStatus", user.szzMailStatus.name))
             }
