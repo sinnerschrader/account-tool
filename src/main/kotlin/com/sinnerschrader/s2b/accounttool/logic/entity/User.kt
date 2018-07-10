@@ -35,6 +35,7 @@ data class User(
         val mail: String,
         val szzStatus: State = State.inactive,
         val szzMailStatus: State = State.inactive,
+        @JsonIgnore
         val sambaPwdLastSet: Long = (System.currentTimeMillis() / 1000L),
         val szzEntryDate: LocalDate?,
         val szzExitDate: LocalDate?,

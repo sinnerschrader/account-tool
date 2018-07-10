@@ -443,7 +443,11 @@ class LdapService {
         }
     }
 
-    fun User.toAttributes() = OBJECT_MAPPER.convertValue(this, Map::class.java).map {
+    @Suppress("UNCHECKED_CAST")
+    fun User.toMap() = OBJECT_MAPPER.convertValue(this, Map::class.java) as Map<String, Any>
+
+    @Suppress("UNCHECKED_CAST")
+    fun User.toAttributes() = toMap().map {
         // TODO cleanup types (generics)
         val k = it.key as String
         val v = it.value
@@ -574,7 +578,7 @@ class LdapService {
                 log.warn("Move user to other company. From: {} To: {} + {}", pUser.dn, newRDN, superiorDN)
                 modifyDNRequest = ModifyDNRequest(pUser.dn, newRDN, delete, superiorDN)
 
-                changes.add(Modification(REPLACE, "o", user.o))
+                //changes.add(Modification(REPLACE, "o", user.o))
             }
 
             // Default Values and LDAP specific entries
@@ -588,77 +592,11 @@ class LdapService {
                 }
                 changes.add(Modification(REPLACE, "employeeNumber", employeeNumber))
             }
-            if (isChanged(user.szzPublicKey, pUser.szzPublicKey)) {
-                changes.add(Modification(REPLACE, "szzPublicKey", user.szzPublicKey!!))
-            }
 
-            // Organisational Entries
-            if (isChanged(user.ou, pUser.ou)) {
-                changes.add(Modification(REPLACE, "ou", user.ou))
-            }
-            if (isChanged(user.title, pUser.title)) {
-                changes.add(Modification(REPLACE, "title", user.title))
-            }
-            if (isChanged(user.l, pUser.l)) {
-                changes.add(Modification(REPLACE, "l", user.l))
-            }
-            if (isChanged(user.description, pUser.description)) {
-                changes.add(Modification(REPLACE, "description", user.description))
-            }
-
-            // Contact informations
-            if (isChanged(user.telephoneNumber, pUser.telephoneNumber, true)) {
-                if (StringUtils.isBlank(user.telephoneNumber)) {
-                    changes.add(Modification(DELETE, "telephoneNumber"))
-                } else {
-                    changes.add(Modification(REPLACE,
-                            "telephoneNumber", user.telephoneNumber))
-                }
-            }
-            if (isChanged(user.mobile, pUser.mobile, true)) {
-                if (StringUtils.isBlank(user.mobile)) {
-                    changes.add(Modification(DELETE, "mobile"))
-                } else {
-                    changes.add(Modification(REPLACE, "mobile", user.mobile))
-                }
-            }
-
-            // Birthday with Day and Month
-            val birth = "${user.szzBirthDay}.${user.szzBirthMonth}"
-            val pbirth = "${pUser.szzBirthDay}.${pUser.szzBirthMonth}"
-            if (birth != null && isChanged(birth, pbirth)) {
-                changes.add(Modification(REPLACE,
-                        "szzBirthDay", user.szzBirthDay.toString()))
-                changes.add(Modification(REPLACE,
-                        "szzBirthMonth", user.szzBirthMonth.toString()))
-            } else if (birth == null && pUser.szzBirthDay != null && pUser.szzBirthMonth != null) {
-                changes.add(Modification(DELETE, "szzBirthDay"))
-                changes.add(Modification(DELETE, "szzBirthMonth"))
-            }
-
-            // Entry Date
-            val entry = user.szzEntryDate
-            if (entry != null && isChanged(entry, pUser.szzEntryDate)) {
-                changes.add(Modification(REPLACE,
-                        "szzEntryDate", entry.format(DateTimeFormatter.ISO_DATE)))
-            }
-
-            // Exit Date
-            val exit = user.szzExitDate
-            if (exit != null && isChanged(exit, pUser.szzExitDate)) {
-                changes.add(Modification(REPLACE,
-                        "szzExitDate", exit.format(DateTimeFormatter.ISO_DATE)))
-            }
-
-            // States
-            if (isChanged(user.szzStatus, pUser.szzStatus)) {
-                changes.add(Modification(REPLACE,
-                        "szzStatus", user.szzStatus.name))
-            }
-            if (isChanged(user.szzMailStatus, pUser.szzMailStatus)) {
-                changes.add(Modification(REPLACE,
-                        "szzMailStatus", user.szzMailStatus.name))
-            }
+            val changedEntries = with(pUser.toMap()){
+                user.toMap().filter { it.value != this[it.key] }
+            } - listOf("uidNumber", "displayName", "homeDirectory", "sambaSID", "mail") // TODO changes to these currently not detected/supported
+            changes.addAll(changedEntries.toModification())
 
             var result: LDAPResult?
             // save modifications
