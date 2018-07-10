@@ -76,8 +76,8 @@ data class UserForm(
             cn = "$firstName $lastName",
 
             // TODO will fail
-            szzBirthDay = birthDate.split(".")[0].toInt(),
-            szzBirthMonth = birthDate.split(".")[1].toInt(),
+            szzBirthDay = birthDate.split(".").getOrNull(0)?.toIntOrNull() ?: -1,
+            szzBirthMonth = birthDate.split(".").getOrNull(1)?.toIntOrNull() ?: -1,
 
             mail = when {
                 emailPrefix.isNotBlank() ->  domainConfiguration.mailDomain(type)
