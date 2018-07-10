@@ -89,7 +89,7 @@ class LdapBusinessService : InitializingBean {
                     }
 
                     for (user in users) {
-                        val exitDate = user.employeeExitDate
+                        val exitDate = user.szzExitDate
                         if (exitDate != null && user.szzStatus === User.State.active) {
                             if (exitDate.isBefore(today)) {
                                 exitedActiveUsers.add(user)
@@ -147,7 +147,7 @@ class LdapBusinessService : InitializingBean {
     fun notifyAboutExpiration() {
         val threshold = LocalDate.now().plusWeeks(2)
         val expiringAccounts = leavingUsers.filter {
-            threshold.isAfter(it.employeeExitDate!!)
+            threshold.isAfter(it.szzExitDate!!)
         }
         expiringAccounts.forEach {
             mailService.sendMail(listOf(it), AccountExpirationMail(it))

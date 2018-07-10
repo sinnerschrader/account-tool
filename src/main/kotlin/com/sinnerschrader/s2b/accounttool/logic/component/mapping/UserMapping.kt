@@ -24,11 +24,6 @@ class UserMapping {
 
         return try {
             with(entry) {
-                val birthDate =
-                        str("szzBirthDate")?.let {
-                            LocalDate.of(1972, it.substring(0, 1).toInt(), it.substring(2, 3).toInt())
-                        } ?: parseDate(dn, false, 1972, int("szzBirthMonth"), int("szzBirthDay"))
-
                 User(
                         dn = dn,
                         uid = str("uid"),
@@ -41,7 +36,8 @@ class UserMapping {
                         cn = str("cn"),
                         homeDirectory = str("homeDirectory"),
                         loginShell = str("loginShell"),
-                        birthDate = birthDate,
+                        szzBirthDay = int("szzBirthDay"),
+                        szzBirthMonth = int("szzBirthMonth"),
                         sambaSID = str("sambaSID"),
                         sambaPasswordHistory = str("sambaPasswordHistory"),
                         sambaAcctFlags = str("sambaAcctFlags"),
@@ -49,8 +45,8 @@ class UserMapping {
                         szzStatus = User.State.fromString(str("szzStatus")),
                         szzMailStatus = User.State.fromString(str("szzMailStatus")),
                         sambaPwdLastSet = long("sambaPwdLastSet") ?: 0L,
-                        employeeEntryDate = parseDate(dn, str("szzEntryDate")),
-                        employeeExitDate = parseDate(dn, str("szzExitDate")),
+                        szzEntryDate = parseDate(dn, str("szzEntryDate")),
+                        szzExitDate = parseDate(dn, str("szzExitDate")),
                         ou = str("ou"),
                         description = str("description"),
                         telephoneNumber = str("telephoneNumber") ?: "",

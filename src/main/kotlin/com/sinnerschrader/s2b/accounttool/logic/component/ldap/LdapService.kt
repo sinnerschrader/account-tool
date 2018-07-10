@@ -1,5 +1,8 @@
 package com.sinnerschrader.s2b.accounttool.logic.component.ldap
 
+import com.fasterxml.jackson.databind.ObjectMapper
+import com.fasterxml.jackson.databind.SerializationFeature
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule
 import com.google.common.cache.Cache
 import com.google.common.cache.CacheBuilder
 import com.sinnerschrader.s2b.accounttool.config.DomainConfiguration
@@ -411,9 +414,8 @@ class LdapService {
                 throw BusinessException("Email prefix is already used.", "user.mail.alreadyUsed", arrayOf<Any>(userWithDefaults.mail.substringBefore("@")))
             if (isUserAttributeAlreadyUsed(connection, "employeeNumber", userWithDefaults.employeeNumber))
                 throw BusinessException("The entered employeenumber is already in use", "user.employeeNumber.alreadyUsed")
-            userWithDefaults.employeeEntryDate ?: throw BusinessException("Entry could not be null", "user.entry.required")
-            userWithDefaults.employeeExitDate ?: throw BusinessException("Exit could not be null", "user.exit.required")
-
+            userWithDefaults.szzEntryDate ?: throw BusinessException("Entry could not be null", "user.entry.required")
+            userWithDefaults.szzExitDate ?: throw BusinessException("Exit could not be null", "user.exit.required")
 
             val result = connection.add(userWithDefaults.dn, userWithDefaults.toAttributes())
             if (result.resultCode !== ResultCode.SUCCESS) {
@@ -441,42 +443,14 @@ class LdapService {
         }
     }
 
-    fun User.toAttributes() = mapOf(
-            "objectClass" to User.objectClasses,
-            "employeeNumber" to employeeNumber,
-            "uidNumber" to uidNumber,
-            "gidNumber" to gidNumber,
-            "loginShell" to loginShell,
-            "homeDirectory" to homeDirectory,
-            "sambaSID" to sambaSID,
-            "sambaPasswordHistory" to sambaPasswordHistory,
-            "sambaPwdLastSet" to sambaPwdLastSet,
-            "uid" to uid,
-            "givenName" to givenName,
-            "sn" to sn,
-            "cn" to cn,
-            "displayName" to displayName,
-            "gecos" to gecos,
-            "o" to o,
-            "ou" to ou,
-            "title" to title,
-            "l" to l,
-            "description" to description,
-            "mail" to mail,
-            "telephoneNumber" to telephoneNumber,
-            "mobile" to mobile,
-            "szzBirthDay" to (birthDate?.dayOfMonth ?: -1),
-            "szzBirthMonth" to (birthDate?.monthValue ?: -1),
-            "szzEntryDate" to employeeEntryDate?.format(DateTimeFormatter.ISO_DATE),
-            "szzExitDate" to employeeExitDate?.format(DateTimeFormatter.ISO_DATE),
-            "szzStatus" to szzStatus.name,
-            "szzMailStatus" to szzMailStatus.name
-    ).map {
+    fun User.toAttributes() = OBJECT_MAPPER.convertValue(this, Map::class.java).map {
+        // TODO cleanup types (generics)
+        val k = it.key as String
         val v = it.value
         when (v) {
-            is Number -> Attribute(it.key, v.toString())
-            is String -> Attribute(it.key, v)
-            is Collection<*> -> Attribute(it.key, v as Collection<String>)
+            is Number -> Attribute(k, v.toString())
+            is String -> Attribute(k, v)
+            is Collection<*> -> Attribute(k, v as Collection<String>)
             else -> throw UnsupportedOperationException()
         }
     }
@@ -650,26 +624,26 @@ class LdapService {
             }
 
             // Birthday with Day and Month
-            val birth = user.birthDate
+            val birth = "${user.szzBirthDay}.${user.szzBirthMonth}"
             if (birth != null && isChanged(birth, birthDate)) {
                 changes.add(Modification(REPLACE,
-                        "szzBirthDay", birth.dayOfMonth.toString()))
+                        "szzBirthDay", user.szzBirthDay.toString()))
                 changes.add(Modification(REPLACE,
-                        "szzBirthMonth", birth.monthValue.toString()))
+                        "szzBirthMonth", user.szzBirthMonth.toString()))
             } else if (birth == null && birthDate != null) {
                 changes.add(Modification(DELETE, "szzBirthDay"))
                 changes.add(Modification(DELETE, "szzBirthMonth"))
             }
 
             // Entry Date
-            val entry = user.employeeEntryDate
+            val entry = user.szzEntryDate
             if (entry != null && isChanged(entry, employeeEntryDate)) {
                 changes.add(Modification(REPLACE,
                         "szzEntryDate", entry.format(DateTimeFormatter.ISO_DATE)))
             }
 
             // Exit Date
-            val exit = user.employeeExitDate
+            val exit = user.szzExitDate
             if (exit != null && isChanged(exit, employeeExitDate)) {
                 changes.add(Modification(REPLACE,
                         "szzExitDate", exit.format(DateTimeFormatter.ISO_DATE)))
@@ -862,6 +836,10 @@ class LdapService {
     companion object {
 
         private val log = LoggerFactory.getLogger(LdapService::class.java)
+        val OBJECT_MAPPER = ObjectMapper().apply {
+            registerModule(JavaTimeModule())
+            configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false)
+        }
     }
 
 }

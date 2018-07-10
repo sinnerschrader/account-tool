@@ -59,12 +59,11 @@ data class UserForm(
         status = user.szzStatus == User.State.active,
         mailStatus = user.szzMailStatus == User.State.active
         ) {
-        user.birthDate?.let { this.birthDate = it.format(BIRTHDAY_PATTERN) }
-        user.employeeEntryDate?.let { this.entryDate = it.format(DATE_PATTERN)}
-        user.employeeExitDate?.let { this.exitDate = it.format(DATE_PATTERN) }
+        this.birthDate = "${user.szzBirthDay}.${user.szzBirthMonth}"
+        user.szzEntryDate?.let { this.entryDate = it.format(DATE_PATTERN)}
+        user.szzExitDate?.let { this.exitDate = it.format(DATE_PATTERN) }
     }
 
-    fun birthAsDate() = if (birthDate.isNotBlank()) "$birthDate.1972".parseLocalDate(DATE_PATTERN) else null
     fun entryAsDate() = entryDate.parseLocalDate(DATE_PATTERN)
     fun exitAsDate() = exitDate.parseLocalDate(DATE_PATTERN)
 
@@ -75,7 +74,11 @@ data class UserForm(
             displayName = "$firstName $lastName",
             gecos = "$firstName $lastName",
             cn = "$firstName $lastName",
-            birthDate = birthAsDate(),
+
+            // TODO will fail
+            szzBirthDay = birthDate.split(".")[0].toInt(),
+            szzBirthMonth = birthDate.split(".")[1].toInt(),
+
             mail = when {
                 emailPrefix.isNotBlank() ->  domainConfiguration.mailDomain(type)
                 else ->  ""
@@ -83,8 +86,8 @@ data class UserForm(
             szzStatus = if(status) User.State.active else User.State.inactive,
             szzMailStatus = if(mailStatus) User.State.active else User.State.inactive,
             sambaPwdLastSet = Long.MAX_VALUE,
-            employeeEntryDate = entryAsDate(),
-            employeeExitDate = exitAsDate(),
+            szzEntryDate = entryAsDate(),
+            szzExitDate = exitAsDate(),
             ou = team,
             description = type,
             telephoneNumber = telephoneNumber,
