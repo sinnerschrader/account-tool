@@ -42,7 +42,8 @@ class UserFormTest {
                 "Example User",
                 "/dev/null",
                 "/bin/false",
-                LocalDate.of(1972, 7, 1),
+                7,
+                1,
                 "SID-12-12-12",
                 "000000",
                 "[U    ]",
@@ -66,8 +67,8 @@ class UserFormTest {
                 ""
         )
         val userForm = UserForm(user)
-        Assert.assertTrue(userForm.entryAsDate() == user.employeeEntryDate)
-        Assert.assertTrue(userForm.exitAsDate() == user.employeeExitDate)
+        Assert.assertTrue(userForm.entryAsDate() == user.szzEntryDate)
+        Assert.assertTrue(userForm.exitAsDate() == user.szzExitDate)
         Assert.assertEquals(userForm.emailPrefix, user.mail.substringBefore("@") )
         Assert.assertEquals(userForm.status, true)
         Assert.assertEquals(userForm.mailStatus, true)

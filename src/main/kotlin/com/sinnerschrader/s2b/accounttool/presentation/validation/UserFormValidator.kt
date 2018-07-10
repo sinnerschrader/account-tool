@@ -56,7 +56,7 @@ class UserFormValidator : Validator {
 
         if (form.birthDate.isNotBlank()) {
             try {
-                form.birthAsDate()!!.year
+                // TODO birthdate validation
             } catch (e: Exception) {
                 errors.rejectValue("birthDate", "date", arrayOf<Any>(form.birthDate),
                     "Birth Date is not a valid date.")

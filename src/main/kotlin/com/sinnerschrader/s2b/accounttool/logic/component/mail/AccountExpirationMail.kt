@@ -7,7 +7,7 @@ class AccountExpirationMail(user: User) : Mail {
     override val body = """
         Hello ${user.givenName} ${user.sn},
 
-        Your account is expiring on ${user.employeeExitDate}.
+        Your account is expiring on ${user.szzExitDate}.
 
 
         Best regards,

@@ -1,5 +1,6 @@
 package com.sinnerschrader.s2b.accounttool.logic.entity
 
+import com.fasterxml.jackson.annotation.JsonIgnore
 import org.apache.commons.lang3.StringUtils
 import org.apache.commons.lang3.builder.CompareToBuilder
 import org.apache.commons.lang3.builder.DiffResult
@@ -14,6 +15,7 @@ import java.time.format.DateTimeFormatter
 import java.util.*
 
 data class User(
+        @JsonIgnore
         val dn: String = "", // Full DN of LDAP - Example: "dn: uid=firlas,ou=users,ou=e1c1,dc=exampe,dc=org"
         val uid: String, // Username based on first- and lastname - Has to be 6 or 8 Characters long.
         val uidNumber: Int? = null, // Unique User ID for PosixAccounts.
@@ -25,7 +27,8 @@ data class User(
         val cn: String = "$givenName $sn",
         val homeDirectory: String = "", // Custom home directory, for personal fileshare.  Pattern: /export/home/{USERNAME}
         val loginShell: String = "/bin/false",
-        val birthDate: LocalDate?, // Date of Birth (always in year 1972)
+        val szzBirthDay: Int = -1,
+        val szzBirthMonth: Int = -1,
         val sambaSID: String? = "", // Seperated into constant part an calculated part based on uidNumber.  S-1-5-21-1517199603-1739104038-1321870143-2552
         val sambaPasswordHistory: String = "0000000000000000000000000000000000000000000000000000000000000000", // Currently not really used
         val sambaAcctFlags: String? = "", // Currently not used, so it is a constant: [U          ]
@@ -33,8 +36,8 @@ data class User(
         val szzStatus: State = State.inactive,
         val szzMailStatus: State = State.inactive,
         val sambaPwdLastSet: Long = (System.currentTimeMillis() / 1000L),
-        val employeeEntryDate: LocalDate?,
-        val employeeExitDate: LocalDate?,
+        val szzEntryDate: LocalDate?,
+        val szzExitDate: LocalDate?,
         val ou: String, // department / team
         val description: String, // Type of employment; should be employeeType of inetOrgPerson. - Example: Mitarbeiter, Freelancer, Student, Praktikant
         val telephoneNumber: String = "",
@@ -44,10 +47,14 @@ data class User(
         val l: String, // location
         val szzPublicKey: String = "",
         val o: String, // organisation
+        @JsonIgnore
         val companyKey: String, // The Company where the User belongs to. (see: companies on yaml configuration)
+        @JsonIgnore
         val modifiersName: String = "",
+        @JsonIgnore
         val modifytimestamp: String = ""
 ) : Comparable<User>, Diffable<User> {
+    val objectClass = objectClasses
 
     companion object {
         val objectClasses = listOf(
@@ -60,20 +67,6 @@ data class User(
         )
     }
 
-
-    fun getPrettyModifytimestamp() =
-        try {
-            val f = DateTimeFormatter.ofPattern("uuuuMMddHHmmss[,SSS][.SSS]X")
-            val odt = OffsetDateTime.parse(modifytimestamp, f)
-            PrettyTime().format(Date(odt.toInstant().toEpochMilli()))!!
-        } catch (e: Exception) {
-            modifytimestamp
-        }
-
-    fun getLastPasswordChange() = Date(sambaPwdLastSet * 1000)
-    fun getPrettyLastPasswordChange() = PrettyTime().format(getLastPasswordChange())
-    fun getPrettyLastModified() = if (modifytimestamp.isNotBlank()) "${getPrettyModifytimestamp()} by ${getPrettyModifiersName()}" else ""
-    fun getPrettyModifiersName() = Regex("^uid=([^,]+)").find(modifiersName)?.groupValues?.get(1) ?: modifiersName
 
     override fun compareTo(other: User) =
         CompareToBuilder().append(sn, other.sn).append(givenName, other.givenName).append(uid, other.uid).build()
@@ -88,6 +81,20 @@ data class User(
         }
     }
 }
+
+fun User.getPrettyModifytimestamp() =
+        try {
+            val f = DateTimeFormatter.ofPattern("uuuuMMddHHmmss[,SSS][.SSS]X")
+            val odt = OffsetDateTime.parse(modifytimestamp, f)
+            PrettyTime().format(Date(odt.toInstant().toEpochMilli()))!!
+        } catch (e: Exception) {
+            modifytimestamp
+        }
+fun User.getLastPasswordChange() = Date(sambaPwdLastSet * 1000)
+fun User.getPrettyLastPasswordChange() = PrettyTime().format(getLastPasswordChange())
+fun User.getPrettyLastModified() = if (modifytimestamp.isNotBlank()) "${getPrettyModifytimestamp()} by ${getPrettyModifiersName()}" else ""
+fun User.getPrettyModifiersName() = Regex("^uid=([^,]+)").find(modifiersName)?.groupValues?.get(1) ?: modifiersName
+
 
 
 // TODO copied from ldapservice
