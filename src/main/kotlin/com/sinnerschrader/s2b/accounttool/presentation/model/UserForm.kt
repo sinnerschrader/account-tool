@@ -64,6 +64,7 @@ data class UserForm(
         user.szzExitDate?.let { this.exitDate = it.format(DATE_PATTERN) }
     }
 
+    fun birthAsDate() = if (birthDate.isNotBlank()) "$birthDate.1972".parseLocalDate(DATE_PATTERN) else null
     fun entryAsDate() = entryDate.parseLocalDate(DATE_PATTERN)
     fun exitAsDate() = exitDate.parseLocalDate(DATE_PATTERN)
 

@@ -53,9 +53,6 @@ class LdapService {
     @Value("\${user.smbIdPrefix}")
     private lateinit var smbIdPrefix: String
 
-    @Value("\${user.sambaFlags}")
-    private lateinit var sambaFlags: String
-
     @Value("\${user.homeDirPrefix}")
     private lateinit var homeDirPrefix: String
 
@@ -71,23 +68,18 @@ class LdapService {
     @Autowired
     private lateinit var cachedLdapService: CachedLdapService
 
-    @Transient
     private var lastUserNumber: Int? = null
 
     @Autowired
     private lateinit var managementConfiguration: LdapManagementConfiguration
 
-    fun getUserCount(connection: LDAPConnection): Int {
+    fun getUserCount(connection: LDAPConnection) =
         try {
-            val searchResult = connection.search(ldapConfiguration.config.baseDN, SearchScope.SUB,
-                    LdapQueries.listAllUsers)
-            return searchResult.entryCount
+            connection.search(ldapConfiguration.config.baseDN, SearchScope.SUB, LdapQueries.listAllUsers).entryCount
         } catch (e: Exception) {
             log.error("Could not fetch count of all users", e)
+            0
         }
-
-        return 0
-    }
 
     fun getUsers(connection: LDAPConnection, firstResult: Int, maxResults: Int): List<User> {
         try {
@@ -434,10 +426,11 @@ class LdapService {
     private fun isEmailPrefixAlreadyUsed(connection: LDAPConnection, mail: String) =
             isUserAttributeAlreadyUsed(connection, "mail", "${mail.substringBefore("@")}@*")
 
-    fun Map<String, *>.toModification(modificationType: ModificationType = REPLACE) = this.map { entry ->
+    fun Map<String, Any>.toModification(modificationType: ModificationType = REPLACE) = this.map { entry ->
         entry.value.let {
             when (it) {
                 is String -> Modification(modificationType, entry.key, it)
+                is Number -> Modification(modificationType, entry.key, it.toString())
                 else -> throw UnsupportedOperationException()
             }
         }
@@ -576,9 +569,8 @@ class LdapService {
                 val superiorDN = newDN.replace("$newRDN,", StringUtils.EMPTY)
 
                 log.warn("Move user to other company. From: {} To: {} + {}", pUser.dn, newRDN, superiorDN)
-                modifyDNRequest = ModifyDNRequest(pUser.dn, newRDN, delete, superiorDN)
-
-                //changes.add(Modification(REPLACE, "o", user.o))
+                modifyDNRequest = ModifyDNRequest(pUser.dn,
+                        newRDN, delete, superiorDN)
             }
 
             // Default Values and LDAP specific entries
@@ -599,15 +591,13 @@ class LdapService {
             changes.addAll(changedEntries.toModification())
 
             var result: LDAPResult?
-            // save modifications
             if (!changes.isEmpty()) {
                 result = connection.modify(pUser.dn, changes)
                 if (result!!.resultCode !== ResultCode.SUCCESS) {
                     log.warn("Could not modify user with dn '{}' username '{}'. Reason: {} Status: {}",
                             pUser.dn, pUser.uid, result!!.diagnosticMessage, result.resultCode)
-
-                    val args = arrayOf(result.resultString, result.resultCode.name, result.resultCode.intValue())
-                    throw BusinessException("LDAP rejected update of user", "user.modify.failed", args)
+                    throw BusinessException("LDAP rejected update of user", "user.modify.failed",
+                            arrayOf(result.resultString, result.resultCode.name, result.resultCode.intValue()))
                 }
             }
             // move user to other DN (Company)
