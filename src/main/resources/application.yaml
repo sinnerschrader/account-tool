@@ -4,6 +4,10 @@
 spring:
   application:
     name: account-tool
+  cache:
+    cache-names: listing,users,groupMembers,groups
+    caffeine:
+      spec: expireAfterWrite=15m
   messages:
     basename: "i18n/messages, i18n/validation"
     cache-seconds: "-1"
