@@ -105,7 +105,7 @@ class GroupController {
 
             if (ldapManagementConfiguration.trackedGroups.contains(groupCN)) {
                 val recipients = ldapService.getGroupAdmins(connection, group)
-                mailService.sendMail(recipients, GroupChangeMail(currentUserDetails!!, user, group, GroupChangeMail.Action.ADD))
+                mailService.sendMail(recipients.toList(), GroupChangeMail(currentUserDetails!!, user, group, GroupChangeMail.Action.ADD))
             }
         } else {
             LOG.warn("Adding user $uid into group $groupCN failed")
@@ -134,7 +134,7 @@ class GroupController {
 
             if (ldapManagementConfiguration.trackedGroups.contains(groupCN)) {
                 val recipients = ldapService.getGroupAdmins(connection, group)
-                mailService.sendMail(recipients, GroupChangeMail(currentUserDetails!!, user, group, GroupChangeMail.Action.REMOVE))
+                mailService.sendMail(recipients.toList(), GroupChangeMail(currentUserDetails!!, user, group, GroupChangeMail.Action.REMOVE))
             }
         } else {
             LOG.warn("{} removed user {} from group {}; but it failed", details.uid, uid, groupCN)
@@ -158,7 +158,7 @@ class GroupController {
             globalMessageFactory.store(request, globalMessageFactory.createError("requestAccess.alreadyMember"))
         } else {
             val adminUser = ldapService.getUsersByGroup(connection, adminGroup)
-            val success = mailService.sendMail(adminUser, GroupAccessRequestMail(details, adminGroup, group))
+            val success = mailService.sendMail(adminUser.toList(), GroupAccessRequestMail(details, adminGroup, group))
             if (success) {
                 LOG.info("${details.uid} requested access to group ${group.cn}. A mail was sent to ${adminUser.size} admins of group ${adminGroup.cn}")
                 globalMessageFactory.store(request, globalMessageFactory.createInfo("requestAccess.success"))
