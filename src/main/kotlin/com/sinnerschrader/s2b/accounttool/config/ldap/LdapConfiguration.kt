@@ -1,5 +1,6 @@
 package com.sinnerschrader.s2b.accounttool.config.ldap
 
+import com.sinnerschrader.s2b.accounttool.logic.entity.Group
 import com.unboundid.ldap.sdk.LDAPConnection
 import com.unboundid.ldap.sdk.LDAPException
 import com.unboundid.util.ssl.SSLUtil
@@ -40,6 +41,8 @@ class LdapConfiguration {
         var admin = ""
         var team = ""
         var technical = ""
+
+        fun adminCnFor(group: Group) = group.cn.replace(team, admin)
     }
 
     class LdapBaseConfig {
