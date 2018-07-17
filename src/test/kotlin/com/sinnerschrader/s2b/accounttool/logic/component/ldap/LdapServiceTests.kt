@@ -74,7 +74,7 @@ class LdapServiceTests {
                 .map { group -> SimpleGrantedAuthority(group.cn) }
                 .toList()
 
-        this.currentUser = LdapUserDetails(user.dn, user.uid, user.displayName!!,
+        this.currentUser = LdapUserDetails(user.dn, user.uid, user.displayName,
                 ldapUserPassword, ldapUserCompany, grantedAuthorities, false, true)
 
         connection.close()
@@ -95,16 +95,17 @@ class LdapServiceTests {
 
         val allGroups = ldapService.getGroups(connection)
         val group = ldapService.getGroupByCN(connection, "company-vpn")
-        val dontExist = ldapService.getGroupByCN(connection, "thisgroupwillneverexist-hopefully")
 
         Assert.assertNotNull(allGroups)
         assertFalse(allGroups.isEmpty())
         Assert.assertNotNull(group)
         assertTrue(allGroups.contains(group))
-        Assert.assertNull(dontExist)
 
         connection.close()
     }
+
+    @Test(expected = Exception::class)
+    fun nonExistingGroup() { ldapService.getGroupByCN(create(true), "thisgroupwillneverexist-hopefully") }
 
     @Test
     @Throws(Exception::class)
@@ -180,9 +181,9 @@ class LdapServiceTests {
         Assert.assertEquals(pUser.mail, "guy.incoegnito@example.com")
         Assert.assertNotNull(pUser.uidNumber)
         Assert.assertNotNull(pUser.loginShell)
-        assertFalse(pUser.loginShell!!.isEmpty())
+        assertFalse(pUser.loginShell.isEmpty())
         Assert.assertNotNull(pUser.homeDirectory)
-        assertFalse(pUser.homeDirectory!!.isEmpty())
+        assertFalse(pUser.homeDirectory.isEmpty())
 
         Assert.assertNotNull(pUser.telephoneNumber)
         Assert.assertNotNull(pUser.mobile)
@@ -280,9 +281,7 @@ class LdapServiceTests {
 
         Assert.assertNotEquals(currentPassword, newPassword)
 
-        success = ldapService.changePassword(connection, currentUser!!, newPassword)
-
-        assertTrue(success)
+        ldapService.changePassword(connection, currentUser!!, newPassword)
 
         connection.close()
     }

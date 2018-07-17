@@ -1,7 +1,6 @@
 package com.sinnerschrader.s2b.accounttool.config.authentication
 
 import com.sinnerschrader.s2b.accounttool.config.ldap.LdapConfiguration
-import com.sinnerschrader.s2b.accounttool.logic.component.ldap.CachedLdapService
 import com.sinnerschrader.s2b.accounttool.logic.component.ldap.LdapService
 import com.sinnerschrader.s2b.accounttool.logic.entity.User
 import com.unboundid.ldap.sdk.LDAPConnection
@@ -29,9 +28,6 @@ class LdapUserDetailsAuthenticationProvider : AbstractUserDetailsAuthenticationP
 
     @Autowired
     private lateinit var ldapService: LdapService
-
-    @Autowired
-    private lateinit var cachedLdapService: CachedLdapService
 
     @Throws(AuthenticationException::class)
     override fun retrieveUser(username: String, authentication: UsernamePasswordAuthenticationToken): UserDetails {
@@ -67,7 +63,7 @@ class LdapUserDetailsAuthenticationProvider : AbstractUserDetailsAuthenticationP
             details.username,
             currentUser.displayName!!,
             details.password,
-            cachedLdapService.companyForDn(details.userDN),
+            ldapService.companyForDn(details.userDN),
             groups,
             currentUser.szzStatus !== User.State.active,
             currentUser.szzStatus === User.State.active)

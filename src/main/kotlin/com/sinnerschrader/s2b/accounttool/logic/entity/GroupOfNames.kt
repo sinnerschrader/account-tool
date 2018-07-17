@@ -10,9 +10,8 @@ data class GroupOfNames(
     override val groupClassification: Group.GroupClassification,
     override val memberIds: List<String>) : Group {
 
-    override val objectClasses: List<String> =
+    override val objectClasses =
         asList("top", if (isUniqueNames) Group.GroupType.GroupOfUniqueNames.objectClass else Group.GroupType.GroupOfNames.objectClass)
-
 
     override val groupType: Group.GroupType =
         if (isUniqueNames) Group.GroupType.GroupOfUniqueNames else Group.GroupType.GroupOfNames

@@ -4,7 +4,7 @@ import com.sinnerschrader.s2b.accounttool.config.authentication.LdapAuthenticati
 import com.sinnerschrader.s2b.accounttool.config.authentication.LdapUserDetailsAuthenticationProvider
 import com.sinnerschrader.s2b.accounttool.config.ldap.LdapConfiguration
 import com.sinnerschrader.s2b.accounttool.config.ldap.LdapManagementConfiguration
-import com.sinnerschrader.s2b.accounttool.logic.component.ldap.CachedLdapService
+import com.sinnerschrader.s2b.accounttool.logic.component.ldap.LdapService
 import com.sinnerschrader.s2b.accounttool.presentation.interceptor.PwnedAuthenticationSuccessHandler
 import com.unboundid.ldap.sdk.LDAPException
 import org.slf4j.LoggerFactory
@@ -36,7 +36,7 @@ class SecurityConfig : WebSecurityConfigurerAdapter() {
     private lateinit var userDetailsAuthenticationProvider: LdapUserDetailsAuthenticationProvider
 
     @Autowired
-    private lateinit var cachedLdapService: CachedLdapService
+    private lateinit var ldapService: LdapService
 
     @Autowired
     private lateinit var ldapConfiguration: LdapConfiguration
@@ -88,7 +88,7 @@ class SecurityConfig : WebSecurityConfigurerAdapter() {
                         with(ldapManagementConfiguration.user) {
                             connection.bind(bindDN, password)
                         }
-                        val userInfo = cachedLdapService.getGroupMember(connection, context.getParameter("uid"))
+                        val userInfo = ldapService.getGroupMember(connection, context.getParameter("uid"))
                         return userInfo?.let { LdapAuthenticationDetails(userInfo.dn, context)}
                     }
                 } catch (e: LDAPException) {

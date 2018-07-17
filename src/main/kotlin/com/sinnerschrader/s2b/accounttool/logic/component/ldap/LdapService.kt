@@ -3,8 +3,6 @@ package com.sinnerschrader.s2b.accounttool.logic.component.ldap
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.databind.SerializationFeature
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule
-import com.google.common.cache.Cache
-import com.google.common.cache.CacheBuilder
 import com.sinnerschrader.s2b.accounttool.config.DomainConfiguration
 import com.sinnerschrader.s2b.accounttool.config.authentication.LdapUserDetails
 import com.sinnerschrader.s2b.accounttool.config.ldap.LdapConfiguration
@@ -14,36 +12,35 @@ import com.sinnerschrader.s2b.accounttool.logic.component.encryption.Encrypt
 import com.sinnerschrader.s2b.accounttool.logic.component.mapping.GroupMapping
 import com.sinnerschrader.s2b.accounttool.logic.component.mapping.UserMapping
 import com.sinnerschrader.s2b.accounttool.logic.entity.Group
+import com.sinnerschrader.s2b.accounttool.logic.entity.Group.GroupClassification.ADMIN
 import com.sinnerschrader.s2b.accounttool.logic.entity.Group.GroupType.Posix
 import com.sinnerschrader.s2b.accounttool.logic.entity.User
 import com.sinnerschrader.s2b.accounttool.logic.entity.User.State.active
-import com.sinnerschrader.s2b.accounttool.logic.entity.User.State.inactive
 import com.sinnerschrader.s2b.accounttool.logic.entity.UserInfo
 import com.sinnerschrader.s2b.accounttool.logic.exception.BusinessException
 import com.unboundid.ldap.sdk.*
+import com.unboundid.ldap.sdk.Filter.createANDFilter
+import com.unboundid.ldap.sdk.Filter.createEqualityFilter
 import com.unboundid.ldap.sdk.ModificationType.*
 import com.unboundid.ldap.sdk.SearchRequest.ALL_OPERATIONAL_ATTRIBUTES
 import com.unboundid.ldap.sdk.SearchRequest.ALL_USER_ATTRIBUTES
-import org.apache.commons.lang3.RandomStringUtils
+import org.apache.commons.lang3.RandomStringUtils.randomAlphanumeric
 import org.apache.commons.lang3.StringUtils
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.cache.annotation.CacheEvict
+import org.springframework.cache.annotation.Cacheable
 import org.springframework.core.env.Environment
 import org.springframework.stereotype.Service
 import java.security.GeneralSecurityException
 import java.text.MessageFormat
 import java.text.Normalizer
-import java.time.format.DateTimeFormatter
 import java.util.*
 import java.util.Arrays.asList
-import java.util.concurrent.TimeUnit
 
 @Service
 class LdapService {
-    private val listingsCache: Cache<String, List<String>> = CacheBuilder.newBuilder().expireAfterWrite(6L, TimeUnit.HOURS).build()
-
     @Autowired
     private lateinit var ldapConfiguration: LdapConfiguration
 
@@ -66,152 +63,156 @@ class LdapService {
     private lateinit var environment: Environment
 
     @Autowired
-    private lateinit var cachedLdapService: CachedLdapService
+    private lateinit var cachedLdapService: LdapService
 
     private var lastUserNumber: Int? = null
 
     @Autowired
     private lateinit var managementConfiguration: LdapManagementConfiguration
 
-    fun getUserCount(connection: LDAPConnection) =
+
+    @Cacheable("groupMembers", key = "#uid", unless = "#result == null")
+    fun getGroupMember(connection: LDAPConnection, uid: String): UserInfo {
         try {
-            connection.search(ldapConfiguration.config.baseDN, SearchScope.SUB, LdapQueries.listAllUsers).entryCount
+            val searchResult = connection.search(
+                    ldapConfiguration.config.baseDN,
+                    SearchScope.SUB,
+                    createANDFilter(
+                            createEqualityFilter("objectclass", "posixAccount"),
+                            createEqualityFilter("uid", uid)
+                    ),
+                    "uid", "givenName", "sn", "mail", "szzStatus"
+            )
+
+            return when (searchResult.searchEntries.size) {
+                0 -> UserInfo("UNKNOWN", uid, "UNKNOWN", "UNKNOWN", "UNKNOWN", "UNKNOWN", User.State.inactive)
+                1 -> with(searchResult.searchEntries.first()) {
+                    UserInfo(
+                            dn = dn,
+                            uid = getAttributeValue("uid"),
+                            givenName = getAttributeValue("givenName"),
+                            sn = getAttributeValue("sn"),
+                            o = companyForDn(dn),
+                            mail = getAttributeValue("mail"),
+                            szzStatus = User.State.valueOf(getAttributeValue("szzStatus")))
+                }
+                else -> throw IllegalStateException()
+            }
         } catch (e: Exception) {
-            log.error("Could not fetch count of all users", e)
-            0
+            throw RuntimeException("Could retrieve user [uid: $uid]", e)
         }
-
-    fun getUsers(connection: LDAPConnection, firstResult: Int, maxResults: Int): List<User> {
-        try {
-            val request = SearchRequest(ldapConfiguration.config.baseDN, SearchScope.SUB,
-                    LdapQueries.listAllUsers, ALL_USER_ATTRIBUTES, ALL_OPERATIONAL_ATTRIBUTES)
-            val searchResult = connection.search(request)
-            val count = searchResult.entryCount
-            val fr = Math.min(Math.max(0, firstResult), count)
-            val mr = Math.min(fr + maxResults, count)
-
-            return searchResult.searchEntries.subList(fr, mr).mapNotNull {
-                userMapping.map(it)
-            }.sorted()
-
-        } catch (e: Exception) {
-            log.error("Could not fetch all users", e)
-        }
-        return emptyList()
     }
 
-    private fun getListingFromCacheOrLdap(connection: LDAPConnection, cacheKey: String, attribute: String): List<String>? {
-        var result = listingsCache.getIfPresent(cacheKey)
-        if (result == null) {
+    @Cacheable("groups", key = "#cn", unless = "#result == null")
+    fun getGroupByCN(connection: LDAPConnection, cn: String) =
             try {
-                val tempResult = HashSet<String>()
-                val searchResult = connection.search(ldapConfiguration.config.baseDN, SearchScope.SUB,
-                        LdapQueries.listAllUsers, attribute)
+                val searchResult = connection.search(ldapConfiguration.config.groupDN, SearchScope.SUB,
+                        MessageFormat.format(LdapQueries.findGroupByCn, cn))
 
-                var value: String
-                for (entry in searchResult.searchEntries) {
-                    value = StringUtils.trimToEmpty(entry.getAttributeValue(attribute))
-                    if (StringUtils.isNotBlank(value)) {
-                        tempResult.add(value)
-                    }
+                when (searchResult.entryCount) {
+                    1 -> groupMapping.map(searchResult.searchEntries[0])
+                    0 -> throw RuntimeException("Could not retrieve group by cn $cn")
+                    else -> throw IllegalStateException("Found multiple entries for group cn $cn")
                 }
-                if (tempResult.size > 0) {
-                    log.debug("Found {} entries for attribue {}", tempResult.size, attribute)
-                    result = ArrayList(tempResult)
-                    Collections.sort(result)
-                    listingsCache.put(cacheKey, result)
+            } catch (e: Exception) {
+                throw RuntimeException("Could not retrieve group from ldap with cn $cn", e)
+            }
+
+    fun companyForDn(dn: String) =
+            try {
+                with(Regex(",ou=([^,]+)").findAll(dn).last().groupValues[1]) {
+                    ldapConfiguration.companies[this] ?: "UNKNOWN"
                 }
+            } catch (e: NoSuchElementException) {
+                "UNKNOWN"
+            }
+
+    fun getUserIDs(connection: LDAPConnection) =
+            try {
+                with(connection.search(ldapConfiguration.config.baseDN, SearchScope.SUB, LdapQueries.listAllUsers, "uid")) {
+                    searchEntries.mapNotNull {
+                        it.getAttributeValue("uid")
+                    }.toSortedSet()
+                }
+            } catch (e: Exception) {
+                throw RuntimeException("Could not fetch count of all users", e)
+            }
+
+    fun getUsers(connection: LDAPConnection) =
+            try {
+                getUserIDs(connection).mapNotNull {
+                    cachedLdapService.getUserByUid(connection, it)
+                }.sorted()
+            } catch (e: Exception) {
+                log.error("Could not fetch all users", e)
+                emptyList<User>()
+            }
+
+    @Cacheable("listing", key = "#attribute")
+    fun getListing(connection: LDAPConnection, attribute: String) =
+            try {
+                connection.search(ldapConfiguration.config.baseDN, SearchScope.SUB, LdapQueries.listAllUsers, attribute)
+                        .searchEntries.map {
+                    it.getAttributeValue(attribute).trim()
+                }.filter { it.isNotBlank() }.toSortedSet()
             } catch (le: LDAPException) {
                 log.warn("Could not fetch employee types")
+                throw le
             }
 
-        }
-        return result
-    }
+    fun getEmployeeType(connection: LDAPConnection) = cachedLdapService.getListing(connection, "description")
 
-    fun getEmployeeType(connection: LDAPConnection) = getListingFromCacheOrLdap(connection, "employeeTypes", "description")
+    fun getLocations(connection: LDAPConnection) = cachedLdapService.getListing(connection, "l")
 
-    fun getLocations(connection: LDAPConnection) = getListingFromCacheOrLdap(connection, "locations", "l")
+    fun getDepartments(connection: LDAPConnection) = cachedLdapService.getListing(connection, "ou")
 
-    fun getDepartments(connection: LDAPConnection) = getListingFromCacheOrLdap(connection, "departments", "ou")
-
-    fun getUserByUid(connection: LDAPConnection, uid: String): User? {
-        try {
-            val searchResult = connection.search(ldapConfiguration.config.baseDN, SearchScope.SUB,
-                    MessageFormat.format(LdapQueries.findUserByUid, uid), ALL_USER_ATTRIBUTES, ALL_OPERATIONAL_ATTRIBUTES)
-            if (searchResult.entryCount > 1) {
-                val msg = "Found multiple entries for uid \"$uid\""
-                log.warn(msg)
-                throw IllegalStateException(msg)
+    @Cacheable("users", key = "#uid", unless = "#result == null", condition = "#skipCache == false")
+    @CacheEvict("users", key = "#uid", beforeInvocation = true, condition = "#skipCache")
+    fun getUserByUid(connection: LDAPConnection, uid: String, skipCache: Boolean = false) =
+            try {
+                with(connection.search(ldapConfiguration.config.baseDN, SearchScope.SUB,
+                        MessageFormat.format(LdapQueries.findUserByUid, uid), ALL_USER_ATTRIBUTES, ALL_OPERATIONAL_ATTRIBUTES)) {
+                    when (entryCount) {
+                        1 -> userMapping.map(searchEntries[0])
+                        0 -> log.warn("could not retrieve user by uid $uid").let { null }
+                        else -> throw IllegalStateException("found multiple entries for uid $uid")
+                    }
+                }
+            } catch (e: Exception) {
+                log.error("Could not retrieve user from user with uid $uid", e)
+                null
             }
-            if (searchResult.entryCount < 1) {
-                log.trace("Could not retrieve user by uid {} ", uid)
-                return null
-            }
-            val entry = searchResult.searchEntries[0]
-            return userMapping.map(entry)
-        } catch (e: Exception) {
-            log.error("Could not retrieve user from user with uid $uid", e)
-        }
-
-        return null
-    }
 
     fun getGroupMembers(connection: LDAPConnection, group: Group): SortedSet<UserInfo> {
-        return group.memberIds.mapNotNull { cachedLdapService.getGroupMember(connection, it) }.toSortedSet()
+        return group.memberIds.map { cachedLdapService.getGroupMember(connection, it) }.toSortedSet()
     }
 
-    fun getGroupByCN(connection: LDAPConnection, groupCn: String?): Group? {
-        try {
-            val searchResult = connection.search(ldapConfiguration.config.groupDN, SearchScope.SUB,
-                    MessageFormat.format(LdapQueries.findGroupByCn, groupCn))
-            if (searchResult.entryCount > 1) {
-                val msg = "Found multiple entries for group cn \"$groupCn\""
-                log.warn(msg)
-                throw IllegalStateException(msg)
-            }
-            if (searchResult.entryCount < 1) {
-                log.warn("Could not retrieve group by cn {} ", groupCn)
-                return null
-            }
-            val entry = searchResult.searchEntries[0]
-            if (groupMapping.isCompatible(entry)) {
-                return groupMapping.map(entry)
-            }
-        } catch (e: Exception) {
-            log.error("Could not retrieve group from ldap with cn $groupCn", e)
-        }
-
-        return null
-    }
-
-    fun findUserBySearchTerm(connection: LDAPConnection, searchTerm: String): List<User> {
+    fun findUserBySearchTerm(connection: LDAPConnection, searchTerm: String): Set<UserInfo> {
         try {
             val searchResult = connection.search(ldapConfiguration.config.baseDN,
-                    SearchScope.SUB, MessageFormat.format(LdapQueries.searchUser, "*$searchTerm*"), ALL_USER_ATTRIBUTES, ALL_OPERATIONAL_ATTRIBUTES)
+                    SearchScope.SUB, MessageFormat.format(LdapQueries.searchUser, "*$searchTerm*"), "uid")
 
-            return searchResult.searchEntries.mapNotNull {
-                userMapping.map(it)
-            }.sorted()
+            return when (searchResult.searchEntries.size) {
+                0 -> emptySet()
+                else -> searchResult.searchEntries.map {
+                    cachedLdapService.getGroupMember(connection, it.getAttributeValue("uid"))
+                }.toSortedSet()
+            }
         } catch (e: Exception) {
             log.error("Could not find user by searchTermn $searchTerm", e)
+            return emptySet()
         }
-        return emptyList()
     }
 
-    fun getGroups(connection: LDAPConnection): List<Group> {
-        val result = LinkedList<Group>()
-        try {
-            val searchResult = connection.search(ldapConfiguration.config.groupDN, SearchScope.SUB,
-                    LdapQueries.listAllGroups)
-            result.addAll(groupMapping.map(searchResult.searchEntries))
-            result.sort()
-        } catch (e: Exception) {
-            log.error("Could not retrieve groups from ldap ", e)
-        }
-
-        return result
-    }
+    @Cacheable("groups")
+    fun getGroups(connection: LDAPConnection) =
+            try {
+                connection.search(ldapConfiguration.config.groupDN, SearchScope.SUB, LdapQueries.listAllGroups).searchEntries.mapNotNull {
+                    groupMapping.map(it)
+                }.toList().sorted()
+            } catch (e: Exception) {
+                throw RuntimeException("Could not retrieve groups from ldap", e)
+            }
 
     fun getGroupsByUser(connection: LDAPConnection, uid: String, userDN: String): List<Group> {
         val result = LinkedList<Group>()
@@ -227,17 +228,13 @@ class LdapService {
         return result
     }
 
-    private fun extractUidFromDN(uidOrDN: String): String {
-        return if (StringUtils.startsWith(uidOrDN, "uid=")) {
-            StringUtils.substring(uidOrDN, 4, uidOrDN.indexOf(','))
-        } else uidOrDN
-    }
+    private fun extractUidFromDN(uidOrDN: String) = if (uidOrDN.startsWith("uid=")) uidOrDN.substring(4, uidOrDN.indexOf(',')) else uidOrDN
 
     fun getUsersByGroup(connection: LDAPConnection, group: Group?): List<User> {
         val users = ArrayList<User>()
         try {
             group!!.memberIds.forEach { uidOrDN ->
-                val user = getUserByUid(connection, extractUidFromDN(uidOrDN))
+                val user = cachedLdapService.getUserByUid(connection, extractUidFromDN(uidOrDN))
                 if (user != null) {
                     users.add(user)
                 }
@@ -250,143 +247,73 @@ class LdapService {
         return users
     }
 
-    fun addUserToGroup(connection: LDAPConnection, user: User, group: Group): Group? {
-        val ldapGroup = getGroupByCN(connection, group.cn) ?: return null
-        if (ldapGroup.hasMember(user.uid, user.dn))
-            return ldapGroup
+    private fun addUserToGroup(connection: LDAPConnection, user: User, group: Group, modificationType: ModificationType): Group? {
         try {
-            val groupType = ldapGroup.groupType
-            val memberValue = if (groupType === Posix) user.uid else user.dn
-            val memberAttribute = groupType.memberAttritube
-            val modification = Modification(ADD, memberAttribute, memberValue)
-            connection.modify(ldapGroup.dn, modification)
+            connection.modify(group.dn, mapOf(
+                    group.groupType.memberAttritube to if (group.groupType === Posix) user.uid else user.dn
+            ).toModification(modificationType))
         } catch (le: LDAPException) {
-            log.error("Could not add user {} to group {}", user.uid, group.cn)
-            if (log.isDebugEnabled) {
-                log.error("Could not add user", le)
-            }
-            return ldapGroup
+            throw RuntimeException("Could not add user ${user.uid} to group ${group.cn}")
         }
-
         return getGroupByCN(connection, group.cn)
     }
 
-    fun removeUserFromGroup(connection: LDAPConnection, user: User, group: Group): Group? {
-        val ldapGroup = getGroupByCN(connection, group.cn) ?: return null
-        if (!ldapGroup.hasMember(user.uid, user.dn))
-            return ldapGroup
-        try {
-            val groupType = ldapGroup.groupType
-            val memberValue = if (groupType === Posix) user.uid else user.dn
-            val memberAttribute = groupType.memberAttritube
-            val modification = Modification(DELETE, memberAttribute, memberValue)
-            connection.modify(ldapGroup.dn, modification)
-        } catch (le: LDAPException) {
-            log.error("Could not add user {} to group {}", user.uid, group.cn)
-            if (log.isDebugEnabled) {
-                log.error("Could not add user", le)
+    @CacheEvict("groups", key = "#group.cn")
+    fun addUserToGroup(connection: LDAPConnection, user: User, group: Group) = addUserToGroup(connection, user, group, ADD)
+
+    @CacheEvict("groups", key = "#group.cn")
+    fun removeUserFromGroup(connection: LDAPConnection, user: User, group: Group) = addUserToGroup(connection, user, group, DELETE)
+
+    @Throws(BusinessException::class)
+    fun resetPassword(connection: LDAPConnection, user: User) = changePassword(connection, user, randomAlphanumeric(32, 33))
+
+    @Throws(BusinessException::class)
+    fun changePassword(connection: LDAPConnection, currentUser: LdapUserDetails, password: String) =
+            with(getUserByUid(connection, currentUser.username)!!) {
+                changePassword(connection, this, password)?.let {
+                    currentUser.setPassword(it)
+                }
             }
-            return ldapGroup
-        }
-
-        return getGroupByCN(connection, group.cn)
-    }
 
     @Throws(BusinessException::class)
-    fun resetPassword(connection: LDAPConnection, user: User): String? {
-        return changePassword(connection, user, RandomStringUtils.randomAlphanumeric(32, 33))
-    }
+    private fun changePassword(connection: LDAPConnection, user: User, newPassword: String): String? {
+        val changes = mapOf(
+                "userPassword" to if (asList(*environment.activeProfiles).contains("development")) newPassword.trim() else Encrypt.salt(newPassword),
+                "sambaNTPassword" to Encrypt.samba(newPassword),
+                "sambaPwdLastSet" to (System.currentTimeMillis() / 1000L).toString()
+        ).toModification()
 
-    @Throws(BusinessException::class)
-    fun changePassword(connection: LDAPConnection, currentUser: LdapUserDetails, password: String): Boolean {
-        val user = getUserByUid(connection, currentUser.username)
-        val newPassword = changePassword(connection, user, password)
-        if (newPassword != null) {
-            currentUser.setPassword(newPassword)
-        }
-        return true
-    }
-
-    @Throws(BusinessException::class)
-    private fun changePassword(connection: LDAPConnection, user: User?, newPassword: String): String? {
-        val timestamp = (System.currentTimeMillis() / 1000L).toString()
-        val ldapUser = getUserByUid(connection, user!!.uid)!!
-
-        val changes = ArrayList<Modification>()
-        if (asList(*environment.activeProfiles).contains("development")) {
-            log.warn("Plaintext crypter - dont use this on production")
-            changes.add(Modification(REPLACE, "userPassword", StringUtils.trim(newPassword)))
-        } else {
-            changes.add(Modification(REPLACE, "userPassword", Encrypt.salt(newPassword)))
-        }
-        changes.add(Modification(REPLACE, "sambaNTPassword", Encrypt.samba(newPassword)))
-        changes.add(Modification(REPLACE, "sambaPwdLastSet", timestamp))
         try {
-            val result = connection.modify(ldapUser.dn, changes)
+            val result = connection.modify(getUserByUid(connection, user.uid)!!.dn, changes)
             if (result.resultCode !== ResultCode.SUCCESS) {
-                log.warn("Could not properly change password for user {}. Reason: {} Status: {}",
-                        ldapUser.uid, result.diagnosticMessage, result.resultCode)
+                log.warn("Could not properly change password for user ${user.uid}. Reason: ${result.diagnosticMessage} Status: ${result.resultCode}")
             }
         } catch (le: LDAPException) {
-            log.error("Could not change password for user {} ", user.uid)
-            if (log.isDebugEnabled) {
-                log.error("Could change password for user", le)
-            }
+            log.error("Could not change password for user ${user.uid}")
             return null
         }
-
         return newPassword
     }
 
-    fun changeUserState(connection: LDAPConnection, uid: String, state: User.State): Boolean {
-        val user = getUserByUid(connection, uid) ?: return false
-        try {
-            val result = connection.modify(user.dn, mapOf(
-                    "szzStatus" to state.name,
-                    "szzMailStatus" to state.name
-            ).toModification())
-
-            if (result.resultCode !== ResultCode.SUCCESS) {
-                log.warn("Could not change user $uid to $state. Reason: ${result.diagnosticMessage} Status: ${result.resultCode}")
-                return false
-            }
-        } catch (le: LDAPException) {
-            log.error("Could not activate user $uid. Reason: ${le.resultString}")
-            return false
-        }
-        return true
-    }
-
-    @CacheEvict("groupMembers", key = "#uid")
-    fun activate(connection: LDAPConnection, uid: String) = changeUserState(connection, uid, active)
-
-    @CacheEvict("groupMembers", key = "#uid")
-    fun deactivate(connection: LDAPConnection, uid: String) = changeUserState(connection, uid, inactive)
-
-
-    private fun createMail(firstName: String, surname: String, domain: String?, shortFirstname: Boolean): String {
-        val fn = mailify(firstName)
-        val sn = mailify(surname)
-        return StringUtils.join<String>(if (shortFirstname) fn[0].toString() else fn, ".", sn, "@", domain)
-    }
+    @CacheEvict(value = ["groupMembers", "users"], key = "#uid")
+    fun changeUserState(connection: LDAPConnection, uid: String, state: User.State) =
+            update(connection, getUserByUid(connection, uid)!!.copy(
+                    szzStatus = state,
+                    szzMailStatus = state
+            ))
 
     @Throws(BusinessException::class)
     private fun generateEmployeeID(connection: LDAPConnection): String {
-        var i = 0
-        var tmpEmployeeNumber = UUID.randomUUID().toString()
-        while (isUserAttributeAlreadyUsed(connection, "employeeNumber", tmpEmployeeNumber)) {
-            tmpEmployeeNumber = UUID.randomUUID().toString()
-            i++
-            if (i > 20) {
-                throw BusinessException("Can't generate unique employee number after 20 retries.",
-                        "user.employeeNumber.cantFindUnique")
+        for (i in 1..20) {
+            with(UUID.randomUUID().toString()) {
+                if (!isUserAttributeAlreadyUsed(connection, "employeeNumber", this)) return this
             }
         }
-        return tmpEmployeeNumber
+        throw BusinessException("Can't generate unique employee number after 20 retries.", "user.employeeNumber.cantFindUnique")
     }
 
     @Throws(BusinessException::class)
-    @CacheEvict("groupMembers", key = "#user.uid")
+    @CacheEvict(value = ["groupMembers", "users"], key = "#user.uid")
     fun insert(connection: LDAPConnection, user: User): User? {
         try {
             val nextUserID = getNextUserID(connection)
@@ -395,7 +322,7 @@ class LdapService {
                     dn = ldapConfiguration.getUserBind(uidSuggestion, user.companyKey),
                     uid = uidSuggestion,
                     uidNumber = nextUserID,
-                    mail = if (user.mail.isNotBlank()) user.mail else createMail(user.givenName, user.sn, domainConfiguration.mailDomain(user.description), false),
+                    mail = if (user.mail.isNotBlank()) user.mail else "${mailify(user.givenName)}.${mailify(user.sn)}@${domainConfiguration.mailDomain(user.description)}",
                     homeDirectory = homeDirPrefix + user.uid,
                     sambaSID = smbIdPrefix + (nextUserID * 2 + 1000),
                     employeeNumber = if (user.employeeNumber.isNotBlank()) user.employeeNumber else generateEmployeeID(connection),
@@ -554,8 +481,7 @@ class LdapService {
     }
 
     @Throws(BusinessException::class)
-
-    @CacheEvict("groupMembers", key = "#user.uid")
+    @CacheEvict(value = ["groupMembers", "users"], key = "#user.uid")
     fun update(connection: LDAPConnection, user: User): User? {
         val pUser = getUserByUid(connection, user.uid)
                 ?: throw BusinessException("The modification was called for a non existing user", "user.notExists")
@@ -585,7 +511,7 @@ class LdapService {
                 changes.add(Modification(REPLACE, "employeeNumber", employeeNumber))
             }
 
-            val changedEntries = with(pUser.toMap()){
+            val changedEntries = with(pUser.toMap()) {
                 user.toMap().filter { it.value != this[it.key] }
             } - listOf("uidNumber", "displayName", "homeDirectory", "sambaSID", "mail") // TODO changes to these currently not detected/supported
             changes.addAll(changedEntries.toModification())
@@ -612,7 +538,7 @@ class LdapService {
                 }
             }
 
-            if (isChanged(user.description, pUser.description)) {
+            if (isChanged(user.description, pUser.description) || isChanged(user.szzStatus, pUser.szzStatus)) {
                 clearGroups(user, onlyDefaultGroups = user.szzStatus == active)
                 if (user.szzStatus == active) addDefaultGroups(user)
             }
@@ -642,7 +568,7 @@ class LdapService {
 
                 defaultGroups.forEach { groupCn ->
                     getGroupByCN(connection, groupCn)?.let {
-                        addUserToGroup(connection, user, it)
+                        cachedLdapService.addUserToGroup(connection, user, it)
                     }
                 }
                 log.debug("Added ${user.uid} to $defaultGroups")
@@ -664,7 +590,7 @@ class LdapService {
                 val defaultGroups = ldapConfiguration.permissions.defaultGroups.values.flatten().toSet()
                 val removedGroups = getGroupsByUser(connection, user.uid, user.dn)
                         .filter { !onlyDefaultGroups || defaultGroups.contains(it.cn) }
-                        .mapNotNull { removeUserFromGroup(connection, user, it) }
+                        .mapNotNull { cachedLdapService.removeUserFromGroup(connection, user, it) }
                 log.debug("Removed ${user.uid} from ${removedGroups.map { it.cn }}")
             }
         } catch (e: LDAPException) {
@@ -745,30 +671,24 @@ class LdapService {
     }
 
     fun getAdminGroup(connection: LDAPConnection, group: Group): Group? {
-        if (group.isAdminGroup) {
-            return group
-        }
+        if (group.groupClassification == ADMIN) return group
 
         val gp = ldapConfiguration.groupPrefixes
-        val adminGroupCN = StringUtils.replace(group.cn, gp.team, gp.admin)
+        val adminGroupCN = group.cn.replace(gp.team, gp.admin)
 
-        val result = getGroupByCN(connection, adminGroupCN)
-        return if (result != null && result.isAdminGroup) {
+        val result = cachedLdapService.getGroupByCN(connection, adminGroupCN)
+        return if (result != null && result.groupClassification == ADMIN) {
             result
-        } else getGroupByCN(connection, ldapConfiguration.permissions.ldapAdminGroup)
+        } else cachedLdapService.getGroupByCN(connection, ldapConfiguration.permissions.ldapAdminGroup)
     }
 
-    fun getGroupAdmins(connection: LDAPConnection, group: Group): List<User> {
-        return getUsersByGroup(connection, getAdminGroup(connection, group))
-    }
+    fun getGroupAdmins(connection: LDAPConnection, group: Group) = getUsersByGroup(connection, getAdminGroup(connection, group))
 
     companion object {
-
         private val log = LoggerFactory.getLogger(LdapService::class.java)
         val OBJECT_MAPPER = ObjectMapper().apply {
             registerModule(JavaTimeModule())
             configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false)
         }
     }
-
 }

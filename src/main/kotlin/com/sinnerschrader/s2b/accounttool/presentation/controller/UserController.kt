@@ -7,6 +7,7 @@ import com.sinnerschrader.s2b.accounttool.logic.component.authorization.Authoriz
 import com.sinnerschrader.s2b.accounttool.logic.component.ldap.LdapBusinessService
 import com.sinnerschrader.s2b.accounttool.logic.component.ldap.LdapService
 import com.sinnerschrader.s2b.accounttool.logic.component.mail.MailService
+import com.sinnerschrader.s2b.accounttool.logic.entity.User
 import com.sinnerschrader.s2b.accounttool.logic.exception.BusinessException
 import com.sinnerschrader.s2b.accounttool.presentation.RequestUtils
 import com.sinnerschrader.s2b.accounttool.presentation.messaging.GlobalMessageFactory
@@ -62,9 +63,9 @@ class UserController {
         authorizationService.ensureUserAdministration(RequestUtils.currentUserDetails!!)
 
         val mav = ModelAndView("pages/user/maintenance.html")
-        mav.addObject("leavingUsers", ldapBusinessService.leavingUsers)
-        mav.addObject("unmaintainedUsers", ldapBusinessService.unmaintainedExternals)
-        mav.addObject("unmaintainedMailUsers", ldapBusinessService.unmaintainedMailUsers)
+        mav.addObject("leavingUsers", ldapBusinessService.leavingUsers())
+        mav.addObject("unmaintainedUsers", ldapBusinessService.unmaintainedExternals())
+        mav.addObject("unmaintainedMailUsers", ldapBusinessService.unmaintainedMailUsers())
         return mav
     }
 
@@ -74,7 +75,7 @@ class UserController {
             @RequestParam(name = "searchTerm", required = false, defaultValue = "") searchTerm: String): ModelAndView {
         authorizationService.ensureUserAdministration(RequestUtils.currentUserDetails!!)
 
-        val users = if (searchTerm.isNotBlank()) ldapService.findUserBySearchTerm(connection, searchTerm) else emptyList()
+        val users = if (searchTerm.isNotBlank()) ldapService.findUserBySearchTerm(connection, searchTerm) else emptySet()
 
         return ModelAndView("pages/user/index.html").apply {
             addObject("company", ldapConfiguration.companies)
@@ -154,12 +155,12 @@ class UserController {
                 var message = if (hidePassword) "user.passwordReset.simple" else "user.passwordReset.full"
                 if (isNotBlank(userForm.activateUser)) {
                     message = "user.activated"
-                    if (ldapService.activate(connection, user.uid)) ldapService.addDefaultGroups(user)
+                    ldapService.changeUserState(connection, user.uid, User.State.active)
                     log.info("{} activated the user {} right now", details.uid, user.uid)
                 }
                 if (isNotBlank(userForm.deactivateUser)) {
                     message = "user.deactivated"
-                    if (ldapService.deactivate(connection, user.uid)) ldapService.clearGroups(user)
+                    ldapService.changeUserState(connection, user.uid, User.State.inactive)
                     log.info("{} deactivated the user {} right now", details.uid, user.uid)
                 }
                 globalMessageFactory.store(request,

@@ -14,65 +14,72 @@ import java.time.OffsetDateTime
 import java.time.format.DateTimeFormatter
 import java.util.*
 
+/**
+ *
+ * @param dn Full DN of LDAP - Example: "dn: uid=firlas,ou=users,ou=e1c1,dc=exampe,dc=org"
+ * @param uid Username based on first- and lastname - Has to be 6 or 8 Characters long.
+ * @param uidNumber Unique User ID for PosixAccounts.
+ * @param gidNumber Numeric Group ID, current always set to 100
+ * @param homeDirectory Custom home directory, for personal fileshare.  Pattern: /export/home/{USERNAME}
+ * @param sambaSID Seperated into constant part an calculated part based on uidNumber.  S-1-5-21-1517199603-1739104038-1321870143-2552
+ * @param sambaAcctFlags Currently not used, so it is a constant: [U          ]
+ * @param sambaPasswordHistory Currently not really used
+ * @param ou department / team
+ * @param description Type of employment; should be employeeType of inetOrgPerson. - Example: Mitarbeiter, Freelancer, Student, Praktikant
+ * @param employeeNumber 6cb2d8bc-e4b6-460c-bd6f-0743b520da1a Unique Employee Number. Generated from UUID
+ * @param l location
+ * @param o organisation
+ * @param companyKey The Company where the User belongs to. (see: companies on yaml configuration)
+ */
 data class User(
-        @JsonIgnore
-        val dn: String = "", // Full DN of LDAP - Example: "dn: uid=firlas,ou=users,ou=e1c1,dc=exampe,dc=org"
-        val uid: String, // Username based on first- and lastname - Has to be 6 or 8 Characters long.
-        val uidNumber: Int? = null, // Unique User ID for PosixAccounts.
-        val gidNumber: Int = 100, // Numeric Group ID, current always set to 100
+        @JsonIgnore val dn: String = "",
+        val uid: String,
+        val uidNumber: Int? = null,
+        val gidNumber: Int = 100,
         val givenName: String,
         val sn: String,
-        val displayName: String = "$givenName $sn (COMPANY)", // Full name firstname + lastname
+        val displayName: String = "$givenName $sn (COMPANY)",
         val gecos: String = asciify("$givenName $sn"),
         val cn: String = "$givenName $sn",
-        val homeDirectory: String = "", // Custom home directory, for personal fileshare.  Pattern: /export/home/{USERNAME}
+        val homeDirectory: String = "",
         val loginShell: String = "/bin/false",
         val szzBirthDay: Int = -1,
         val szzBirthMonth: Int = -1,
-        val sambaSID: String? = "", // Seperated into constant part an calculated part based on uidNumber.  S-1-5-21-1517199603-1739104038-1321870143-2552
-        val sambaPasswordHistory: String = "0000000000000000000000000000000000000000000000000000000000000000", // Currently not really used
-        val sambaAcctFlags: String? = "", // Currently not used, so it is a constant: [U          ]
+        val sambaSID: String? = "",
+        val sambaPasswordHistory: String = "0000000000000000000000000000000000000000000000000000000000000000",
+        val sambaAcctFlags: String? = "",
         val mail: String,
         val szzStatus: State = State.inactive,
         val szzMailStatus: State = State.inactive,
-        @JsonIgnore
-        val sambaPwdLastSet: Long = (System.currentTimeMillis() / 1000L),
+        @JsonIgnore val sambaPwdLastSet: Long = (System.currentTimeMillis() / 1000L),
         val szzEntryDate: LocalDate?,
         val szzExitDate: LocalDate?,
-        val ou: String, // department / team
-        val description: String, // Type of employment; should be employeeType of inetOrgPerson. - Example: Mitarbeiter, Freelancer, Student, Praktikant
+        val ou: String,
+        val description: String,
         val telephoneNumber: String = "",
         val mobile: String = "",
-        val employeeNumber: String, // 6cb2d8bc-e4b6-460c-bd6f-0743b520da1a Unique Employee Number. Generated from UUID
+        val employeeNumber: String,
         val title: String = "",
-        val l: String, // location
+        val l: String,
         val szzPublicKey: String = "",
-        val o: String, // organisation
-        @JsonIgnore
-        val companyKey: String, // The Company where the User belongs to. (see: companies on yaml configuration)
-        @JsonIgnore
-        val modifiersName: String = "",
-        @JsonIgnore
-        val modifytimestamp: String = ""
+        val o: String,
+        @JsonIgnore val companyKey: String,
+        @JsonIgnore val modifiersName: String = "",
+        @JsonIgnore val modifytimestamp: String = ""
 ) : Comparable<User>, Diffable<User> {
-    val objectClass = objectClasses
-
-    companion object {
-        val objectClasses = listOf(
+    val objectClass = listOf(
             "person",
             "organizationalPerson",
             "inetOrgPerson",
             "posixAccount",
             "sambaSamAccount",
             "szzUser"
-        )
-    }
-
+    )
 
     override fun compareTo(other: User) =
-        CompareToBuilder().append(sn, other.sn).append(givenName, other.givenName).append(uid, other.uid).build()
+            CompareToBuilder().append(sn, other.sn).append(givenName, other.givenName).append(uid, other.uid).build()
 
-    override fun diff(other: User?): DiffResult = ReflectionDiffBuilder(this, other, SHORT_PREFIX_STYLE).build()
+    override fun diff(other: User): DiffResult = ReflectionDiffBuilder(this, other, SHORT_PREFIX_STYLE).build()
 
     enum class State {
         active, inactive;
@@ -91,11 +98,11 @@ fun User.getPrettyModifytimestamp() =
         } catch (e: Exception) {
             modifytimestamp
         }
+
 fun User.getLastPasswordChange() = Date(sambaPwdLastSet * 1000)
 fun User.getPrettyLastPasswordChange() = PrettyTime().format(getLastPasswordChange())
 fun User.getPrettyLastModified() = if (modifytimestamp.isNotBlank()) "${getPrettyModifytimestamp()} by ${getPrettyModifiersName()}" else ""
 fun User.getPrettyModifiersName() = Regex("^uid=([^,]+)").find(modifiersName)?.groupValues?.get(1) ?: modifiersName
-
 
 
 // TODO copied from ldapservice

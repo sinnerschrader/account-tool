@@ -20,9 +20,7 @@ class GroupMapping {
     @Autowired
     private lateinit var ldapConfiguration: LdapConfiguration
 
-    fun map(entry: SearchResultEntry?): Group? {
-        if (entry == null) return null
-
+    fun map(entry: SearchResultEntry): Group? {
         fun SearchResultEntry.str(attributeName: String) = getAttributeValue(attributeName)
         fun SearchResultEntry.int(attributeName: String) = getAttributeValueAsInteger(attributeName)
 
