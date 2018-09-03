@@ -62,6 +62,7 @@ data class User(
         val title: String = "",
         val l: String,
         val szzPublicKey: String = "",
+        val szzGithubAccount: String = "",
         val o: String,
         @JsonIgnore val companyKey: String,
         @JsonIgnore val modifiersName: String = "",

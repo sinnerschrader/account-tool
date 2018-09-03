@@ -18,20 +18,23 @@ class ChangeProfile(
     var passwordRepeat: String = "",
     var telephone: String = "",
     var mobile: String = "",
-    var publicKey: String = ""
+    var publicKey: String = "",
+    var githubAccount: String = ""
 ) : Serializable {
 
     constructor(user: User) : this(
         telephone = user.telephoneNumber,
         mobile = user.mobile,
-        publicKey = user.szzPublicKey ?: ""
+        publicKey = user.szzPublicKey ?: "",
+        githubAccount = user.szzGithubAccount ?: ""
     )
 
     fun createUserEntityFromForm(persistentUser: User) =
         persistentUser.copy(
             telephoneNumber = telephone.trim(),
             mobile = mobile.trim(),
-            szzPublicKey = publicKey.trim())
+            szzPublicKey = publicKey.trim(),
+            szzGithubAccount = githubAccount.trim())
 
     fun isPasswordChange() = changePassword.isNotBlank()
     fun isPhoneChange() = changePhones.isNotBlank()

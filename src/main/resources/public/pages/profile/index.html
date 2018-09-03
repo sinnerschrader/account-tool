@@ -114,6 +114,8 @@
                         <input type="hidden" name="{{request.getAttribute('_csrf').parameterName}}"
                                value="{{request.getAttribute('_csrf').token}}"/>
                         <input type="hidden" name="publicKey" value="{{ changeProfileForm.publicKey }}"/>
+                        <input type="hidden" name="githubAccount" value="{{ changeProfileForm.githubAccount }}"/>
+
                         <div class="s2act-textfield mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
                             <input class="mdl-textfield__input" type="text" name="telephone" id="telephone"
                                    value="{{ changeProfileForm.telephone }}" pattern="\+?[0-9 ()]+">
@@ -155,6 +157,7 @@
                                value="{{request.getAttribute('_csrf').token}}"/>
                         <input type="hidden" name="telephone" value="{{ changeProfileForm.telephone }}"/>
                         <input type="hidden" name="mobile" value="{{ changeProfileForm.mobile }}"/>
+                        <input type="hidden" name="githubAccount" value="{{ changeProfileForm.githubAccount }}"/>
 
                         <div class="s2act-textfield mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
                             <textarea class="mdl-textfield__input" type="text" rows="16" id="publicKey"
@@ -163,6 +166,42 @@
                         </div>
                         <div class="s2act-buttonRow">
                             <input type="submit" name="changePublicKey" value="Save"
+                                   class="s2act-button--right mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--primary"/>
+                        </div>
+                    </form>
+                </td>
+            </tr>
+
+            <tr id="changeGithubAccount" class="">
+                <td class="mdl-data-table__cell--non-numeric s2act-data-table__cell--header">Github account</td>
+                <td class="mdl-data-table__cell--non-numeric s2act-data-table__cell--value">{{ user.szzGithubAccount |
+                    abbreviate(26) | default("No Github account") }}
+                </td>
+                <td class="mdl-data-table__cell--non-numeric s2act-data-table__cell--value">
+                    <a href="/profile?edit={{edit == 'GITHUB_ACCOUNT'? 'NONE' : 'GITHUB_ACCOUNT' }}"
+                       class="mdl-button mdl-js-button mdl-button--icon">
+                        <i class="material-icons">edit</i>
+                    </a>
+                </td>
+            </tr>
+            <!-- Change Github account -->
+            <tr id="changeGithubAccountForm"
+                class="s2act-attributeForm {{edit == 'GITHUB_ACCOUNT' or hasFieldErrors(formName, 'githubAccount') ? 'active' : ''}}">
+                <td colspan="3" class="mdl-data-table__cell--non-numeric s2act-data-table__cell--value">
+                    <form name="changeGithubAccountForm" action="/profile/change" method="post">
+                        <input type="hidden" name="{{request.getAttribute('_csrf').parameterName}}"
+                               value="{{request.getAttribute('_csrf').token}}"/>
+                        <input type="hidden" name="telephone" value="{{ changeProfileForm.telephone }}"/>
+                        <input type="hidden" name="mobile" value="{{ changeProfileForm.mobile }}"/>
+                        <input type="hidden" name="publicKey" value="{{ changeProfileForm.publicKey }}"/>
+
+                        <div class="s2act-textfield mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+                            <input class="mdl-textfield__input" type="text" name="githubAccount" id="githubAccount"
+                                   value="{{ changeProfileForm.githubAccount }}">
+                            <label class="mdl-textfield__label" for="githubAccount">Github Account</label>
+                        </div>
+                        <div class="s2act-buttonRow">
+                            <input type="submit" name="changeGithubAccount" value="Save"
                                    class="s2act-button--right mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--primary"/>
                         </div>
                     </form>
