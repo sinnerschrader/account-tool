@@ -38,7 +38,7 @@ class ProfileController {
     @Resource(name = "changeProfileFormValidator")
     private val changeProfileFormValidator: ChangeProfileFormValidator? = null
 
-    enum class Edit { PASSWORD, PHONE, SSH_KEY, NONE }
+    enum class Edit { PASSWORD, PHONE, SSH_KEY, GITHUB_ACCOUNT, NONE }
 
     @RequestMapping("/profile", method = [GET])
     fun profile(request: HttpServletRequest, model: Model,

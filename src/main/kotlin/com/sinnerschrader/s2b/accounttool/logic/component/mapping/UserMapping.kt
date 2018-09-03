@@ -55,6 +55,7 @@ class UserMapping {
                         title = str("title") ?: "",
                         l = str("l"),
                         szzPublicKey = str("szzPublicKey") ?: "",
+                        szzGithubAccount = str("szzGithubAccount") ?: "",
                         o = companyForDn(dn).second,
                         companyKey = companyForDn(dn).first,
                         modifiersName = str("modifiersName"),
