@@ -114,7 +114,7 @@
                         <input type="hidden" name="{{request.getAttribute('_csrf').parameterName}}"
                                value="{{request.getAttribute('_csrf').token}}"/>
                         <input type="hidden" name="publicKey" value="{{ changeProfileForm.publicKey }}"/>
-                        <input type="hidden" name="githubAccount" value="{{ changeProfileForm.githubAccount }}"/>
+                        <input type="hidden" name="externalAccounts" value="{{ changeProfileForm.szzExternalAccounts }}"/>
 
                         <div class="s2act-textfield mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
                             <input class="mdl-textfield__input" type="text" name="telephone" id="telephone"
@@ -157,7 +157,7 @@
                                value="{{request.getAttribute('_csrf').token}}"/>
                         <input type="hidden" name="telephone" value="{{ changeProfileForm.telephone }}"/>
                         <input type="hidden" name="mobile" value="{{ changeProfileForm.mobile }}"/>
-                        <input type="hidden" name="githubAccount" value="{{ changeProfileForm.githubAccount }}"/>
+                        <input type="hidden" name="szzExternalAcounts" value="{{ changeProfileForm.szzExternalAccounts }}"/>
 
                         <div class="s2act-textfield mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
                             <textarea class="mdl-textfield__input" type="text" rows="16" id="publicKey"
@@ -172,21 +172,25 @@
                 </td>
             </tr>
 
-            <tr id="changeGithubAccount" class="">
-                <td class="mdl-data-table__cell--non-numeric s2act-data-table__cell--header">Github account</td>
-                <td class="mdl-data-table__cell--non-numeric s2act-data-table__cell--value">{{ user.szzGithubAccount |
-                    abbreviate(26) | default("No Github account") }}
+            <tr id="changeExternalAccounts" class="">
+                <td class="mdl-data-table__cell--non-numeric s2act-data-table__cell--header">External Accounts</td>
+                <td class="mdl-data-table__cell--non-numeric s2act-data-table__cell--value">
+                    {% for externalAccount in user.szzExternalAccounts %}
+                            {{externalAccount.key}}: {{ externalAccount.value | abbreviate(26) | default("No " + externalAccount.value + " account") }}
+                            <br />
+                    {% endfor %}
                 </td>
                 <td class="mdl-data-table__cell--non-numeric s2act-data-table__cell--value">
-                    <a href="/profile?edit={{edit == 'GITHUB_ACCOUNT'? 'NONE' : 'GITHUB_ACCOUNT' }}"
+                    <a href="/profile?edit={{edit == 'EXTERNAL_ACCOUNTS'? 'NONE' : 'EXTERNAL_ACCOUNTS' }}"
                        class="mdl-button mdl-js-button mdl-button--icon">
                         <i class="material-icons">edit</i>
                     </a>
                 </td>
             </tr>
+
             <!-- Change Github account -->
             <tr id="changeGithubAccountForm"
-                class="s2act-attributeForm {{edit == 'GITHUB_ACCOUNT' or hasFieldErrors(formName, 'githubAccount') ? 'active' : ''}}">
+                class="s2act-attributeForm {{edit == 'EXTERNAL_ACCOUNTS' or hasFieldErrors(formName, 'externalAccountS') ? 'active' : ''}}">
                 <td colspan="3" class="mdl-data-table__cell--non-numeric s2act-data-table__cell--value">
                     <form name="changeGithubAccountForm" action="/profile/change" method="post">
                         <input type="hidden" name="{{request.getAttribute('_csrf').parameterName}}"
@@ -195,11 +199,15 @@
                         <input type="hidden" name="mobile" value="{{ changeProfileForm.mobile }}"/>
                         <input type="hidden" name="publicKey" value="{{ changeProfileForm.publicKey }}"/>
 
+                        {% for externalAccount in changeProfileForm.szzExternalAccounts %}
                         <div class="s2act-textfield mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
-                            <input class="mdl-textfield__input" type="text" name="githubAccount" id="githubAccount"
-                                   value="{{ changeProfileForm.githubAccount }}">
-                            <label class="mdl-textfield__label" for="githubAccount">Github Account</label>
+                            <input class="mdl-textfield__input" type="text" name="szzExternalAccounts[{{ externalAccount.key }}]" id="szzExternalAccounts[{{ externalAccount.key }}]"
+                                   value="{{ externalAccount.value }}">
+                            <label class="mdl-textfield__label" for="szzExternalAccounts[{{ externalAccount.key }}]">{{ externalAccount.key }}</label>
                         </div>
+                        {% else %}
+                            <p> There are no external accounts. </p>
+                        {% endfor %}
                         <div class="s2act-buttonRow">
                             <input type="submit" name="changeGithubAccount" value="Save"
                                    class="s2act-button--right mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--primary"/>

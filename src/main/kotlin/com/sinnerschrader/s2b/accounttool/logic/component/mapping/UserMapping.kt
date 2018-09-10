@@ -1,5 +1,6 @@
 package com.sinnerschrader.s2b.accounttool.logic.component.mapping
 
+import com.sinnerschrader.s2b.accounttool.config.UserConfiguration
 import com.sinnerschrader.s2b.accounttool.config.ldap.LdapConfiguration
 import com.sinnerschrader.s2b.accounttool.logic.entity.User
 import com.unboundid.ldap.sdk.SearchResultEntry
@@ -15,12 +16,19 @@ class UserMapping {
     @Autowired
     private lateinit var ldapConfiguration: LdapConfiguration
 
+    @Autowired
+    private lateinit var userConfiguration: UserConfiguration
+
     fun map(entry: SearchResultEntry?): User? {
         if (entry == null) return null
 
-        fun SearchResultEntry.str(attributeName: String) = getAttributeValue(attributeName)
         fun SearchResultEntry.int(attributeName: String) = getAttributeValueAsInteger(attributeName)
         fun SearchResultEntry.long(attributeName: String) = getAttributeValueAsLong(attributeName)
+        fun SearchResultEntry.str(attributeName: String) = getAttributeValue(attributeName)
+        fun SearchResultEntry.strMap(attributeName: String) =
+                if (hasAttribute(attributeName)) str(attributeName).split(',')
+                    .map { it.split('=', limit = 2).let { valuePair -> valuePair[0] to valuePair[1] } }.toMap()
+                else emptyMap()
 
         return try {
             with(entry) {
@@ -55,7 +63,7 @@ class UserMapping {
                         title = str("title") ?: "",
                         l = str("l"),
                         szzPublicKey = str("szzPublicKey") ?: "",
-                        szzGithubAccount = str("szzGithubAccount") ?: "",
+                        szzExternalAccounts = userConfiguration.externalAccounts.keys.map { it to "" }.toMap() + strMap("szzExternalAccounts"),
                         o = companyForDn(dn).second,
                         companyKey = companyForDn(dn).first,
                         modifiersName = str("modifiersName"),

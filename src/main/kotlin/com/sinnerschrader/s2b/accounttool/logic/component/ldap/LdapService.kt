@@ -11,12 +11,10 @@ import com.sinnerschrader.s2b.accounttool.config.ldap.LdapQueries
 import com.sinnerschrader.s2b.accounttool.logic.component.encryption.Encrypt
 import com.sinnerschrader.s2b.accounttool.logic.component.mapping.GroupMapping
 import com.sinnerschrader.s2b.accounttool.logic.component.mapping.UserMapping
-import com.sinnerschrader.s2b.accounttool.logic.entity.Group
+import com.sinnerschrader.s2b.accounttool.logic.entity.*
 import com.sinnerschrader.s2b.accounttool.logic.entity.Group.GroupClassification.ADMIN
 import com.sinnerschrader.s2b.accounttool.logic.entity.Group.GroupType.Posix
-import com.sinnerschrader.s2b.accounttool.logic.entity.User
 import com.sinnerschrader.s2b.accounttool.logic.entity.User.State.active
-import com.sinnerschrader.s2b.accounttool.logic.entity.UserInfo
 import com.sinnerschrader.s2b.accounttool.logic.exception.BusinessException
 import com.unboundid.ldap.sdk.*
 import com.unboundid.ldap.sdk.Filter.createANDFilter
@@ -345,6 +343,7 @@ class LdapService {
             when (it) {
                 is String -> Modification(modificationType, entry.key, it)
                 is Number -> Modification(modificationType, entry.key, it.toString())
+                is Map<*,*> -> Modification(modificationType, entry.key, it.map {entry -> "${entry.key}=${entry.value}"}.joinToString(separator = ","))
                 else -> throw UnsupportedOperationException()
             }
         }
@@ -362,6 +361,7 @@ class LdapService {
             is Number -> Attribute(k, v.toString())
             is String -> Attribute(k, v)
             is Collection<*> -> Attribute(k, v as Collection<String>)
+            is Map<*, *> ->  Attribute(k, v.map {entry -> "${entry.key}=${entry.value}"}.joinToString(","))
             else -> throw UnsupportedOperationException()
         }
     }

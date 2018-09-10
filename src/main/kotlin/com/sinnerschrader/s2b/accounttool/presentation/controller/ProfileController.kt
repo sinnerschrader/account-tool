@@ -38,7 +38,7 @@ class ProfileController {
     @Resource(name = "changeProfileFormValidator")
     private val changeProfileFormValidator: ChangeProfileFormValidator? = null
 
-    enum class Edit { PASSWORD, PHONE, SSH_KEY, GITHUB_ACCOUNT, NONE }
+    enum class Edit { PASSWORD, PHONE, SSH_KEY, EXTERNAL_ACCOUNTS, NONE }
 
     @RequestMapping("/profile", method = [GET])
     fun profile(request: HttpServletRequest, model: Model,
@@ -47,7 +47,7 @@ class ProfileController {
         val details = RequestUtils.currentUserDetails
         val mav = ModelAndView("pages/profile/index.html")
         if (details != null) {
-            val user = ldapService.getUserByUid(connection, details.username)
+            val user = ldapService.getUserByUid(connection, details.username)!!
             mav.addAllObjects(model.asMap())
             mav.addObject("user", user)
             mav.addObject("groups", ldapService.getGroupsByUser(connection, details.uid, details.dn))

@@ -38,6 +38,7 @@ szzBirthDay: 1
 szzBirthMonth: 1
 szzEntryDate: 2001-02-12
 szzExitDate: 2025-12-31
+szzExternalAccounts: aws=accadmataws,github=accadmatgithub
 sambaAcctFlags: [U          ]
 sambaPasswordHistory: 0
 sambaNTPassword: testuser

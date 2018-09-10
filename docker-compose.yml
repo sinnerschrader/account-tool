@@ -17,6 +17,8 @@ services:
       - '8081:8081'
       - '5005:5005'
     environment:
-      SPRING_PROFILES_ACTIVE: development,maildev
+      SPRING_PROFILES_ACTIVE: development,maildev,local
       GIT_COMMIT: dummycommit
       GIT_BRANCH: dummybranch
+    #command: 'sh -c "gradle --continuous build & gradle bootRun"'
+    command: 'gradle --continuous build bootRun'

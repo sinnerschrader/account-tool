@@ -19,14 +19,14 @@ class ChangeProfile(
     var telephone: String = "",
     var mobile: String = "",
     var publicKey: String = "",
-    var githubAccount: String = ""
+    var szzExternalAccounts: Map<String,String> = mutableMapOf()
 ) : Serializable {
 
     constructor(user: User) : this(
         telephone = user.telephoneNumber,
         mobile = user.mobile,
-        publicKey = user.szzPublicKey ?: "",
-        githubAccount = user.szzGithubAccount ?: ""
+        publicKey = user.szzPublicKey,
+        szzExternalAccounts = user.szzExternalAccounts
     )
 
     fun createUserEntityFromForm(persistentUser: User) =
@@ -34,7 +34,7 @@ class ChangeProfile(
             telephoneNumber = telephone.trim(),
             mobile = mobile.trim(),
             szzPublicKey = publicKey.trim(),
-            szzGithubAccount = githubAccount.trim())
+            szzExternalAccounts = szzExternalAccounts)
 
     fun isPasswordChange() = changePassword.isNotBlank()
     fun isPhoneChange() = changePhones.isNotBlank()

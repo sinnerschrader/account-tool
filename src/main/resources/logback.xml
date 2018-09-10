@@ -1,11 +1,23 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <configuration>
-    <include resource="org/springframework/boot/logging/logback/defaults.xml"/>
+  <include resource="org/springframework/boot/logging/logback/defaults.xml"/>
 
-    <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
+  <if condition='!property("SPRING_PROFILES_ACTIVE").contains("local")'>
+    <then>
+      <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
         <encoder class="net.logstash.logback.encoder.LogstashEncoder"/>
-    </appender>
-    <root level="INFO">
-        <appender-ref ref="CONSOLE"/>
-    </root>
+      </appender>
+    </then>
+    <else>
+      <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+          <pattern>%-4relative [%thread] %-5level %logger{35} - %msg %n</pattern>
+        </encoder>
+      </appender>
+    </else>
+  </if>
+
+  <root level="INFO">
+    <appender-ref ref="CONSOLE"/>
+  </root>
 </configuration>

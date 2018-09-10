@@ -161,7 +161,8 @@ class LdapServiceTests {
                 employeeNumber =  employeeNumber,
                 l = "Hamburg",
                 o = "Example - Company 2",
-                companyKey = "e1c2"
+                companyKey = "e1c2",
+                szzExternalAccounts = mapOf("github" to "me@github")
         )
 
     }

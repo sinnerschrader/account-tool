@@ -61,11 +61,14 @@ class UserFormTest {
                 "Example User",
                 "Hamburg",
                 "",
+                mapOf("github" to "me@github",
+                        "aws" to "me@aws" ),
                 "Example Company",
                 "e1c1",
                 "",
                 ""
         )
+
         val userForm = UserForm(user)
         Assert.assertTrue(userForm.entryAsDate() == user.szzEntryDate)
         Assert.assertTrue(userForm.exitAsDate() == user.szzExitDate)
