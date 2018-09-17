@@ -3,6 +3,12 @@ FROM gradle:jdk8-alpine
 USER root
 RUN apk add --no-cache git
 
+RUN cd / \
+ && wget https://github.com/glowroot/glowroot/releases/download/v0.10.12/glowroot-0.10.12-dist.zip  \
+ && unzip glowroot-*.zip \
+ && rm glowroot-*.zip \
+ && echo '{"web": {"bindAddress": "0.0.0.0"}}' > /glowroot/admin.json
+
 WORKDIR /app
 
 ENV GRADLE_USER_HOME=/gradle

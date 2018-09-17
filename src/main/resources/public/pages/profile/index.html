@@ -66,9 +66,8 @@
                     <form name="changeProfileForm" action="/profile/change" method="post">
                         <input type="hidden" name="{{request.getAttribute('_csrf').parameterName}}"
                                value="{{request.getAttribute('_csrf').token}}"/>
-                        <input type="hidden" name="publicKey" value="{{ changeProfileForm.publicKey }}"/>
-                        <input type="hidden" name="telephone" value="{{ changeProfileForm.telephone }}"/>
-                        <input type="hidden" name="mobile" value="{{ changeProfileForm.mobile }}"/>
+                        <input type="hidden" name="edit" value = "PASSWORD" />
+
                         <div class="s2act-textfield mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
                             <input class="mdl-textfield__input" type="password" name="oldPassword" id="oldPassword"
                                    value="{{ changeProfileForm.oldPassword }}">
@@ -113,8 +112,7 @@
                     <form name="changeProfileForm" action="/profile/change" method="post">
                         <input type="hidden" name="{{request.getAttribute('_csrf').parameterName}}"
                                value="{{request.getAttribute('_csrf').token}}"/>
-                        <input type="hidden" name="publicKey" value="{{ changeProfileForm.publicKey }}"/>
-                        <input type="hidden" name="externalAccounts" value="{{ changeProfileForm.szzExternalAccounts }}"/>
+                        <input type="hidden" name="edit" value = "PHONE" />
 
                         <div class="s2act-textfield mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
                             <input class="mdl-textfield__input" type="text" name="telephone" id="telephone"
@@ -155,9 +153,7 @@
                     <form name="changeProfileForm" action="/profile/change" method="post">
                         <input type="hidden" name="{{request.getAttribute('_csrf').parameterName}}"
                                value="{{request.getAttribute('_csrf').token}}"/>
-                        <input type="hidden" name="telephone" value="{{ changeProfileForm.telephone }}"/>
-                        <input type="hidden" name="mobile" value="{{ changeProfileForm.mobile }}"/>
-                        <input type="hidden" name="szzExternalAcounts" value="{{ changeProfileForm.szzExternalAccounts }}"/>
+                        <input type="hidden" name="edit" value = "SSH_KEY" />
 
                         <div class="s2act-textfield mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
                             <textarea class="mdl-textfield__input" type="text" rows="16" id="publicKey"
@@ -195,9 +191,7 @@
                     <form name="changeGithubAccountForm" action="/profile/change" method="post">
                         <input type="hidden" name="{{request.getAttribute('_csrf').parameterName}}"
                                value="{{request.getAttribute('_csrf').token}}"/>
-                        <input type="hidden" name="telephone" value="{{ changeProfileForm.telephone }}"/>
-                        <input type="hidden" name="mobile" value="{{ changeProfileForm.mobile }}"/>
-                        <input type="hidden" name="publicKey" value="{{ changeProfileForm.publicKey }}"/>
+                        <input type="hidden" name="edit" value = "EXTERNAL_ACCOUNTS" />
 
                         {% for externalAccount in changeProfileForm.szzExternalAccounts %}
                         <div class="s2act-textfield mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
@@ -233,9 +227,7 @@
             <tbody>
             <tr>
                 <td class="mdl-data-table__cell--non-numeric s2act-data-table__cell--header">Entry Date</td>
-                <td colspan="2" class="mdl-data-table__cell--non-numeric s2act-data-table__cell--value">{{
-                    user.employeeEntryDate.dayOfMonth | numberformat("00") }}.{{ user.employeeEntryDate.monthValue |
-                    numberformat("00") }}.{{ user.employeeEntryDate.year | numberformat("0000") }}
+                <td colspan="2" class="mdl-data-table__cell--non-numeric s2act-data-table__cell--value">{{ user.szzEntryDate }}
                 </td>
             </tr>
             <tr>

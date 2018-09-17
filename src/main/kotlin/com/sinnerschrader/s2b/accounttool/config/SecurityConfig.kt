@@ -92,8 +92,10 @@ class SecurityConfig : WebSecurityConfigurerAdapter() {
                         return userInfo?.let { LdapAuthenticationDetails(userInfo.dn, context)}
                     }
                 } catch (e: LDAPException) {
+                    // TODO log exception
                     return null
                 } catch (e: GeneralSecurityException) {
+                    // TODO log exception
                     return null
                 }
             }

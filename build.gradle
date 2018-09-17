@@ -15,6 +15,8 @@ targetCompatibility = 1.8
 
 bootRun {
     jvmArgs = ['-Xmx256m', '-Xss256k', '-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=5005']
+    // TODO glowroot breaks remote debugging (values cannot be viewed)
+    //jvmArgs = ['-javaagent:/glowroot/glowroot.jar', '-Xmx256m', '-Xss256k', '-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=5005']
 }
 
 repositories {
@@ -32,6 +34,7 @@ dependencies {
     compile group: 'org.apache.commons', name: 'commons-lang3', version: '3.7'
     compile group: 'org.apache.sshd', name: 'sshd-core', version: '1.6.0'
     compile group: 'org.codehaus.janino', name: 'janino', version: '3.0.9'
+    compile group: 'org.glowroot', name: 'glowroot-agent-api', version: '0.10.12'
     compile group: 'org.jetbrains.kotlin', name: 'kotlin-stdlib-jre8', version: '1.2.61'
     compile group: 'org.ocpsoft.prettytime', name: 'prettytime', version: '4.0.1.Final'
     compile group: 'org.springframework.boot', name: 'spring-boot-devtools'

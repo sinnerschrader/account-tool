@@ -162,6 +162,7 @@ class LdapServiceTests {
                 l = "Hamburg",
                 o = "Example - Company 2",
                 companyKey = "e1c2",
+                szzPublicKey = "MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQCF4SHFVImV9odHcddPXRNCpwLWFdsG/5AJcntDtqucWBN8JvYCsW2iR+mk8+sStnlnPpaiR20Rc7avhPI0tw7JayoMPP3rec/hKKPdSez6QlrOmYcarnz/DVq/07fNaG6F1HKveYIbYK457Ey56lpd6rmlWXW/F2106fY2yy9IyQIDAQAB",
                 szzExternalAccounts = mapOf("github" to "me@github")
         )
 
