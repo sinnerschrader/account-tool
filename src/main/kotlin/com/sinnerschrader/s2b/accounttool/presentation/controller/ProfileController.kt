@@ -74,16 +74,24 @@ class ProfileController {
             attr.addFlashAttribute(FORMNAME, form)
         } else {
             try {
-                val ldapUser = ldapService.getUserByUid(connection, details!!.uid)
-                val updatedUser = form.createUserEntityFromForm(ldapUser!!)
-                if (form.isPasswordChange()) {
+                val ldapUser = ldapService.getUserByUid(connection, details!!.uid, skipCache = true)!!
+                val updatedUser = with(form){
+                    when(edit){
+                        PHONE -> ldapUser.copy(mobile = mobile.trim(), telephoneNumber = telephone.trim())
+                        SSH_KEY -> ldapUser.copy(szzPublicKey = publicKey.trim())
+                        EXTERNAL_ACCOUNTS -> ldapUser.copy(szzExternalAccounts = szzExternalAccounts)
+                        else -> ldapUser
+                    }
+                }
+
+                if (form.edit == PASSWORD) {
                     ldapService.changePassword(connection, details, form.password)
                     log.info("{} changed his/her password", details.uid)
                     mailService.sendMail(listOf(ldapUser), AccountChangeMail(ldapUser, AccountChangeMail.Action.PASSWORD_CHANGED))
                 } else {
                     ldapService.update(connection, updatedUser)
                     log.info("{} updated his/her account informations", details.uid)
-                    if (form.isPublicKeyChange()) {
+                    if (form.edit == SSH_KEY) {
                         mailService.sendMail(listOf(ldapUser), AccountChangeMail(ldapUser, AccountChangeMail.Action.SSH_KEY_CHANGED))
                     }
                 }
@@ -97,9 +105,7 @@ class ProfileController {
         val edit = with(form) {
             when {
                 !bindingResult.hasErrors() -> NONE
-                isPasswordChange() -> PASSWORD
-                isPhoneChange() -> PHONE
-                else -> SSH_KEY
+                else -> edit
             }
         }
         return "redirect:/profile?edit=$edit"

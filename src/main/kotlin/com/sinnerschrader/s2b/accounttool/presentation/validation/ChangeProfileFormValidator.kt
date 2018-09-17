@@ -3,6 +3,8 @@ package com.sinnerschrader.s2b.accounttool.presentation.validation
 import com.sinnerschrader.s2b.accounttool.logic.component.security.PasswordAnalyzeService
 import com.sinnerschrader.s2b.accounttool.logic.component.security.PwnedPasswordService
 import com.sinnerschrader.s2b.accounttool.presentation.RequestUtils
+import com.sinnerschrader.s2b.accounttool.presentation.controller.ProfileController
+import com.sinnerschrader.s2b.accounttool.presentation.controller.ProfileController.Edit.*
 import com.sinnerschrader.s2b.accounttool.presentation.model.ChangeProfile
 import org.apache.commons.codec.binary.Base64
 import org.apache.commons.lang3.StringUtils
@@ -16,12 +18,16 @@ import org.springframework.validation.Validator
 import java.security.interfaces.DSAPublicKey
 import java.security.interfaces.ECPublicKey
 import java.security.interfaces.RSAPublicKey
+import javax.servlet.http.HttpServletRequest
 
 @Component(value = "changeProfileFormValidator")
 class ChangeProfileFormValidator : Validator {
 
     @Autowired
     private lateinit var passwordAnalyzeService: PasswordAnalyzeService
+
+    @Autowired
+    private lateinit var request: HttpServletRequest
 
     override fun supports(clazz: Class<*>) =ChangeProfile::class.java.isAssignableFrom(clazz)
 
@@ -127,10 +133,10 @@ class ChangeProfileFormValidator : Validator {
 
     override fun validate(target: Any, errors: Errors) {
         with(target as ChangeProfile){
-            when{
-                isPublicKeyChange() -> validateAndSanitizeSSHKey(this, errors)
-                isPhoneChange() -> Unit // disabled check
-                isPasswordChange() -> validatePassword(this, errors)
+            when(edit){
+                SSH_KEY -> validateAndSanitizeSSHKey(this, errors)
+                PASSWORD -> validatePassword(this, errors)
+                else -> Unit
             }
         }
     }

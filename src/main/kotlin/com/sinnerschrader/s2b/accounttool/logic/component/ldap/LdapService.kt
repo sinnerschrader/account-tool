@@ -24,6 +24,7 @@ import com.unboundid.ldap.sdk.SearchRequest.ALL_OPERATIONAL_ATTRIBUTES
 import com.unboundid.ldap.sdk.SearchRequest.ALL_USER_ATTRIBUTES
 import org.apache.commons.lang3.RandomStringUtils.randomAlphanumeric
 import org.apache.commons.lang3.StringUtils
+import org.glowroot.agent.api.Instrumentation
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Value
@@ -32,7 +33,6 @@ import org.springframework.cache.annotation.Cacheable
 import org.springframework.core.env.Environment
 import org.springframework.stereotype.Service
 import java.security.GeneralSecurityException
-import java.text.MessageFormat
 import java.text.Normalizer
 import java.util.*
 import java.util.Arrays.asList
@@ -68,7 +68,7 @@ class LdapService {
     @Autowired
     private lateinit var managementConfiguration: LdapManagementConfiguration
 
-
+    @Instrumentation.Timer("getGroupMembers")
     @Cacheable("groupMembers", key = "#uid", unless = "#result == null")
     fun getGroupMember(connection: LDAPConnection, uid: String): UserInfo {
         try {
@@ -101,6 +101,7 @@ class LdapService {
         }
     }
 
+    @Instrumentation.Timer("getGroupByCN")
     @Cacheable("groups", key = "#cn", unless = "#result == null")
     fun getGroupByCN(connection: LDAPConnection, cn: String) =
             try {
@@ -125,6 +126,8 @@ class LdapService {
                 "UNKNOWN"
             }
 
+    @Cacheable("uids", key = "'uids'") // TODO update on add
+    @Instrumentation.Timer("getUserIDs")
     fun getUserIDs(connection: LDAPConnection) =
             try {
                 with(connection.search(ldapConfiguration.config.baseDN, SearchScope.SUB, LdapQueries.listAllUsers, "uid")) {
@@ -136,9 +139,10 @@ class LdapService {
                 throw RuntimeException("Could not fetch count of all users", e)
             }
 
+    @Instrumentation.Timer("getUsers")
     fun getUsers(connection: LDAPConnection) =
             try {
-                getUserIDs(connection).mapNotNull {
+                cachedLdapService.getUserIDs(connection).mapNotNull {
                     cachedLdapService.getUserByUid(connection, it)
                 }.sorted()
             } catch (e: Exception) {
@@ -146,6 +150,7 @@ class LdapService {
                 emptyList<User>()
             }
 
+    @Instrumentation.Timer("getListing")
     @Cacheable("listing", key = "#attribute")
     fun getListing(connection: LDAPConnection, attribute: String) =
             try {
@@ -164,6 +169,7 @@ class LdapService {
 
     fun getDepartments(connection: LDAPConnection) = cachedLdapService.getListing(connection, "ou")
 
+    @Instrumentation.TraceEntry(message = "getUserByUid: {{1}}", timer = "getUserByUid")
     @Cacheable("users", key = "#uid", unless = "#result == null", condition = "#skipCache == false")
     @CacheEvict("users", key = "#uid", beforeInvocation = true, condition = "#skipCache")
     fun getUserByUid(connection: LDAPConnection, uid: String, skipCache: Boolean = false) =
@@ -181,10 +187,12 @@ class LdapService {
                 null
             }
 
+    @Instrumentation.Timer("getGroupMembers")
     fun getGroupMembers(connection: LDAPConnection, group: Group): SortedSet<UserInfo> {
         return group.memberIds.map { cachedLdapService.getGroupMember(connection, it) }.toSortedSet()
     }
 
+    @Instrumentation.Timer("findUserBySearchTerm")
     fun findUserBySearchTerm(connection: LDAPConnection, searchTerm: String): Set<UserInfo> {
         return try {
             val searchResult = connection.search(ldapConfiguration.config.baseDN,
@@ -199,7 +207,8 @@ class LdapService {
         }
     }
 
-    @Cacheable("groups")
+    @Instrumentation.Timer("getGroups")
+    @Cacheable("groups", key="'groups'")
     fun getGroups(connection: LDAPConnection) =
             try {
                 connection.search(ldapConfiguration.config.groupDN, SearchScope.SUB, LdapQueries.listAllGroups).searchEntries.mapNotNull {
@@ -209,6 +218,7 @@ class LdapService {
                 throw RuntimeException("Could not retrieve groups from ldap", e)
             }
 
+    @Instrumentation.Timer("getGroupsByUser")
     fun getGroupsByUser(connection: LDAPConnection, uid: String, userDN: String) =
             try {
                 with(connection.search(ldapConfiguration.config.groupDN, SearchScope.SUB, LdapQueries.findGroupsByUser(uid, userDN))) {
@@ -223,6 +233,7 @@ class LdapService {
 
     private fun extractUidFromDN(uidOrDN: String) = if (uidOrDN.startsWith("uid=")) uidOrDN.substring(4, uidOrDN.indexOf(',')) else uidOrDN
 
+    @Instrumentation.Timer("getUsersByGroup")
     fun getUsersByGroup(connection: LDAPConnection, group: Group) =
             try {
                 group.memberIds.mapNotNull { uidOrDN ->
@@ -341,7 +352,8 @@ class LdapService {
     fun Map<String, Any>.toModification(modificationType: ModificationType = REPLACE) = this.map { entry ->
         entry.value.let {
             when (it) {
-                is String -> Modification(modificationType, entry.key, it)
+                is String -> if(it.isNotBlank()) Modification(modificationType, entry.key, it)
+                                else Modification(modificationType, entry.key)
                 is Number -> Modification(modificationType, entry.key, it.toString())
                 is Map<*,*> -> Modification(modificationType, entry.key, it.map {entry -> "${entry.key}=${entry.value}"}.joinToString(separator = ","))
                 else -> throw UnsupportedOperationException()
@@ -353,13 +365,13 @@ class LdapService {
     fun User.toMap() = OBJECT_MAPPER.convertValue(this, Map::class.java) as Map<String, Any>
 
     @Suppress("UNCHECKED_CAST")
-    fun User.toAttributes() = toMap().map {
+    fun User.toAttributes() = toMap().mapNotNull {
         // TODO cleanup types (generics)
         val k = it.key as String
         val v = it.value
         when (v) {
             is Number -> Attribute(k, v.toString())
-            is String -> Attribute(k, v)
+            is String -> if(v.isNotBlank()) Attribute(k, v) else null
             is Collection<*> -> Attribute(k, v as Collection<String>)
             is Map<*, *> ->  Attribute(k, v.map {entry -> "${entry.key}=${entry.value}"}.joinToString(","))
             else -> throw UnsupportedOperationException()
@@ -653,6 +665,7 @@ class LdapService {
         }
     }
 
+    @Instrumentation.Timer("getAdminGroup")
     fun getAdminGroup(connection: LDAPConnection, group: Group) =
             when (group.groupClassification) {
                 ADMIN -> group

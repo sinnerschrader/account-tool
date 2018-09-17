@@ -89,21 +89,22 @@ data class User(
             fun fromString(value: String) = if (active.name.equals(value, ignoreCase = true)) active else inactive
         }
     }
+
+    @JsonIgnore fun getPrettyModifytimestamp() =
+            try {
+                val f = DateTimeFormatter.ofPattern("uuuuMMddHHmmss[,SSS][.SSS]X")
+                val odt = OffsetDateTime.parse(modifytimestamp, f)
+                PrettyTime().format(Date(odt.toInstant().toEpochMilli()))!!
+            } catch (e: Exception) {
+                modifytimestamp
+            }
+
+    @JsonIgnore fun getLastPasswordChange() = Date(sambaPwdLastSet * 1000)
+    @JsonIgnore fun getPrettyLastPasswordChange() = PrettyTime().format(getLastPasswordChange())
+    @JsonIgnore fun getPrettyLastModified() = if (modifytimestamp.isNotBlank()) "${getPrettyModifytimestamp()} by ${getPrettyModifiersName()}" else ""
+    @JsonIgnore fun getPrettyModifiersName() = Regex("^uid=([^,]+)").find(modifiersName)?.groupValues?.get(1) ?: modifiersName
 }
 
-fun User.getPrettyModifytimestamp() =
-        try {
-            val f = DateTimeFormatter.ofPattern("uuuuMMddHHmmss[,SSS][.SSS]X")
-            val odt = OffsetDateTime.parse(modifytimestamp, f)
-            PrettyTime().format(Date(odt.toInstant().toEpochMilli()))!!
-        } catch (e: Exception) {
-            modifytimestamp
-        }
-
-fun User.getLastPasswordChange() = Date(sambaPwdLastSet * 1000)
-fun User.getPrettyLastPasswordChange() = PrettyTime().format(getLastPasswordChange())
-fun User.getPrettyLastModified() = if (modifytimestamp.isNotBlank()) "${getPrettyModifytimestamp()} by ${getPrettyModifiersName()}" else ""
-fun User.getPrettyModifiersName() = Regex("^uid=([^,]+)").find(modifiersName)?.groupValues?.get(1) ?: modifiersName
 
 
 // TODO copied from ldapservice

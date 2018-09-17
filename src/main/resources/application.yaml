@@ -5,9 +5,9 @@ spring:
   application:
     name: account-tool
   cache:
-    cache-names: listing,users,groupMembers,groups
+    cache-names: listing,uids,users,groupMembers,groups
     caffeine:
-      spec: expireAfterWrite=15m
+      spec: expireAfterWrite=24h
   messages:
     basename: "i18n/messages, i18n/validation"
     cache-seconds: "-1"
