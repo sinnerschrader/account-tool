@@ -134,12 +134,12 @@ class UserController {
         }
         try {
             if (isNotBlank(userForm.save)) {
-                val currentUser = ldapService.getUserByUid(connection, userId)
-                val changedUser = ldapService.update(connection, userForm.createUserEntityFromForm(ldapConfiguration, domainConfiguration))
+                val currentUser = ldapService.getUserByUid(connection, userId)!!
+                val changedUser = ldapService.update(connection, userForm.createUserEntityFromForm(ldapConfiguration, domainConfiguration, currentUser))
 
                 globalMessageFactory.store(request,
                         globalMessageFactory.createInfo("user.edit.success", changedUser!!.uid))
-                log.info("{} updated the account of user {}: {}", details.uid, currentUser!!.uid, currentUser.diff(changedUser))
+                log.info("{} updated the account of user {}: {}", details.uid, currentUser.uid, currentUser.diff(changedUser))
             }
             if (isNotBlank(userForm.resetPassword) || isNotBlank(userForm.activateUser) || isNotBlank(userForm.deactivateUser)) {
                 val hidePassword = false

@@ -68,10 +68,7 @@ data class UserForm(
     fun entryAsDate() = entryDate.parseLocalDate(DATE_PATTERN)
     fun exitAsDate() = exitDate.parseLocalDate(DATE_PATTERN)
 
-    fun createUserEntityFromForm(ldapConfiguration: LdapConfiguration, domainConfiguration: DomainConfiguration) = User(
-            uid = uid,
-            givenName = firstName,
-            sn = lastName,
+    fun createUserEntityFromForm(ldapConfiguration: LdapConfiguration, domainConfiguration: DomainConfiguration, user: User = User(uid = uid, givenName = firstName, sn = lastName)) = user.copy(
             szzBirthDay = birthDate.split(".").getOrNull(0)?.toIntOrNull() ?: -1,
             szzBirthMonth = birthDate.split(".").getOrNull(1)?.toIntOrNull() ?: -1,
             mail = when {
