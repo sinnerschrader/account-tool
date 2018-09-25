@@ -28,8 +28,7 @@
             {{ inputText("Lastname *", "lastName", createUserForm.lastName) }}
             {{ inputText("Username", "uid", createUserForm.uid, pattern="\D\D\D\D\D\D\D?\D?", errorMsg="Please enter the uid with six, seven or eight characters") }}
             {{ inputText("Birthdate", "birthDate", createUserForm.birthDate, pattern="\d\d\.\d\d", errorMsg="Please enter the Birthdate in pattern dd.MM") }}
-            {{ inputText("E-Mail Prefix", "emailPrefix", createUserForm.emailPrefix, halfWidth=true) }}
-            {{ inputText("E-Mail Domain", "emailDomain", createUserForm.emailDomain, readonly=true, halfWidth=true, readonly=true) }}
+            {{ inputText("E-Mail Prefix", "emailPrefix", createUserForm.emailPrefix, readonly=true, halfWidth=false) }}
             {{ inputText("Telephone", "telephoneNumber", createUserForm.telephoneNumber, pattern="\+?[0-9 ()]+") }}
             {{ inputText("Mobile", "mobileNumber", createUserForm.mobileNumber, pattern="\+?[0-9 ()]+", errorMsg="Please define a valid mobile number") }}
             {{ inputText("Last password change", "passwordChange", user.prettyLastPasswordChange, readonly=true) }}

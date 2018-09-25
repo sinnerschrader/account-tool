@@ -47,7 +47,7 @@ class ProfileController {
         val details = RequestUtils.currentUserDetails
         val mav = ModelAndView("pages/profile/index.html")
         if (details != null) {
-            val user = ldapService.getUserByUid(connection, details.username)!!
+            val user = ldapService.getUserByUid(connection, details.username, skipCache = true)!!
             mav.addAllObjects(model.asMap())
             mav.addObject("user", user)
             mav.addObject("groups", ldapService.getGroupsByUser(connection, details.uid, details.dn))
