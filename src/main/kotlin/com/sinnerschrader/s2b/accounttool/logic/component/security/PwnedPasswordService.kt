@@ -36,18 +36,22 @@ object PwnedPasswordService {
     private fun retrieveList(prefix: String): List<String> {
         val headers = HttpHeaders().apply { add("user-agent", "github.com/sinnerschrader/account-tool") }
 
-        val template = RestTemplate().exchange(
-                "https://api.pwnedpasswords.com/range/$prefix",
-                HttpMethod.GET,
-                HttpEntity<String>("parameters", headers),
-                String::class.java)
+        try {
+            val template = RestTemplate().exchange(
+                    "https://api.pwnedpasswords.com/range/$prefix",
+                    HttpMethod.GET,
+                    HttpEntity<String>("parameters", headers),
+                    String::class.java)
 
-        return when (template.statusCode) {
-            HttpStatus.OK -> template.body.lines()
-            else -> {
-                LOG.warn("Failed to retrieve list of pwnedpasswords: $this")
-                emptyList()
+            return when (template.statusCode) {
+                HttpStatus.OK -> template.body.lines()
+                else -> {
+                    LOG.warn("Failed to retrieve list of pwnedpasswords: $this")
+                    emptyList()
+                }
             }
+        } catch(e: Exception) {
+            return emptyList()
         }
     }
 

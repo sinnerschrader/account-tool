@@ -9,6 +9,7 @@ import com.sinnerschrader.s2b.accounttool.presentation.interceptor.PwnedAuthenti
 import com.unboundid.ldap.sdk.LDAPException
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.beans.factory.annotation.Value
 import org.springframework.boot.autoconfigure.security.SecurityProperties
 import org.springframework.context.annotation.Configuration
 import org.springframework.core.annotation.Order
@@ -42,8 +43,8 @@ class SecurityConfig : WebSecurityConfigurerAdapter() {
     @Autowired
     private lateinit var ldapManagementConfiguration: LdapManagementConfiguration
 
-    //@Value("\${spring.security.contentSecurityPolicy}")
-    //private lateinit var contentSecurityPolicy: String
+    @Value("\${spring.security.contentSecurityPolicy}")
+    private lateinit var contentSecurityPolicy: String
 
     @Throws(Exception::class)
     override fun configure(web: WebSecurity) {
@@ -83,11 +84,7 @@ class SecurityConfig : WebSecurityConfigurerAdapter() {
                 .sessionFixation().newSession()
                 .and()
                 .headers()
-        //.and()
-        //.csrf()
-        //.and()
-        //.headers()
-        //.contentSecurityPolicy(contentSecurityPolicy)
+                .contentSecurityPolicy(contentSecurityPolicy)
     }
 
     private fun authenticationDetailsSource(): WebAuthenticationDetailsSource {

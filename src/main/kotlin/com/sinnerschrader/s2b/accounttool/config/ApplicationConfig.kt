@@ -19,6 +19,7 @@ import org.springframework.web.servlet.i18n.AcceptHeaderLocaleResolver
 import org.springframework.web.servlet.resource.ResourceUrlEncodingFilter
 import springfox.documentation.builders.RequestHandlerSelectors.basePackage
 import springfox.documentation.service.ApiInfo
+import springfox.documentation.service.BasicAuth
 import springfox.documentation.service.Contact
 import springfox.documentation.spi.DocumentationType
 import springfox.documentation.spring.web.plugins.Docket
@@ -76,9 +77,10 @@ class ApplicationConfig : WebMvcConfigurerAdapter() {
                             "",
                             "",
                             arrayListOf()))
+                    .securitySchemes(listOf(BasicAuth("basicAuth"))) // TODO fix basic auth / unwanted redirect
                     .forCodeGeneration(true)
                     .select()
                     .apis(Predicates.or(
-                            basePackage("com.sinnerschrader.s2b.accounttool.presentation.controller")))
+                            basePackage("com.sinnerschrader.s2b.accounttool.presentation.controller.v2")))
                     .build()!!
 }
