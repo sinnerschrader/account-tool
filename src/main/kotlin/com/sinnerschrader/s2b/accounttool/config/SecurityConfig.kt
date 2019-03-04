@@ -9,7 +9,6 @@ import com.sinnerschrader.s2b.accounttool.presentation.interceptor.PwnedAuthenti
 import com.unboundid.ldap.sdk.LDAPException
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.beans.factory.annotation.Value
 import org.springframework.boot.autoconfigure.security.SecurityProperties
 import org.springframework.context.annotation.Configuration
 import org.springframework.core.annotation.Order
@@ -21,9 +20,8 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter
 import org.springframework.security.web.authentication.WebAuthenticationDetails
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource
-
-import javax.servlet.http.HttpServletRequest
 import java.security.GeneralSecurityException
+import javax.servlet.http.HttpServletRequest
 
 
 @Configuration
@@ -44,13 +42,23 @@ class SecurityConfig : WebSecurityConfigurerAdapter() {
     @Autowired
     private lateinit var ldapManagementConfiguration: LdapManagementConfiguration
 
-    @Value("\${spring.security.contentSecurityPolicy}")
-    private lateinit var contentSecurityPolicy: String
+    //@Value("\${spring.security.contentSecurityPolicy}")
+    //private lateinit var contentSecurityPolicy: String
 
     @Throws(Exception::class)
     override fun configure(web: WebSecurity) {
         LOG.debug("Setting up access for static resources and CSP Report")
-        web.ignoring().antMatchers("/csp-report", "/extensions/**", "/static/**", "/management/**")
+        web.ignoring().antMatchers(
+                "/csp-report",
+                "/extensions/**",
+                "/static/**",
+                "/management/**",
+                "/swagger-resources/**",
+                "/swagger-ui.html",
+                "/v2/api-docs",
+                "/webjars/**"
+
+        )
     }
 
     @Throws(Exception::class)
@@ -74,10 +82,12 @@ class SecurityConfig : WebSecurityConfigurerAdapter() {
                 .sessionManagement()
                 .sessionFixation().newSession()
                 .and()
-                .csrf()
-                .and()
                 .headers()
-                .contentSecurityPolicy(contentSecurityPolicy)
+        //.and()
+        //.csrf()
+        //.and()
+        //.headers()
+        //.contentSecurityPolicy(contentSecurityPolicy)
     }
 
     private fun authenticationDetailsSource(): WebAuthenticationDetailsSource {
@@ -89,7 +99,7 @@ class SecurityConfig : WebSecurityConfigurerAdapter() {
                             connection.bind(bindDN, password)
                         }
                         val userInfo = ldapService.getGroupMember(connection, context.getParameter("uid"))
-                        return userInfo?.let { LdapAuthenticationDetails(userInfo.dn, context)}
+                        return userInfo?.let { LdapAuthenticationDetails(userInfo.dn, context) }
                     }
                 } catch (e: LDAPException) {
                     // TODO log exception
