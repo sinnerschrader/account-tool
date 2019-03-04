@@ -1,5 +1,6 @@
 package com.sinnerschrader.s2b.accounttool.config
 
+import com.google.common.base.Predicates
 import com.mitchellbosecke.pebble.spring4.extension.SpringExtension
 import com.sinnerschrader.s2b.accounttool.config.ldap.LdapConfiguration
 import com.sinnerschrader.s2b.accounttool.presentation.interceptor.GlobalMessageInterceptor
@@ -16,12 +17,19 @@ import org.springframework.web.servlet.config.annotation.InterceptorRegistry
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter
 import org.springframework.web.servlet.i18n.AcceptHeaderLocaleResolver
 import org.springframework.web.servlet.resource.ResourceUrlEncodingFilter
+import springfox.documentation.builders.RequestHandlerSelectors.basePackage
+import springfox.documentation.service.ApiInfo
+import springfox.documentation.service.Contact
+import springfox.documentation.spi.DocumentationType
+import springfox.documentation.spring.web.plugins.Docket
+import springfox.documentation.swagger2.annotations.EnableSwagger2
 import java.util.*
 
 
 @Configuration
 @EnableAutoConfiguration
 @EnableCaching
+@EnableSwagger2
 class ApplicationConfig : WebMvcConfigurerAdapter() {
 
     @Autowired
@@ -54,4 +62,23 @@ class ApplicationConfig : WebMvcConfigurerAdapter() {
 
     @Bean
     fun springExtension() = SpringExtension()
+
+
+    @Bean
+    fun api() =
+            Docket(DocumentationType.SWAGGER_2)
+                    .apiInfo(ApiInfo(
+                            "account-tool",
+                            "",
+                            "",
+                            "",
+                             ApiInfo.DEFAULT_CONTACT,
+                            "",
+                            "",
+                            arrayListOf()))
+                    .forCodeGeneration(true)
+                    .select()
+                    .apis(Predicates.or(
+                            basePackage("com.sinnerschrader.s2b.accounttool.presentation.controller")))
+                    .build()!!
 }
