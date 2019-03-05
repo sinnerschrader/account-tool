@@ -11,8 +11,8 @@ class GroupControllerV2 {
     lateinit var ldapServiceV2: LdapServiceV2
 
     @GetMapping("/group")
-    fun group() = ldapServiceV2.getGroups()
+    fun getGroups(@RequestParam(required = false) memberUid: String? = null) = ldapServiceV2.getGroups(memberUid = memberUid)
 
     @GetMapping("/group/{cn}")
-    private fun group(@PathVariable cn: String) = ldapServiceV2.getGroups(cn).single()
+    fun getGroup(@PathVariable cn: String) = ldapServiceV2.getGroups(cn = cn).single()
 }
