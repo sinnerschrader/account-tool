@@ -83,6 +83,8 @@ class SecurityConfig : WebSecurityConfigurerAdapter() {
                 .sessionManagement()
                 .sessionFixation().newSession()
                 .and()
+                .csrf()
+                .and()
                 .headers()
                 .contentSecurityPolicy(contentSecurityPolicy)
     }
