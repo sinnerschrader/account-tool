@@ -22,7 +22,7 @@ class LdapServiceV2 {
     @Autowired
     lateinit var ldapConfiguration: LdapConfiguration
 
-    fun getGroups(cn: String? = null) =
+    fun getGroups(cn: String? = null, memberUid: String? = null) =
             try {
                 // TODO fail on no request at the moment
                 with(RequestUtils.getLdapConnection(request!!)!!) {
@@ -34,7 +34,8 @@ class LdapServiceV2 {
                                                     createEqualityFilter("objectClass", "groupOfUniqueNames"),
                                                     createEqualityFilter("objectClass", "groupOfNames")
                                             ),
-                                            cn?.let { createEqualityFilter("cn", cn) }
+                                            cn?.let { createEqualityFilter("cn", cn) },
+                                            memberUid?.let { createEqualityFilter("memberuid", memberUid) }
                                     )
                             ),
                             "cn", "description", "memberuid"
