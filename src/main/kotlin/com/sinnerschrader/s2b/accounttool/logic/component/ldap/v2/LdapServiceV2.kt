@@ -42,7 +42,7 @@ class LdapServiceV2 {
             }.searchEntries.map {
                 GroupInfo(
                         name = it.getAttributeValue("cn"),
-                        description = it.getAttributeValue("description"),
+                        description = it.getAttributeValue("description") ?: "",
                         members = (it.getAttributeValues("memberuid") ?: emptyArray()).toSortedSet())
             }
 
