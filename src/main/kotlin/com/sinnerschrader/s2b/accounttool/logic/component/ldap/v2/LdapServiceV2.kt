@@ -52,7 +52,7 @@ class LdapServiceV2 {
 
     fun getUser(uid: String? = null,
                 state: State? = null,
-                search: String? = null,
+                searchTerm: String? = null,
                 entryDateRange: DateRange? = null,
                 exitDateRange: DateRange? = null) =
             try {
@@ -65,7 +65,7 @@ class LdapServiceV2 {
                                             createEqualityFilter("objectclass", "posixAccount"),
                                             uid?.let { createEqualityFilter("uid", uid) },
                                             state?.let { createEqualityFilter("szzStatus", state.name) },
-                                            search?.let { createUserSearchFilter(search) },
+                                            searchTerm?.let { createUserSearchFilter(searchTerm) },
                                             entryDateRange?.createFilter("szzEntryDate"),
                                             exitDateRange?.createFilter("szzExitDate")
                                     )
