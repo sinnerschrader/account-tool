@@ -23,31 +23,27 @@ class LdapServiceV2 {
     lateinit var ldapConfiguration: LdapConfiguration
 
     fun getGroups(cn: String? = null, memberUid: String? = null) =
-            try {
-                // TODO fail on no request at the moment
-                with(RequestUtils.getLdapConnection(request!!)!!) {
-                    search(ldapConfiguration.config.groupDN, SearchScope.SUB,
-                            createANDFilter(
-                                    listOfNotNull(
-                                            createORFilter(
-                                                    createEqualityFilter("objectClass", "posixGroup"),
-                                                    createEqualityFilter("objectClass", "groupOfUniqueNames"),
-                                                    createEqualityFilter("objectClass", "groupOfNames")
-                                            ),
-                                            cn?.let { createEqualityFilter("cn", cn) },
-                                            memberUid?.let { createEqualityFilter("memberuid", memberUid) }
-                                    )
-                            ),
-                            "cn", "description", "memberuid"
-                    )
-                }.searchEntries.map {
-                    GroupInfo(
-                            name = it.getAttributeValue("cn"),
-                            description = it.getAttributeValue("description"),
-                            members = (it.getAttributeValues("memberuid") ?: emptyArray()).toSortedSet())
-                }
-            } catch (e: Exception) {
-                throw RuntimeException("BOOOM", e)
+            // TODO fail on no request at the moment
+            with(RequestUtils.getLdapConnection(request!!)!!) {
+                search(ldapConfiguration.config.groupDN, SearchScope.SUB,
+                        createANDFilter(
+                                listOfNotNull(
+                                        createORFilter(
+                                                createEqualityFilter("objectClass", "posixGroup"),
+                                                createEqualityFilter("objectClass", "groupOfUniqueNames"),
+                                                createEqualityFilter("objectClass", "groupOfNames")
+                                        ),
+                                        cn?.let { createEqualityFilter("cn", cn) },
+                                        memberUid?.let { createEqualityFilter("memberuid", memberUid) }
+                                )
+                        ),
+                        "cn", "description", "memberuid"
+                )
+            }.searchEntries.map {
+                GroupInfo(
+                        name = it.getAttributeValue("cn"),
+                        description = it.getAttributeValue("description"),
+                        members = (it.getAttributeValues("memberuid") ?: emptyArray()).toSortedSet())
             }
 
     fun getUser(uid: String? = null,
@@ -55,36 +51,33 @@ class LdapServiceV2 {
                 searchTerm: String? = null,
                 entryDateRange: DateRange? = null,
                 exitDateRange: DateRange? = null) =
-            try {
-                with(RequestUtils.getLdapConnection(request!!)!!) {
-                    search(
-                            ldapConfiguration.config.baseDN,
-                            SearchScope.SUB,
-                            createANDFilter(
-                                    listOfNotNull(
-                                            createEqualityFilter("objectclass", "posixAccount"),
-                                            uid?.let { createEqualityFilter("uid", uid) },
-                                            state?.let { createEqualityFilter("szzStatus", state.name) },
-                                            searchTerm?.let { createUserSearchFilter(searchTerm) },
-                                            entryDateRange?.createFilter("szzEntryDate"),
-                                            exitDateRange?.createFilter("szzExitDate")
-                                    )
-                            ),
-                            "uid", "givenName", "sn", "mail", "szzStatus"
-                    ).searchEntries.map {
-                        UserInfo(
-                                dn = it.dn,
-                                uid = it.getAttributeValue("uid"),
-                                givenName = it.getAttributeValue("givenName"),
-                                sn = it.getAttributeValue("sn"),
-                                o = companyForDn(it.dn),
-                                mail = it.getAttributeValue("mail"),
-                                szzStatus = State.valueOf(it.getAttributeValue("szzStatus")))
+            // TODO fail on no request at the moment
+            with(RequestUtils.getLdapConnection(request!!)!!) {
+                search(
+                        ldapConfiguration.config.baseDN,
+                        SearchScope.SUB,
+                        createANDFilter(
+                                listOfNotNull(
+                                        createEqualityFilter("objectclass", "posixAccount"),
+                                        uid?.let { createEqualityFilter("uid", uid) },
+                                        state?.let { createEqualityFilter("szzStatus", state.name) },
+                                        searchTerm?.let { createUserSearchFilter(searchTerm) },
+                                        entryDateRange?.createFilter("szzEntryDate"),
+                                        exitDateRange?.createFilter("szzExitDate")
+                                )
+                        ),
+                        "uid", "givenName", "sn", "mail", "szzStatus"
+                ).searchEntries.map {
+                    UserInfo(
+                            dn = it.dn,
+                            uid = it.getAttributeValue("uid"),
+                            givenName = it.getAttributeValue("givenName"),
+                            sn = it.getAttributeValue("sn"),
+                            o = companyForDn(it.dn),
+                            mail = it.getAttributeValue("mail"),
+                            szzStatus = State.valueOf(it.getAttributeValue("szzStatus")))
 
-                    }
                 }
-            } catch (e: Exception) {
-                throw RuntimeException("BOOOOM")
             }
 
     fun companyForDn(dn: String) =
