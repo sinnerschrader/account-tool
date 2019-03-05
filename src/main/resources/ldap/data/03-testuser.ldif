@@ -74,8 +74,8 @@ description: User-Management
 loginShell: /bin/false
 szzBirthDay: 1
 szzBirthMonth: 1
-szzEntryDate: 19700101
-szzExitDate: 21991231
+szzEntryDate: 2018-05-05
+szzExitDate: 2019-02-02
 sambaAcctFlags: [U          ]
 sambaPasswordHistory: 0
 sambaNTPassword: testuser
