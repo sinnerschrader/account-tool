@@ -94,11 +94,14 @@ class LdapServiceV2 {
                 createSubstringFilter(it, null, arrayOf(search), null)
             })
 
-    data class DateRange(val from: LocalDate = LocalDate.MIN, val to: LocalDate = LocalDate.MAX) {
+    data class DateRange(val from: LocalDate = DateRange.MIN, val to: LocalDate = DateRange.MAX) {
         companion object {
+            val MIN = LocalDate.of(0,1,1)!!
+            val MAX = LocalDate.of(9999,12,12)!!
+
             fun of(from: LocalDate?, to: LocalDate?) = when {
                 from == null && to == null -> null
-                else -> DateRange(from ?: LocalDate.MIN, to ?: LocalDate.MAX)
+                else -> DateRange(from ?: DateRange.MIN, to ?: DateRange.MAX)
             }
         }
 
