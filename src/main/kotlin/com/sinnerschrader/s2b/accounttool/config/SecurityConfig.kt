@@ -19,6 +19,7 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity
 import org.springframework.security.config.annotation.web.builders.WebSecurity
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter
+import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.security.web.authentication.WebAuthenticationDetails
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource
 import java.security.GeneralSecurityException
@@ -58,7 +59,6 @@ class SecurityConfig : WebSecurityConfigurerAdapter() {
                 "/swagger-ui.html",
                 "/v2/api-docs",
                 "/webjars/**"
-
         )
     }
 
@@ -71,22 +71,19 @@ class SecurityConfig : WebSecurityConfigurerAdapter() {
                 .loginProcessingUrl("/login")
                 .permitAll()
                 .authenticationDetailsSource(authenticationDetailsSource())
-                .and()
-                .logout()
+        http.logout()
                 .logoutUrl("/logout")
                 .permitAll()
-                .and()
-                .authorizeRequests()
+        http.authorizeRequests()
                 .anyRequest()
                 .authenticated()
-                .and()
-                .sessionManagement()
-                .sessionFixation().newSession()
-                .and()
-                .csrf()
-                .and()
-                .headers()
+        http.sessionManagement()
+                .sessionFixation()
+                .newSession()
+        http.csrf()
+        http.headers()
                 .contentSecurityPolicy(contentSecurityPolicy)
+
     }
 
     private fun authenticationDetailsSource(): WebAuthenticationDetailsSource {

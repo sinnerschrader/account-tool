@@ -22,4 +22,4 @@ services:
       GIT_COMMIT: dummycommit
       GIT_BRANCH: dummybranch
     #command: 'sh -c "gradle --continuous build & gradle bootRun"'
-    command: 'gradle --continuous build bootRun'
+    command: 'gradle --no-daemon --continuous build bootRun'
