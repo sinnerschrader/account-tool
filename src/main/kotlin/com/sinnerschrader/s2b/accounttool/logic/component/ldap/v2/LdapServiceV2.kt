@@ -79,7 +79,7 @@ class LdapServiceV2 {
                             o = companyForDn(it.dn),
                             mail = it.getAttributeValue("mail"),
                             szzStatus = State.valueOf(it.getAttributeValue("szzStatus")),
-                            type = it.getAttributeValue("description"))
+                            type = it.getAttributeValue("description") ?: "")
 
                 }
             }
