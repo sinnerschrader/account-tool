@@ -77,7 +77,6 @@ class ApplicationConfig : WebMvcConfigurerAdapter() {
                             "",
                             "",
                             arrayListOf()))
-                    .securitySchemes(listOf(BasicAuth("basicAuth"))) // TODO fix basic auth / unwanted redirect
                     .forCodeGeneration(true)
                     .select()
                     .apis(Predicates.or(
