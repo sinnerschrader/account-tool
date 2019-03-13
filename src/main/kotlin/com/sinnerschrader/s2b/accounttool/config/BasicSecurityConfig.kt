@@ -5,13 +5,11 @@ import com.sinnerschrader.s2b.accounttool.config.authentication.LdapUserDetailsA
 import com.sinnerschrader.s2b.accounttool.config.ldap.LdapConfiguration
 import com.sinnerschrader.s2b.accounttool.config.ldap.LdapManagementConfiguration
 import com.sinnerschrader.s2b.accounttool.logic.component.ldap.LdapService
-import com.sinnerschrader.s2b.accounttool.presentation.interceptor.PwnedAuthenticationSuccessHandler
 import com.unboundid.ldap.sdk.LDAPException
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.boot.autoconfigure.security.SecurityProperties
-import org.springframework.context.annotation.Configuration
 import org.springframework.core.annotation.Order
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity
@@ -19,20 +17,16 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity
 import org.springframework.security.config.annotation.web.builders.WebSecurity
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter
-import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.security.web.authentication.WebAuthenticationDetails
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource
-import java.nio.charset.Charset
-import java.nio.charset.StandardCharsets
 import java.security.GeneralSecurityException
-import java.util.*
 import javax.servlet.http.HttpServletRequest
 
 
 @EnableWebSecurity
-@Order(SecurityProperties.ACCESS_OVERRIDE_ORDER)
+@Order(SecurityProperties.ACCESS_OVERRIDE_ORDER - 1)
 @EnableGlobalMethodSecurity(securedEnabled = true)
-class SecurityConfig : WebSecurityConfigurerAdapter() {
+class BasicSecurityConfig : WebSecurityConfigurerAdapter() {
 
     @Autowired
     private lateinit var userDetailsAuthenticationProvider: LdapUserDetailsAuthenticationProvider
@@ -66,16 +60,9 @@ class SecurityConfig : WebSecurityConfigurerAdapter() {
 
     @Throws(Exception::class)
     override fun configure(http: HttpSecurity) {
-        LOG.debug("Setting up authorization")
-        http.formLogin()
-                .successHandler(PwnedAuthenticationSuccessHandler)
-                .loginPage("/login")
-                .loginProcessingUrl("/login")
-                .permitAll()
-                .authenticationDetailsSource(authenticationDetailsSource())
-        http.logout()
-                .logoutUrl("/logout")
-                .permitAll()
+        LOG.debug("Setting basic up authorization")
+
+        http.antMatcher("/v2/**").httpBasic().authenticationDetailsSource(authenticationDetailsSource())
         http.authorizeRequests()
                 .anyRequest()
                 .authenticated()
