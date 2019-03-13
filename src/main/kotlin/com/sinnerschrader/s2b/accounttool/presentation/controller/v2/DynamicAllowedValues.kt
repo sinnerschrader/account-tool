@@ -14,7 +14,7 @@ import springfox.documentation.swagger.common.SwaggerPluginSupport.SWAGGER_PLUGI
 
 
 /**
- * Handles parameters with allowed value list that is dynamically retrieved from database.
+ * Handles parameters with allowed value list that is dynamically retrieved.
  *
  * @link https://github.com/springfox/springfox/issues/1877
  * @link https://gist.github.com/rehevkor5/6374faa255a56174ec9307df5049f9a1
