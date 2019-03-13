@@ -8,9 +8,8 @@ import io.swagger.annotations.ApiParam
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.format.annotation.DateTimeFormat
 import org.springframework.format.annotation.DateTimeFormat.ISO.DATE
-import org.springframework.http.HttpStatus
 import org.springframework.web.bind.annotation.*
-import java.lang.IllegalArgumentException
+import springfox.documentation.service.AllowableListValues
 import java.time.LocalDate
 
 @RestController
@@ -34,7 +33,7 @@ class UserControllerV2 {
                 @RequestParam(required = false) @DateTimeFormat(iso = DATE) exitDateStart: LocalDate?,
                 @ApiParam("latest exit date")
                 @RequestParam(required = false) @DateTimeFormat(iso = DATE) exitDateEnd: LocalDate?,
-                @ApiParam(allowableValues = "a,b,c") company: String?) =
+                @ApiParam(allowableValues = "dynamic[whatever]") company: String?) =
             ldapServiceV2.getUser(state = state,
                     searchTerm = searchTerm,
                     entryDateRange = LdapServiceV2.DateRange.of(entryDateStart, entryDateEnd),
