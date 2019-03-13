@@ -48,25 +48,28 @@ class LdapServiceV2 {
 
     fun getUser(uid: String? = null,
                 state: State? = null,
+                company: String? = null,
+                type: String? = null,
                 searchTerm: String? = null,
                 entryDateRange: DateRange? = null,
                 exitDateRange: DateRange? = null) =
             // TODO fail on no request at the moment
             with(RequestUtils.getLdapConnection(request!!)!!) {
                 search(
-                        ldapConfiguration.config.baseDN,
+                        (company?.let { "ou=$it," } ?: "") + ldapConfiguration.config.baseDN,
                         SearchScope.SUB,
                         createANDFilter(
                                 listOfNotNull(
                                         createEqualityFilter("objectclass", "posixAccount"),
                                         uid?.let { createEqualityFilter("uid", uid) },
                                         state?.let { createEqualityFilter("szzStatus", state.name) },
+                                        type?.let { createEqualityFilter("description", type) },
                                         searchTerm?.let { createUserSearchFilter(searchTerm) },
                                         entryDateRange?.createFilter("szzEntryDate"),
                                         exitDateRange?.createFilter("szzExitDate")
                                 )
                         ),
-                        "uid", "givenName", "sn", "mail", "szzStatus"
+                        "uid", "givenName", "sn", "mail", "szzStatus", "description"
                 ).searchEntries.map {
                     UserInfo(
                             dn = it.dn,
@@ -75,7 +78,8 @@ class LdapServiceV2 {
                             sn = it.getAttributeValue("sn"),
                             o = companyForDn(it.dn),
                             mail = it.getAttributeValue("mail"),
-                            szzStatus = State.valueOf(it.getAttributeValue("szzStatus")))
+                            szzStatus = State.valueOf(it.getAttributeValue("szzStatus")),
+                            type = it.getAttributeValue("description"))
 
                 }
             }

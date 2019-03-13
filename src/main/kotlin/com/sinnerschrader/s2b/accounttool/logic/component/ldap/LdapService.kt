@@ -83,7 +83,7 @@ class LdapService {
             )
 
             return when (searchResult.searchEntries.size) {
-                0 -> UserInfo("UNKNOWN", uid, "UNKNOWN", "UNKNOWN", "UNKNOWN", "UNKNOWN", User.State.inactive)
+                0 -> UserInfo("UNKNOWN", uid, "UNKNOWN", "UNKNOWN", "UNKNOWN", "UNKNOWN", User.State.inactive, "UNKNOWN")
                 1 -> with(searchResult.searchEntries.first()) {
                     UserInfo(
                             dn = dn,
@@ -92,7 +92,8 @@ class LdapService {
                             sn = getAttributeValue("sn"),
                             o = companyForDn(dn),
                             mail = getAttributeValue("mail"),
-                            szzStatus = User.State.valueOf(getAttributeValue("szzStatus")))
+                            szzStatus = User.State.valueOf(getAttributeValue("szzStatus")),
+                            type = getAttributeValue("description") ?: "")
                 }
                 else -> throw IllegalStateException()
             }
