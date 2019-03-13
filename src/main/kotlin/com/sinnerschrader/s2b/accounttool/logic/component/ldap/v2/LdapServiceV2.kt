@@ -1,11 +1,13 @@
 package com.sinnerschrader.s2b.accounttool.logic.component.ldap.v2
 
+import com.sinnerschrader.s2b.accounttool.config.UserConfiguration
 import com.sinnerschrader.s2b.accounttool.config.ldap.LdapConfiguration
 import com.sinnerschrader.s2b.accounttool.logic.entity.GroupInfo
 import com.sinnerschrader.s2b.accounttool.logic.entity.User.State
 import com.sinnerschrader.s2b.accounttool.logic.entity.UserInfo
 import com.sinnerschrader.s2b.accounttool.presentation.RequestUtils
 import com.unboundid.ldap.sdk.Filter.*
+import com.unboundid.ldap.sdk.SearchResultEntry
 import com.unboundid.ldap.sdk.SearchScope
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
@@ -21,6 +23,9 @@ class LdapServiceV2 {
 
     @Autowired
     lateinit var ldapConfiguration: LdapConfiguration
+
+    @Autowired
+    lateinit var userConfiguration: UserConfiguration
 
     fun getGroups(cn: String? = null, memberUid: String? = null) =
             // TODO fail on no request at the moment
@@ -69,7 +74,7 @@ class LdapServiceV2 {
                                         exitDateRange?.createFilter("szzExitDate")
                                 )
                         ),
-                        "uid", "givenName", "sn", "mail", "szzStatus", "description"
+                        "uid", "givenName", "sn", "mail", "szzStatus", "description", "szzExternalAccounts"
                 ).searchEntries.map {
                     UserInfo(
                             dn = it.dn,
@@ -79,10 +84,22 @@ class LdapServiceV2 {
                             o = companyForDn(it.dn),
                             mail = it.getAttributeValue("mail"),
                             szzStatus = State.valueOf(it.getAttributeValue("szzStatus")),
-                            type = it.getAttributeValue("description") ?: "")
-
+                            type = it.getAttributeValue("description") ?: "",
+                            externalAccounts = it.strMap("szzExternalAccounts"))
                 }
             }
+
+    fun SearchResultEntry.int(attributeName: String) = getAttributeValueAsInteger(attributeName) ?: 0
+    fun SearchResultEntry.long(attributeName: String) = getAttributeValueAsLong(attributeName) ?: 0L
+    fun SearchResultEntry.str(attributeName: String) = getAttributeValue(attributeName) ?: ""
+    fun SearchResultEntry.strMap(attributeName: String) =
+            if (hasAttribute(attributeName)) str(attributeName).split(',')
+                    .mapNotNull {
+                        it.split('=', limit = 2).let { keyValue ->
+                            if (keyValue.size == 2) keyValue[0] to keyValue[1] else null
+                        }
+                    }.toMap()
+            else emptyMap()
 
     fun companyForDn(dn: String) =
             try {

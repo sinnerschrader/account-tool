@@ -77,6 +77,7 @@ class ApplicationConfig : WebMvcConfigurerAdapter() {
                             "",
                             "",
                             arrayListOf()))
+                    .securitySchemes(listOf(BasicAuth("basicAuth")))
                     .forCodeGeneration(true)
                     .select()
                     .apis(Predicates.or(
