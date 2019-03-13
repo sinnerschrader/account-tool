@@ -2,6 +2,8 @@ package com.sinnerschrader.s2b.accounttool.presentation.controller.v2
 
 import com.sinnerschrader.s2b.accounttool.logic.component.ldap.v2.LdapServiceV2
 import com.sinnerschrader.s2b.accounttool.logic.entity.User.State
+import com.sinnerschrader.s2b.accounttool.presentation.controller.v2.DynamicAllowedValues.Companion.COMPANIES
+import com.sinnerschrader.s2b.accounttool.presentation.controller.v2.DynamicAllowedValues.Companion.USERTYPE
 import io.swagger.annotations.Api
 import io.swagger.annotations.ApiOperation
 import io.swagger.annotations.ApiParam
@@ -9,7 +11,6 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.format.annotation.DateTimeFormat
 import org.springframework.format.annotation.DateTimeFormat.ISO.DATE
 import org.springframework.web.bind.annotation.*
-import springfox.documentation.service.AllowableListValues
 import java.time.LocalDate
 
 @RestController
@@ -33,8 +34,11 @@ class UserControllerV2 {
                 @RequestParam(required = false) @DateTimeFormat(iso = DATE) exitDateStart: LocalDate?,
                 @ApiParam("latest exit date")
                 @RequestParam(required = false) @DateTimeFormat(iso = DATE) exitDateEnd: LocalDate?,
-                @ApiParam(allowableValues = "dynamic[whatever]") company: String?) =
+                @ApiParam(allowableValues = COMPANIES) company: String?,
+                @ApiParam(allowableValues = USERTYPE) type: String?) =
             ldapServiceV2.getUser(state = state,
+                    company = company,
+                    type = type,
                     searchTerm = searchTerm,
                     entryDateRange = LdapServiceV2.DateRange.of(entryDateStart, entryDateEnd),
                     exitDateRange = LdapServiceV2.DateRange.of(exitDateStart, exitDateEnd))
