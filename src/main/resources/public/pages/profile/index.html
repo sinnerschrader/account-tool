@@ -196,7 +196,7 @@
                         {% for externalAccount in changeProfileForm.szzExternalAccounts %}
                         <div class="s2act-textfield mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
                             <input class="mdl-textfield__input" type="text" name="szzExternalAccounts[{{ externalAccount.key }}]" id="szzExternalAccounts[{{ externalAccount.key }}]"
-                                   value="{{ externalAccount.value }}" pattern="[0-9a-zA-Z.@]+">
+                                   value="{{ externalAccount.value }}" pattern="[0-9a-zA-Z.@\-_]+">
                             <label class="mdl-textfield__label" for="szzExternalAccounts[{{ externalAccount.key }}]">{{ externalAccount.key }}</label>
                         </div>
                         {% else %}
