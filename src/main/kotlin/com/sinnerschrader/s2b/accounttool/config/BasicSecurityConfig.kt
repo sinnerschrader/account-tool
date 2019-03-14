@@ -23,6 +23,7 @@ import java.security.GeneralSecurityException
 import javax.servlet.http.HttpServletRequest
 
 
+// TODO code duplication with FormSecurityConfig
 @EnableWebSecurity
 @Order(SecurityProperties.ACCESS_OVERRIDE_ORDER - 1)
 @EnableGlobalMethodSecurity(securedEnabled = true)
@@ -101,6 +102,6 @@ class BasicSecurityConfig : WebSecurityConfigurerAdapter() {
     fun configureGlobal(auth: AuthenticationManagerBuilder) = auth.authenticationProvider(userDetailsAuthenticationProvider)
 
     companion object {
-        private val LOG = LoggerFactory.getLogger(SecurityConfig::class.java)
+        private val LOG = LoggerFactory.getLogger(FormSecurityConfig::class.java)
     }
 }
