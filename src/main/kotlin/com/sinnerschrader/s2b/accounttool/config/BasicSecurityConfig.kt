@@ -24,9 +24,10 @@ import javax.servlet.http.HttpServletRequest
 
 
 // TODO code duplication with FormSecurityConfig
-@EnableWebSecurity
-@Order(SecurityProperties.ACCESS_OVERRIDE_ORDER - 1)
-@EnableGlobalMethodSecurity(securedEnabled = true)
+// TODO disabled
+//@EnableWebSecurity
+//@Order(SecurityProperties.ACCESS_OVERRIDE_ORDER - 1)
+//@EnableGlobalMethodSecurity(securedEnabled = true)
 class BasicSecurityConfig : WebSecurityConfigurerAdapter() {
 
     @Autowired
