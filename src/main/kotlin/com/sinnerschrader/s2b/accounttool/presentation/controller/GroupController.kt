@@ -158,7 +158,7 @@ class GroupController {
             globalMessageFactory.store(request, globalMessageFactory.createError("requestAccess.alreadyMember"))
         } else {
             val adminUser = ldapService.getUsersByGroup(connection, adminGroup)
-            val success = mailService.sendMail(adminUser.toList(), GroupAccessRequestMail(details, adminGroup, group))
+            val success = mailService.sendMail(adminUser.toList(), GroupAccessRequestMail(details, group, adminGroup))
             if (success) {
                 LOG.info("${details.uid} requested access to group ${group.cn}. A mail was sent to ${adminUser.size} admins of group ${adminGroup.cn}")
                 globalMessageFactory.store(request, globalMessageFactory.createInfo("requestAccess.success"))
