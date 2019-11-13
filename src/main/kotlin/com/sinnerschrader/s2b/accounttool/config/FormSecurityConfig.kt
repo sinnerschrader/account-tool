@@ -94,10 +94,10 @@ class FormSecurityConfig : WebSecurityConfigurerAdapter() {
                         return LdapAuthenticationDetails(context) { ldapService.getGroupMember(connection, it).dn } // TODO verify exists
                     }
                 } catch (e: LDAPException) {
-                    // TODO log exception
+                    LOG.warn("ldap authentication failed: ${e.message}")
                     return null
                 } catch (e: GeneralSecurityException) {
-                    // TODO log exception
+                    LOG.warn("ldap authentication failed: ${e.message}")
                     return null
                 }
             }
