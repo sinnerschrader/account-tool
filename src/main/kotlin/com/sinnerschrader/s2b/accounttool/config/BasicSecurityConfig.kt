@@ -78,7 +78,7 @@ class BasicSecurityConfig : WebSecurityConfigurerAdapter() {
 
     private fun authenticationDetailsSource(): WebAuthenticationDetailsSource {
         return object : WebAuthenticationDetailsSource() {
-            override fun buildDetails(context: HttpServletRequest): WebAuthenticationDetails? {
+            override fun buildDetails(context: HttpServletRequest): WebAuthenticationDetails {
                 try {
                     ldapConfiguration.createConnection().use { connection ->
                         with(ldapManagementConfiguration.user) {
@@ -88,10 +88,10 @@ class BasicSecurityConfig : WebSecurityConfigurerAdapter() {
                     }
                 } catch (e: LDAPException) {
                     LOG.warn("ldap authentication failed: ${e.message}")
-                    return null
+                    throw e
                 } catch (e: GeneralSecurityException) {
                     LOG.warn("ldap authentication failed: ${e.message}")
-                    return null
+                    throw e
                 }
             }
         }
