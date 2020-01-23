@@ -1,7 +1,7 @@
 plugins {
     id 'org.springframework.boot' version '1.5.9.RELEASE'
-    id "org.jetbrains.kotlin.jvm" version "1.2.61"
-    id "org.jetbrains.kotlin.plugin.spring" version "1.2.61"
+    id "org.jetbrains.kotlin.jvm" version "1.3.61"
+    id "org.jetbrains.kotlin.plugin.spring" version "1.3.61"
     id 'com.github.ben-manes.versions' version '0.17.0'
 }
 
@@ -38,14 +38,14 @@ dependencies {
     compile group: 'org.apache.sshd', name: 'sshd-core', version: '1.6.0'
     compile group: 'org.codehaus.janino', name: 'janino', version: '3.0.9'
     compile group: 'org.glowroot', name: 'glowroot-agent-api', version: '0.10.12'
-    compile group: 'org.jetbrains.kotlin', name: 'kotlin-stdlib-jre8', version: '1.2.61'
+    compile group: 'org.jetbrains.kotlin', name: 'kotlin-stdlib-jdk8', version: '1.3.61'
     compile group: 'org.ocpsoft.prettytime', name: 'prettytime', version: '4.0.1.Final'
     compile group: 'org.springframework.boot', name: 'spring-boot-devtools'
     compile group: 'org.springframework.boot', name: 'spring-boot-starter-actuator', version: '1.5.9.RELEASE'
     compile group: 'org.springframework.boot', name: 'spring-boot-starter-mail', version: '1.5.9.RELEASE'
     compile group: 'org.springframework.boot', name: 'spring-boot-starter-security', version: '1.5.9.RELEASE'
     compile group: 'org.springframework.boot', name: 'spring-boot-starter-web', version: '1.5.9.RELEASE'
-    testCompile group: 'org.jetbrains.kotlin', name: 'kotlin-test', version: '1.2.61'
+    testCompile group: 'org.jetbrains.kotlin', name: 'kotlin-test', version: '1.3.61'
     testCompile(group: 'org.springframework.boot', name: 'spring-boot-starter-test', version: '1.5.9.RELEASE') {
         exclude(module: 'commons-logging')
     }
