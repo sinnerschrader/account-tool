@@ -10,7 +10,6 @@ import com.sinnerschrader.s2b.accounttool.presentation.controller.ProfileControl
 import com.sinnerschrader.s2b.accounttool.presentation.model.ChangeProfile
 import com.sinnerschrader.s2b.accounttool.presentation.validation.ChangeProfileFormValidator
 import com.unboundid.ldap.sdk.LDAPConnection
-import org.apache.catalina.servlet4preview.http.HttpServletRequest
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Controller
@@ -25,6 +24,7 @@ import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.servlet.ModelAndView
 import org.springframework.web.servlet.mvc.support.RedirectAttributes
 import javax.annotation.Resource
+import javax.servlet.http.HttpServletRequest
 
 @Controller
 class ProfileController {

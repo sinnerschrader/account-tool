@@ -25,7 +25,7 @@ import javax.servlet.http.HttpServletRequest
 
 
 @EnableWebSecurity
-@Order(SecurityProperties.ACCESS_OVERRIDE_ORDER)
+@Order(SecurityProperties.BASIC_AUTH_ORDER)
 @EnableGlobalMethodSecurity(securedEnabled = true)
 class FormSecurityConfig : WebSecurityConfigurerAdapter() {
 
