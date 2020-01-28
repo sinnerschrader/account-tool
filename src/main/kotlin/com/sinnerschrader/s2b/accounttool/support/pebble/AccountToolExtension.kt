@@ -2,6 +2,8 @@ package com.sinnerschrader.s2b.accounttool.support.pebble
 
 import com.mitchellbosecke.pebble.extension.AbstractExtension
 import com.mitchellbosecke.pebble.extension.Function
+import com.mitchellbosecke.pebble.template.EvaluationContext
+import com.mitchellbosecke.pebble.template.PebbleTemplate
 import com.sinnerschrader.s2b.accounttool.logic.component.authorization.AuthorizationService
 import com.sinnerschrader.s2b.accounttool.logic.entity.Group
 import com.sinnerschrader.s2b.accounttool.presentation.RequestUtils.currentUserDetails
@@ -30,27 +32,28 @@ class AccountToolExtension : AbstractExtension() {
     override fun getFunctions() = mapOf(
         "isLoggedIn" to object : Function {
             override fun getArgumentNames() = emptyList<String>()
-            override fun execute(args: Map<String, Any>) = currentUserDetails != null
+            override fun execute(args: MutableMap<String, Any>, self: PebbleTemplate, context: EvaluationContext, lineNumber: Int) = currentUserDetails != null
         },
         "isGroupAdmin" to object : Function {
             override fun getArgumentNames() = listOf("groupCn")
-            override fun execute(args: Map<String, Any>) =
+            override fun execute(args: MutableMap<String, Any>, self: PebbleTemplate, context: EvaluationContext, lineNumber: Int) =
                     authorizationService.isGroupAdmin(currentUserDetails!!, args["groupCn"] as String)
                             || authorizationService.isAdmin(currentUserDetails!!)
         },
         "isAdmin" to object : Function {
             override fun getArgumentNames() = emptyList<String>()
-            override fun execute(args: Map<String, Any>) = authorizationService.isAdmin(currentUserDetails!!)
+            override fun execute(args: MutableMap<String, Any>, self: PebbleTemplate, context: EvaluationContext, lineNumber: Int) =
+                    authorizationService.isAdmin(currentUserDetails!!)
         },
         "isUserAdmin" to object : Function {
             override fun getArgumentNames() = emptyList<String>()
-            override fun execute(args: Map<String, Any>) =
+            override fun execute(args: MutableMap<String, Any>, self: PebbleTemplate, context: EvaluationContext, lineNumber: Int) =
                     authorizationService.isUserAdministration(currentUserDetails!!)
                             || authorizationService.isAdmin(currentUserDetails!!)
         },
         "isMemberOf" to object : Function {
             override fun getArgumentNames() = listOf("groupCn")
-            override fun execute(args: Map<String, Any>): Any {
+            override fun execute(args: MutableMap<String, Any>, self: PebbleTemplate, context: EvaluationContext, lineNumber: Int): Boolean {
                 val userDetails = currentUserDetails
                 val groupArgument = args["groupCn"]
                 var group: Group? = null
@@ -73,11 +76,12 @@ class AccountToolExtension : AbstractExtension() {
         },
         "isSelected" to object : Function {
             override fun getArgumentNames() = listOf("current", "match")
-            override fun execute(args: Map<String, Any>) = if (args["current"] == args["match"]) "selected" else ""
+            override fun execute(args: MutableMap<String, Any>, self: PebbleTemplate, context: EvaluationContext, lineNumber: Int) =
+                 if (args["current"] == args["match"]) "selected" else ""
         },
         "gravatarUrl" to object : Function {
             override fun getArgumentNames() = listOf("mail", "size")
-            override fun execute(args: Map<String, Any>) =
+            override fun execute(args: MutableMap<String, Any>, self: PebbleTemplate, context: EvaluationContext, lineNumber: Int) =
                    with(DigestUtils.md5DigestAsHex((args["mail"] as String).toLowerCase().trim().toByteArray())) {
                        "$gravatarDomain$gravatarPath/${this}?s=${args["size"]}"
                    }

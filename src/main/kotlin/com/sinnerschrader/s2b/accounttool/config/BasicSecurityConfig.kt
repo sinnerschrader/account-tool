@@ -24,9 +24,9 @@ import javax.servlet.http.HttpServletRequest
 
 
 // TODO code duplication with FormSecurityConfig
-@EnableWebSecurity
-@Order(SecurityProperties.BASIC_AUTH_ORDER - 1)
-@EnableGlobalMethodSecurity(securedEnabled = true)
+//@EnableWebSecurity
+//@Order(SecurityProperties.BASIC_AUTH_ORDER - 1)
+//@EnableGlobalMethodSecurity(securedEnabled = true)
 class BasicSecurityConfig : WebSecurityConfigurerAdapter() {
 
     @Autowired
