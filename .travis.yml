@@ -1,5 +1,4 @@
 language: java
-dist: bionic
 sudo: required
 
 jdk:
