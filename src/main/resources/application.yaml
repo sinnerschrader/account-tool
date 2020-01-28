@@ -10,8 +10,6 @@ spring:
     cache-seconds: "-1"
     encoding: "UTF-8"
     fallback-to-system-locale: "true"
-  resources:
-    cache-period: "2678400"
   security:
     contentSecurityPolicy: "default-src 'none'; manifest-src 'self'; img-src 'self' ${gravatar.domain}; script-src 'self' https://cdn.jsdelivr.net; style-src 'self' https://fonts.googleapis.com https://cdn.jsdelivr.net; font-src 'self' https://fonts.gstatic.com; connect-src 'self'; report-uri /csp-report"
   mail:

@@ -1,7 +1,6 @@
 package com.sinnerschrader.s2b.accounttool.config
 
 import com.google.common.base.Predicates
-import com.mitchellbosecke.pebble.spring4.extension.SpringExtension
 import com.sinnerschrader.s2b.accounttool.config.ldap.LdapConfiguration
 import com.sinnerschrader.s2b.accounttool.presentation.interceptor.GlobalMessageInterceptor
 import com.sinnerschrader.s2b.accounttool.presentation.interceptor.LdapConnectionInterceptor
@@ -9,29 +8,30 @@ import com.sinnerschrader.s2b.accounttool.presentation.interceptor.RequestInterc
 import com.sinnerschrader.s2b.accounttool.presentation.messaging.GlobalMessageFactory
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration
+import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.cache.annotation.EnableCaching
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.core.env.Environment
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry
-import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter
+import org.springframework.web.servlet.config.annotation.WebMvcConfigurer
 import org.springframework.web.servlet.i18n.AcceptHeaderLocaleResolver
 import org.springframework.web.servlet.resource.ResourceUrlEncodingFilter
 import springfox.documentation.builders.RequestHandlerSelectors.basePackage
 import springfox.documentation.service.ApiInfo
 import springfox.documentation.service.BasicAuth
-import springfox.documentation.service.Contact
 import springfox.documentation.spi.DocumentationType
 import springfox.documentation.spring.web.plugins.Docket
 import springfox.documentation.swagger2.annotations.EnableSwagger2
 import java.util.*
 
 
+@SpringBootApplication
 @Configuration
 @EnableAutoConfiguration
 @EnableCaching
 @EnableSwagger2
-class ApplicationConfig : WebMvcConfigurerAdapter() {
+class ApplicationConfig() : WebMvcConfigurer {
 
     @Autowired
     private lateinit var environment: Environment
@@ -60,10 +60,6 @@ class ApplicationConfig : WebMvcConfigurerAdapter() {
 
     @Bean
     fun resourceUrlEncodingFilter() = ResourceUrlEncodingFilter()
-
-    @Bean
-    fun springExtension() = SpringExtension()
-
 
     @Bean
     fun api() =
