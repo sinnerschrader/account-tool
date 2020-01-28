@@ -1,14 +1,11 @@
 language: java
-dist: trusty
 sudo: required
+
+jdk:
+  - openjdk8
 
 services:
   - docker
-
-addons:
-  apt:
-    packages:
-      - openjdk-8-jdk
 
 cache:
   directories:
