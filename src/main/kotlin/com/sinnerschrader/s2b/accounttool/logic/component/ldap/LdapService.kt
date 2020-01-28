@@ -516,6 +516,11 @@ class LdapService {
             } - listOf("uidNumber", "displayName", "homeDirectory", "sambaSID", "mail") // TODO changes to these currently not detected/supported
             changes.addAll(changedEntries.toModification())
 
+            if (changedEntries.containsKey("description") && user.mail.isNotBlank()) {
+                val mailChange = mapOf("mail" to user.mail.substringBefore('@') + "@${domainConfiguration.mailDomain(user.description)}")
+                changes.addAll(mailChange.toModification())
+            }
+
             var result: LDAPResult?
             if (!changes.isEmpty()) {
                 result = connection.modify(pUser.dn, changes)

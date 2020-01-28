@@ -72,7 +72,7 @@ data class UserForm(
             szzBirthDay = birthDate.split(".").getOrNull(0)?.toIntOrNull() ?: -1,
             szzBirthMonth = birthDate.split(".").getOrNull(1)?.toIntOrNull() ?: -1,
             mail = when {
-                emailPrefix.isNotBlank() ->  domainConfiguration.mailDomain(type)
+                emailPrefix.isNotBlank() ->  emailPrefix + "@" + domainConfiguration.mailDomain(type)
                 else ->  ""
             },
             szzStatus = if(status) User.State.active else User.State.inactive,
