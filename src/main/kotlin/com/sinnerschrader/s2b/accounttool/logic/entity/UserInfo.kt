@@ -14,4 +14,15 @@ data class UserInfo(val dn: String,
                     val externalAccounts: Map<String, String> = emptyMap()) : Comparable<UserInfo> {
     private fun fullName() = "$sn, $givenName"
     override fun compareTo(other: UserInfo) = fullName().compareTo(other.fullName())
+
+    constructor(user:User) : this(
+                dn = user.dn,
+                uid = user.uid,
+                givenName = user.givenName,
+                sn = user.sn,
+                o = user.o,
+                mail = user.mail,
+                szzStatus = user.szzStatus,
+                type = user.description,
+                externalAccounts = user.szzExternalAccounts)
 }
