@@ -1,8 +1,8 @@
 package com.sinnerschrader.s2b.accounttool.presentation.controller.v2
 
 import com.sinnerschrader.s2b.accounttool.logic.component.ldap.v2.LdapServiceV2
+import com.sinnerschrader.s2b.accounttool.logic.component.ldap.v2.LdapServiceV2.UserAttributes.FULL
 import com.sinnerschrader.s2b.accounttool.logic.entity.User.State
-import com.sinnerschrader.s2b.accounttool.logic.entity.UserInfo
 import com.sinnerschrader.s2b.accounttool.presentation.controller.v2.DynamicAllowedValues.Companion.COMPANIES
 import com.sinnerschrader.s2b.accounttool.presentation.controller.v2.DynamicAllowedValues.Companion.USERTYPE
 import io.swagger.annotations.Api
@@ -11,18 +11,20 @@ import io.swagger.annotations.ApiParam
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.format.annotation.DateTimeFormat
 import org.springframework.format.annotation.DateTimeFormat.ISO.DATE
+import org.springframework.security.access.prepost.PreAuthorize
 import org.springframework.web.bind.annotation.*
 import java.time.LocalDate
 
 @RestController
-@Api(tags = ["User"], description = "Provides access to users")
+@Api(tags = ["Admin"], description = "Provides admin access")
 @RequestMapping("/v2")
-class UserControllerV2 {
+@PreAuthorize("@authorizationService.isUserAdministration()")
+class AdminController {
     @Autowired
     lateinit var ldapServiceV2: LdapServiceV2
 
     @ApiOperation("Retrieve users")
-    @GetMapping("/user")
+    @GetMapping("/admin/user")
     fun getUser(@ApiParam("account state")
                 @RequestParam(required = false) state: State?,
                 @ApiParam("search multiple fields for a specific keyword")
@@ -42,12 +44,10 @@ class UserControllerV2 {
                     type = type,
                     searchTerm = searchTerm,
                     entryDateRange = LdapServiceV2.DateRange.of(entryDateStart, entryDateEnd),
-                    exitDateRange = LdapServiceV2.DateRange.of(exitDateStart, exitDateEnd)).map {
-                UserInfo(it)
-            }
-
+                    exitDateRange = LdapServiceV2.DateRange.of(exitDateStart, exitDateEnd),
+                    attributes = FULL)
 
     @ApiOperation("Retrieve user by uid")
-    @GetMapping("/user/{uid}")
-    fun getUser(@PathVariable uid: String) = UserInfo(ldapServiceV2.getUser(uid = uid).single())
+    @GetMapping("/admin/user/{uid}")
+    fun getUser(@PathVariable uid: String) = ldapServiceV2.getUser(uid = uid, attributes = FULL).single()
 }

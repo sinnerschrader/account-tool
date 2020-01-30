@@ -5,16 +5,15 @@ import org.springframework.security.core.userdetails.UserDetails
 import java.io.Serializable
 
 
-class LdapUserDetails(val dn: String,
+data class LdapUserDetails(val dn: String,
                       val uid: String,
                       val displayName: String,
                       private var password: String?,
                       val company: String,
-                      grantedAuthorities: List<GrantedAuthority>?,
+                      private val grantedAuthorities: List<GrantedAuthority>,
                       private val expired: Boolean,
                       private val enabled: Boolean) : UserDetails, Serializable {
 
-    private val grantedAuthorities = grantedAuthorities?.toList() ?: emptyList()
 
     override fun getPassword() = password
 

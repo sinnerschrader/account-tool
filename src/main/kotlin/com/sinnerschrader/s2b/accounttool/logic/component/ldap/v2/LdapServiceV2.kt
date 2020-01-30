@@ -2,11 +2,13 @@ package com.sinnerschrader.s2b.accounttool.logic.component.ldap.v2
 
 import com.sinnerschrader.s2b.accounttool.config.UserConfiguration
 import com.sinnerschrader.s2b.accounttool.config.ldap.LdapConfiguration
+import com.sinnerschrader.s2b.accounttool.logic.component.mapping.UserMapping
 import com.sinnerschrader.s2b.accounttool.logic.entity.GroupInfo
 import com.sinnerschrader.s2b.accounttool.logic.entity.User.State
-import com.sinnerschrader.s2b.accounttool.logic.entity.UserInfo
 import com.sinnerschrader.s2b.accounttool.presentation.RequestUtils
 import com.unboundid.ldap.sdk.Filter.*
+import com.unboundid.ldap.sdk.SearchRequest.ALL_OPERATIONAL_ATTRIBUTES
+import com.unboundid.ldap.sdk.SearchRequest.ALL_USER_ATTRIBUTES
 import com.unboundid.ldap.sdk.SearchResultEntry
 import com.unboundid.ldap.sdk.SearchScope
 import org.springframework.beans.factory.annotation.Autowired
@@ -26,6 +28,9 @@ class LdapServiceV2 {
 
     @Autowired
     lateinit var userConfiguration: UserConfiguration
+
+    @Autowired
+    lateinit var userMapping: UserMapping
 
     fun getGroups(cn: String? = null, memberUid: String? = null) =
             // TODO fail on no request at the moment
@@ -51,13 +56,19 @@ class LdapServiceV2 {
                         members = (it.getAttributeValues("memberuid") ?: emptyArray()).toSortedSet())
             }
 
+    enum class UserAttributes(vararg val ldapAttributes: String){
+        FULL(ALL_USER_ATTRIBUTES, ALL_OPERATIONAL_ATTRIBUTES),
+        INFO("uid", "givenName", "sn", "mail", "szzStatus", "description", "szzExternalAccounts")
+    }
+
     fun getUser(uid: String? = null,
                 state: State? = null,
                 company: String? = null,
                 type: String? = null,
                 searchTerm: String? = null,
                 entryDateRange: DateRange? = null,
-                exitDateRange: DateRange? = null) =
+                exitDateRange: DateRange? = null,
+                attributes: UserAttributes = UserAttributes.INFO) =
             // TODO fail on no request at the moment
             with(RequestUtils.getLdapConnection(request!!)!!) {
                 search(
@@ -74,19 +85,8 @@ class LdapServiceV2 {
                                         exitDateRange?.createFilter("szzExitDate")
                                 )
                         ),
-                        "uid", "givenName", "sn", "mail", "szzStatus", "description", "szzExternalAccounts"
-                ).searchEntries.map {
-                    UserInfo(
-                            dn = it.dn,
-                            uid = it.getAttributeValue("uid"),
-                            givenName = it.getAttributeValue("givenName"),
-                            sn = it.getAttributeValue("sn"),
-                            o = companyForDn(it.dn),
-                            mail = it.getAttributeValue("mail"),
-                            szzStatus = State.valueOf(it.getAttributeValue("szzStatus")),
-                            type = it.getAttributeValue("description") ?: "",
-                            externalAccounts = it.strMap("szzExternalAccounts"))
-                }
+                        *attributes.ldapAttributes
+                ).searchEntries.mapNotNull { userMapping.map(it)}
             }
 
     fun SearchResultEntry.int(attributeName: String) = getAttributeValueAsInteger(attributeName) ?: 0

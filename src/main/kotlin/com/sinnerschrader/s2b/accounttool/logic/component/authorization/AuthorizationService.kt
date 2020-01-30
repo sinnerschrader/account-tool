@@ -2,6 +2,7 @@ package com.sinnerschrader.s2b.accounttool.logic.component.authorization
 
 import com.sinnerschrader.s2b.accounttool.config.authentication.LdapUserDetails
 import com.sinnerschrader.s2b.accounttool.config.ldap.LdapConfiguration
+import com.sinnerschrader.s2b.accounttool.presentation.RequestUtils
 import org.apache.commons.lang3.StringUtils
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.security.access.AccessDeniedException
@@ -24,6 +25,7 @@ class AuthorizationService {
 
     fun isAdmin(user: LdapUserDetails) = isMemberOf(user.authorities, ldapConfiguration.permissions.ldapAdminGroup)
 
+    fun isUserAdministration() = isUserAdministration(RequestUtils.currentUserDetails!!) // default parameter failed to work with @PreAuth
     fun isUserAdministration(user: LdapUserDetails): Boolean {
         for (userAdminGroup in ldapConfiguration.permissions.userAdminGroups)
             if (isMemberOf(user.authorities, userAdminGroup))

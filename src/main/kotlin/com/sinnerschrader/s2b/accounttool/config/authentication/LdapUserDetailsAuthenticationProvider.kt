@@ -1,6 +1,7 @@
 package com.sinnerschrader.s2b.accounttool.config.authentication
 
 import com.sinnerschrader.s2b.accounttool.config.ldap.LdapConfiguration
+import com.sinnerschrader.s2b.accounttool.logic.component.authorization.AuthorizationService
 import com.sinnerschrader.s2b.accounttool.logic.component.ldap.LdapService
 import com.sinnerschrader.s2b.accounttool.logic.entity.User
 import com.unboundid.ldap.sdk.LDAPConnection
@@ -28,6 +29,9 @@ class LdapUserDetailsAuthenticationProvider : AbstractUserDetailsAuthenticationP
 
     @Autowired
     private lateinit var ldapService: LdapService
+
+    @Autowired
+    private lateinit var authorizationService: AuthorizationService
 
     @Throws(AuthenticationException::class)
     override fun retrieveUser(username: String, authentication: UsernamePasswordAuthenticationToken): UserDetails {
