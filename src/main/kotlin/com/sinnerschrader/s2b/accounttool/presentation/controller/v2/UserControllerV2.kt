@@ -1,6 +1,7 @@
 package com.sinnerschrader.s2b.accounttool.presentation.controller.v2
 
 import com.sinnerschrader.s2b.accounttool.logic.component.ldap.v2.LdapServiceV2
+import com.sinnerschrader.s2b.accounttool.logic.component.ldap.v2.LdapServiceV2.UserAttributes.INFO
 import com.sinnerschrader.s2b.accounttool.logic.entity.User.State
 import com.sinnerschrader.s2b.accounttool.logic.entity.UserInfo
 import com.sinnerschrader.s2b.accounttool.presentation.controller.v2.DynamicAllowedValues.Companion.COMPANIES
@@ -42,12 +43,10 @@ class UserControllerV2 {
                     type = type,
                     searchTerm = searchTerm,
                     entryDateRange = LdapServiceV2.DateRange.of(entryDateStart, entryDateEnd),
-                    exitDateRange = LdapServiceV2.DateRange.of(exitDateStart, exitDateEnd)).map {
-                UserInfo(it)
-            }
-
+                    exitDateRange = LdapServiceV2.DateRange.of(exitDateStart, exitDateEnd),
+                    attributes = INFO)
 
     @ApiOperation("Retrieve user by uid")
     @GetMapping("/user/{uid}")
-    fun getUser(@PathVariable uid: String) = UserInfo(ldapServiceV2.getUser(uid = uid).single())
+    fun getUser(@PathVariable uid: String) = ldapServiceV2.getUser(uid = uid, attributes = INFO).single()
 }
