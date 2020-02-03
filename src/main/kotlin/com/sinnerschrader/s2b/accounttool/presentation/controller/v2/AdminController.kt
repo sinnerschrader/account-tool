@@ -18,7 +18,7 @@ import java.time.LocalDate
 @RestController
 @Api(tags = ["Admin"], description = "Provides admin access")
 @RequestMapping("/v2")
-@PreAuthorize("@authorizationService.isUserAdministration()")
+@PreAuthorize("@authorizationService.ensureUserAdministration()")
 class AdminController {
     @Autowired
     lateinit var ldapServiceV2: LdapServiceV2

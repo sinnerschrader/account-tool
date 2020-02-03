@@ -25,7 +25,6 @@ class AuthorizationService {
 
     fun isAdmin(user: LdapUserDetails) = isMemberOf(user.authorities, ldapConfiguration.permissions.ldapAdminGroup)
 
-    fun isUserAdministration() = isUserAdministration(RequestUtils.currentUserDetails!!) // default parameter failed to work with @PreAuth
     fun isUserAdministration(user: LdapUserDetails): Boolean {
         for (userAdminGroup in ldapConfiguration.permissions.userAdminGroups)
             if (isMemberOf(user.authorities, userAdminGroup))
@@ -46,6 +45,9 @@ class AuthorizationService {
         } else false
     }
 
+    fun ensureUserAdministration() =  with(RequestUtils.currentUserDetails!!){ // default parameter failed to work with @PreAuth
+        isAdmin(this) || isUserAdministration(this)
+    }
     @Throws(AccessDeniedException::class)
     fun ensureUserAdministration(user: LdapUserDetails) {
         if (isAdmin(user) || isUserAdministration(user)) {
