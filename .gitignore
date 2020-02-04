@@ -19,3 +19,4 @@ target/
 docker-compose.override.yml
 build
 .gradle
+src/main/resources/application-test.yaml

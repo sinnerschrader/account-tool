@@ -70,7 +70,7 @@ class BasicSecurityConfig : WebSecurityConfigurerAdapter() {
         http.sessionManagement()
                 .sessionFixation()
                 .newSession()
-        http.csrf()
+        http.csrf().disable()
         http.headers()
                 .contentSecurityPolicy(contentSecurityPolicy)
 
