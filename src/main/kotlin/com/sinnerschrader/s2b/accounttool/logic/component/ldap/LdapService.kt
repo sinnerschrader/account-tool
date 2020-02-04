@@ -252,7 +252,7 @@ class LdapService {
                 ).toModification(modificationType))
                 getGroupByCN(connection, group.cn)
             } catch (le: LDAPException) {
-                throw RuntimeException("Could not add user ${user.uid} to group ${group.cn}", le)
+                throw RuntimeException("Could not ${modificationType.name} user ${user.uid} for group ${group.cn}", le)
             }
 
     @CacheEvict("groups", key = "#group.cn")
