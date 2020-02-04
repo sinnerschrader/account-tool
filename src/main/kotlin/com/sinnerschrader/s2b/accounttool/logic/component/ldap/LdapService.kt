@@ -544,7 +544,7 @@ class LdapService {
             }
 
             if (isChanged(user.description, pUser.description) || isChanged(user.szzStatus, pUser.szzStatus)) {
-                clearGroups(user, onlyDefaultGroups = user.szzStatus == active)
+                clearGroups(connection, user, onlyDefaultGroups = user.szzStatus == active)
                 if (user.szzStatus == active) addDefaultGroups(user)
             }
         } catch (le: LDAPException) {
@@ -583,18 +583,13 @@ class LdapService {
 
     }
 
-    fun clearGroups(user: User, onlyDefaultGroups: Boolean = false) {
+    fun clearGroups(connection: LDAPConnection, user: User, onlyDefaultGroups: Boolean = false) {
         try {
-            ldapConfiguration.createConnection().use { connection ->
-                connection.bind(managementConfiguration.user.bindDN,
-                        managementConfiguration.user.password)
-
                 val defaultGroups = ldapConfiguration.permissions.defaultGroups.values.flatten().toSet()
                 val removedGroups = getGroupsByUser(connection, user.uid, user.dn)
                         .filter { !onlyDefaultGroups || defaultGroups.contains(it.cn) }
-                        .mapNotNull { cachedLdapService.removeUserFromGroup(connection, user, it) }
+                        .map { cachedLdapService.removeUserFromGroup(connection, user, it) }
                 log.debug("Removed ${user.uid} from ${removedGroups.map { it.cn }}")
-            }
         } catch (e: LDAPException) {
             log.error("Could not clear groups for user ${user.uid}", e)
         } catch (e: GeneralSecurityException) {
