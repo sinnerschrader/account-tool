@@ -90,7 +90,7 @@ class LdapServiceV2 {
     fun SearchResultEntry.long(attributeName: String) = getAttributeValueAsLong(attributeName) ?: 0L
 
     private fun createUserSearchFilter(search: String) = createORFilter(
-            listOf("uid", "givenName", "sn", "mail", "cn").map {
+            listOf("uid", "givenName", "sn", "mail", "cn", "szzExternalAccounts").map {
                 createSubstringFilter(it, null, arrayOf(search), null)
             })
 
